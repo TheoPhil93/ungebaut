@@ -479,7 +479,12 @@ export function GalleryGL({
       mouseY = -(event.clientY - rect.top - rect.height / 2);
       if (dragging) {
         const dx = (event.clientX - dragLastX) * DRAG_SENSITIVITY;
-        if (Math.abs(event.clientX - dragStartX) > 4) dragMoved = true;
+        // Tap-vs-drag threshold. Touch input slides slightly on tap, so use a
+        // larger threshold for `pointerType === 'touch'` to prevent every tap
+        // from being misclassified as a drag.
+        const dragThreshold = event.pointerType === 'touch' ? 8 : 4;
+        if (Math.abs(event.clientX - dragStartX) > dragThreshold)
+          dragMoved = true;
         target = clamp(target - dx, minScroll, maxScroll);
         dragLastX = event.clientX;
       }

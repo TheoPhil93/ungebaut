@@ -26,6 +26,19 @@
 
   --pad-x: clamp(1.25rem, 3vw, 2.75rem);
   --pad-y: clamp(1rem, 1.8vw, 1.5rem);
+
+  /* Canonical responsive breakpoints. Plain CSS does not let custom
+     properties be used inside @media queries, so these are documentation
+     only — author new media queries against these three values:
+       sm  640px  phone / tablet boundary
+       md  900px  tablet / desktop boundary
+       lg  1200px wide desktop
+     Existing legacy values (720, 880, 899, 980, 1023, 1024) are tuned for
+     specific layouts; migrate them to {640, 900, 1200} when the surrounding
+     component is next touched. */
+  --bp-sm: 640px;
+  --bp-md: 900px;
+  --bp-lg: 1200px;
 }
 
 *,
@@ -224,6 +237,129 @@ button {
 .nav__btn:focus-visible::after,
 .nav__btn[aria-current='page']::after {
   transform: scaleX(1);
+}
+
+/* Hamburger toggle — hidden by default, shown below 640px. */
+.nav__toggle {
+  display: none;
+  position: relative;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+}
+
+.nav__toggle-bar {
+  position: absolute;
+  left: 7px;
+  right: 7px;
+  height: 1.5px;
+  background: currentColor;
+  transition: transform 0.32s var(--ease-out), top 0.32s var(--ease-out);
+}
+
+.nav__toggle-bar:nth-child(1) { top: 14px; }
+.nav__toggle-bar:nth-child(2) { top: 21px; }
+
+.nav__toggle[aria-expanded='true'] .nav__toggle-bar:nth-child(1) {
+  top: 17.5px;
+  transform: rotate(45deg);
+}
+.nav__toggle[aria-expanded='true'] .nav__toggle-bar:nth-child(2) {
+  top: 17.5px;
+  transform: rotate(-45deg);
+}
+
+/* Drawer — full-viewport overlay on small screens. */
+.nav__drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--pad-x);
+  background: var(--bg);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.28s var(--ease-out);
+}
+
+.nav__drawer[data-open='true'] {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.nav__drawer[hidden] {
+  display: none;
+}
+
+.nav__drawer-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.25rem, 4vh, 2rem);
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
+.nav__drawer-link {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(2rem, 8vw, 3rem);
+  letter-spacing: -0.01em;
+  line-height: 1.05;
+  text-transform: none;
+  padding: 0.4em 0.6em;
+  color: var(--fg);
+  position: relative;
+}
+
+.nav__drawer-link[aria-current='page'] {
+  font-style: italic;
+}
+
+.nav__drawer-link::after {
+  content: '';
+  position: absolute;
+  left: 0.6em;
+  right: 0.6em;
+  bottom: 0.3em;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.45s var(--ease-out);
+}
+
+.nav__drawer-link[aria-current='page']::after,
+.nav__drawer-link:focus-visible::after {
+  transform: scaleX(0.9);
+}
+
+@media (max-width: 640px) {
+  .nav__list {
+    display: none;
+  }
+  .nav__toggle {
+    display: block;
+    z-index: 61;
+  }
+  /* Drawer trigger needs to stay above the drawer overlay so it remains
+     clickable to close the menu. */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav__drawer,
+  .nav__toggle-bar,
+  .nav__drawer-link::after {
+    transition: none;
+  }
 }
 
 /* ---------- Footer ---------- */
@@ -2717,6 +2853,7 @@ a.about__contact-value:hover::after {
   justify-content: center;
   padding: clamp(2rem, 6vh, 5rem) var(--pad-x);
   min-height: calc(100vh - 80px);
+  min-height: calc(100dvh - 80px);
 }
 
 /* Title wrapper — full-bleed overlay sitting BEHIND the hero, flush to the
@@ -2972,6 +3109,7 @@ a.about__contact-value:hover::after {
   .detail__main {
     padding-top: clamp(2rem, 12vh, 10rem);
     min-height: calc(100vh - 60px);
+    min-height: calc(100dvh - 60px);
   }
   .detail .massive-title__main {
     font-size: clamp(3.5rem, 12vw, 7rem);
@@ -2992,6 +3130,30 @@ a.about__contact-value:hover::after {
   .detail__seo {
     grid-column: 1;
     justify-self: start;
+  }
+}
+
+/* Phone-specific tightening for the close affordance and detail strip
+   typography. At ≤640 the close button needs a 44px tap target per WCAG
+   2.5.5 / iOS guidelines, and the strip caption can drop a size for
+   breathing room. */
+@media (max-width: 640px) {
+  .detail__close {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 6px 12px;
+  }
+  .detail .massive-title__main {
+    /* Tighter floor on small phones — 14vw was bumping into the hero. */
+    font-size: clamp(2.6rem, 11vw, 5rem);
+  }
+  .detail .massive-title__row-wrap--top,
+  .detail .massive-title__row-wrap--bot {
+    padding-left: clamp(0.75rem, 3vw, 2rem);
+  }
+  .detail__strip-caption {
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
   }
 }
 
