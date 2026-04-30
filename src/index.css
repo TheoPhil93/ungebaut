@@ -3498,11 +3498,13 @@ a.about__contact-value:hover::after {
    =========================================================================== */
 
 @media (max-width: 900px), (max-height: 540px) {
-  /* Landscape phone: home view's min-height of clamp(520px, 88vh, 920px)
-     is taller than the viewport (~430px) so the canvas overflows below
-     the fold. Lock the section to the dynamic viewport instead. */
+  /* Mobile/landscape: drop the 520px min-height floor that overflowed
+     short viewports and pushed the footer (and its contact info) below
+     the fold. flex:1 on .home makes it fill available space inside
+     .app__main, which is correctly sized to viewport-minus-footer by
+     the .app flex column. */
   .home {
-    min-height: 100dvh;
+    min-height: 0;
   }
 
   :root {
