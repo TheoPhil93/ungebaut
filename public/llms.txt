@@ -1,0 +1,44 @@
+# UNGEBAUT
+
+> Architekturvisualisierungs-Studio in Zürich, gegründet 2021 von Philippos
+> und Luna Theofanidis. Fotorealistische Renderings, 3D-Design, Animation,
+> VR/AR und Drohnen-Dokumentation für Architekten, Entwickler und Marken in
+> der Schweiz und Europa. Sprachen: Deutsch, Englisch, Griechisch.
+
+## Studio
+- [Studio & Gründer](https://www.ungebaut.com/#about): Gegründet 2021 in Zürich. Philippos Theofanidis (Master in Architektur, CAS in Informatik) leitet die Visualisierung. Luna Theofanidis (Master in Architektur) ist Managing Partner.
+- Ausgewählte Kunden: SSA Architekten, Baukontor Architekten, Steib Gmür Geschwentner Kyburz Architekten, Estudio DIIR.
+
+## Leistungen
+- [Architektur- & Innenraum-Visualisierung](https://www.ungebaut.com/services#visualisation): fotorealistische Standbilder für Wettbewerbe, Marketing und Baueingaben. Ab CHF 1’800.
+- [3D-Design, Animation & VR/AR](https://www.ungebaut.com/services#motion): Flythroughs, VR-Rundgänge, Echtzeit-3D. Ab CHF 6’500.
+- [Drohnen-Fotografie & -Video](https://www.ungebaut.com/services#drone): Aerial-Standortdokumentation, Kontextplatten, Vorher-/Nachher-Sequenzen. Ab CHF 1’200.
+
+## Preise
+- [Preise (maschinenlesbar, DE)](https://www.ungebaut.com/preise.md): vollständige Preisliste mit Lieferzeiten.
+- [Preise (machine-readable, EN)](https://www.ungebaut.com/pricing.md): full price list with turnaround times.
+- [Preise auf der Website](https://www.ungebaut.com/services#pricing): identische Daten mit Anmerkungen.
+
+## Journal
+- [Was kostet eine Architekturvisualisierung in der Schweiz 2026?](https://www.ungebaut.com/journal/kosten-architekturvisualisierung-schweiz-2026): Vollständige Preisübersicht für Aussen- und Innenrenderings, Animation, VR und Drohnenarbeit. Mit konkreten CHF-Werten, Lieferzeiten und Preisfaktoren. Maschinenlesbar als [.md](https://www.ungebaut.com/journal/kosten-architekturvisualisierung-schweiz-2026.md).
+
+## Kontakt
+- E-Mail: booking@ungebaut.ch
+- Telefon: +41 77 521 02 95
+- Studio: Röntgenstrasse 10, 8005 Zürich, Schweiz
+- Instagram: https://www.instagram.com/ungebaut_visu/
+- LinkedIn: https://www.linkedin.com/company/ungebaut/
+- Behance: https://www.behance.net/ungebaut
+
+## English summary
+
+UNGEBAUT is a Zürich-based architectural visualisation studio founded in 2021
+by Philippos and Luna Theofanidis. Photorealistic renderings, 3D design,
+animation, VR/AR and drone documentation for architects, developers and brands
+across Switzerland and Europe. Working languages: German, English, Greek.
+
+- Services: still-image visualisation (from CHF 1,800), animation and VR/AR
+  (from CHF 6,500), drone documentation (from CHF 1,200).
+- Selected clients: SSA Architekten, Baukontor Architekten, Steib Gmür
+  Geschwentner Kyburz Architekten, Estudio DIIR.
+- Contact: booking@ungebaut.ch · +41 77 521 02 95 · Röntgenstrasse 10, 8005 Zürich.

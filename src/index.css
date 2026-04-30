@@ -1,0 +1,3520 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Inter:wght@300;400;500&display=swap');
+
+:root {
+  /* Light theme — warm off-white backdrop, near-black ink. The previous
+     dark variant lives in the project palette (per-project detailInk /
+     detailBg) so opening a project still triggers a colour shift. */
+  --bg: #f4f0e8;
+  --bg-elev: #ebe7df;
+  --fg: #0b0b0b;
+  --muted: rgba(11, 11, 11, 0.55);
+  --muted-soft: rgba(11, 11, 11, 0.32);
+  --line: rgba(11, 11, 11, 0.14);
+  --line-strong: rgba(11, 11, 11, 0.32);
+  /* Constant CREAM colour for elements that use mix-blend-mode: difference.
+     They float on top of unpredictable backgrounds (gallery photos, project
+     tints, both light and dark) and rely on the blend to invert into a
+     readable colour. A theme-following --fg would go invisible the moment
+     the underlying BG matches its lightness. */
+  --fg-blend: #ece8e1;
+
+  --font-display: 'Fraunces', 'Times New Roman', serif;
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --pad-x: clamp(1.25rem, 3vw, 2.75rem);
+  --pad-y: clamp(1rem, 1.8vw, 1.5rem);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--fg);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+/* Hide native cursor when custom cursor is active and pointer is fine */
+body[data-custom-cursor='on'],
+body[data-custom-cursor='on'] a,
+body[data-custom-cursor='on'] button,
+body[data-custom-cursor='on'] canvas {
+  cursor: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  background: none;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+:focus {
+  outline: none;
+}
+:focus-visible {
+  outline: 1px solid var(--fg);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+::selection {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+/* Skip link */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 1rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--fg);
+  color: var(--bg);
+  z-index: 200;
+  transition: top 0.2s var(--ease-out);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0;
+}
+.skip-link:focus {
+  top: 1rem;
+}
+
+/* ---------- App shell ---------- */
+
+.app {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.app__main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* ---------- Cursor ---------- */
+
+.cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--fg-blend);
+  pointer-events: none;
+  z-index: 999;
+  mix-blend-mode: difference;
+  transform-origin: center;
+  will-change: transform;
+}
+
+.cursor__label {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--bg);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+@media (pointer: coarse) {
+  .cursor {
+    display: none;
+  }
+}
+
+/* ---------- Nav ---------- */
+
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: var(--pad-y) var(--pad-x);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  /* Plain dark text on the off-white backdrop. We previously used
+     mix-blend-mode: difference to invert against gallery photos, but the
+     user wants flat black-on-white legibility now that the page is light. */
+  color: var(--fg);
+}
+
+.nav__brand {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  letter-spacing: 0.18em;
+}
+
+.nav__list {
+  display: flex;
+  gap: clamp(1.25rem, 2.5vw, 2.5rem);
+  list-style: none;
+}
+
+.nav__btn {
+  position: relative;
+  font-family: var(--font-sans);
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  padding: 0.25rem 0;
+}
+
+.nav__btn::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.5s var(--ease-out);
+}
+
+.nav__btn:hover::after,
+.nav__btn:focus-visible::after,
+.nav__btn[aria-current='page']::after {
+  transform: scaleX(1);
+}
+
+/* ---------- Footer ---------- */
+
+.footer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 40;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: var(--pad-y) var(--pad-x);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  /* Plain dark text on the off-white backdrop (no blend inversion). */
+  color: var(--fg);
+  pointer-events: none;
+}
+
+.footer > * {
+  pointer-events: auto;
+}
+
+.footer__location {
+  display: flex;
+  gap: 1.5rem;
+  align-items: baseline;
+}
+
+.footer__time {
+  /* Slightly darker than --muted so 10.56px text on the cream bg meets
+     WCAG AA 4.5:1 (the default --muted only hits 4.22:1 at this size). */
+  color: rgba(11, 11, 11, 0.68);
+  font-variant-numeric: tabular-nums;
+}
+
+.footer__credit {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 300;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+/* ---------- Views (shared) ---------- */
+
+.view {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- HomeView (slider) ---------- */
+
+.slide {
+  position: relative;
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr auto;
+  padding: calc(var(--pad-y) * 4) var(--pad-x) calc(var(--pad-y) * 5);
+  isolation: isolate;
+}
+
+.slide__visual-wrap {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.slide__visual {
+  position: relative;
+  width: clamp(280px, 42vw, 560px);
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  will-change: transform;
+}
+
+.slide__visual-inner {
+  position: absolute;
+  inset: -8%;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(80% 60% at 50% 30%, var(--slide-accent) 0%, transparent 75%),
+    linear-gradient(180deg, var(--slide-accent-soft) 0%, #050505 100%);
+  will-change: transform;
+}
+
+.slide__visual-mark {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(3rem, 8vw, 6rem);
+  color: rgba(236, 232, 225, 0.85);
+  text-align: center;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  padding: 0 1rem;
+  mix-blend-mode: overlay;
+}
+
+.slide__visual-grain {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 3px 3px;
+  opacity: 0.5;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+.slide__meta {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: end;
+  gap: 2rem;
+  margin-top: clamp(1.5rem, 4vh, 3rem);
+}
+
+.slide__meta-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.slide__client {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+}
+
+.slide__title {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(2rem, 5.5vw, 4.25rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.slide__title em {
+  font-style: italic;
+}
+
+.slide__nav {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.slide__nav-btn {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  transition: border-color 0.4s var(--ease-out), transform 0.4s var(--ease-out);
+}
+.slide__nav-btn:hover {
+  border-color: var(--line-strong);
+}
+.slide__nav-btn:focus-visible {
+  border-color: var(--fg);
+}
+.slide__nav-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.slide__meta-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.4rem;
+  text-align: right;
+}
+
+.slide__tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--muted);
+}
+
+.slide__year {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 300;
+  font-size: 1rem;
+  color: var(--muted);
+}
+
+.slide__year-row {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  color: var(--muted);
+}
+
+/* Counter */
+
+.counter {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.4em;
+  font-family: var(--font-sans);
+  font-feature-settings: 'tnum' on;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+}
+
+.counter__group {
+  display: inline-flex;
+  overflow: hidden;
+  height: 1em;
+  line-height: 1;
+}
+
+.counter__digit {
+  display: inline-block;
+  width: 0.62em;
+  text-align: center;
+  will-change: transform;
+}
+
+.counter__sep {
+  opacity: 0.5;
+}
+
+/* ---------- IndexView ---------- */
+
+.index {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: calc(var(--pad-y) * 5) var(--pad-x) calc(var(--pad-y) * 5);
+}
+
+.index__heading {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  margin-bottom: clamp(2rem, 5vh, 4rem);
+}
+
+.index__list {
+  list-style: none;
+  border-top: 1px solid var(--line);
+}
+
+.index__row {
+  position: relative;
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  border-bottom: 1px solid var(--line);
+  cursor: pointer;
+  outline: none;
+  will-change: height, opacity;
+}
+
+.index__row:focus-visible {
+  outline: 1px solid var(--row-accent, var(--ink));
+  outline-offset: -2px;
+}
+
+.index__row-media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background: var(--row-accent, #1a1a1a);
+  z-index: 0;
+  will-change: opacity, transform;
+}
+
+.index__row-media img,
+.index__row-media video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.index__row-media-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.7) 0%,
+    rgba(0, 0, 0, 0.25) 45%,
+    rgba(0, 0, 0, 0.1) 100%
+  );
+  pointer-events: none;
+}
+
+.index__row-content {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 4ch 1fr 1.6fr auto;
+  gap: clamp(1rem, 3vw, 3rem);
+  align-items: end;
+  padding: 0 clamp(0.5rem, 2vw, 1.5rem) clamp(0.9rem, 1.6vw, 1.4rem);
+  height: 100%;
+}
+
+.index__row-num,
+.index__row-client,
+.index__row-title,
+.index__row-year {
+  transition: color 0.25s var(--ease-out);
+}
+
+.index__row-num {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  align-self: end;
+  padding-bottom: 0.18em;
+}
+
+.index__row-client {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(1.5rem, 3.4vw, 2.4rem);
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+
+.index__row-title {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.5rem, 3.4vw, 2.4rem);
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+
+.index__row-desc {
+  position: absolute;
+  left: clamp(0.5rem, 2vw, 1.5rem);
+  right: clamp(0.5rem, 2vw, 1.5rem);
+  bottom: calc(clamp(0.9rem, 1.6vw, 1.4rem) + clamp(1.5rem, 3.4vw, 2.4rem) + 0.6rem);
+  z-index: 2;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  line-height: 1.45;
+  letter-spacing: 0.01em;
+  color: rgba(255, 255, 255, 0.82);
+  max-width: 56ch;
+  pointer-events: none;
+}
+
+.index__row-year {
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  font-variant-numeric: tabular-nums;
+  align-self: end;
+  padding-bottom: 0.25em;
+}
+
+.index__row[data-hovered='true'] .index__row-num,
+.index__row[data-hovered='true'] .index__row-client,
+.index__row[data-hovered='true'] .index__row-title,
+.index__row[data-hovered='true'] .index__row-year {
+  color: #fff;
+}
+
+.index__row[data-hovered='true'] .index__row-num,
+.index__row[data-hovered='true'] .index__row-year {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+@media (max-width: 720px) {
+  .index__row-content {
+    grid-template-columns: 4ch 1fr auto;
+  }
+  .index__row-title {
+    display: none;
+  }
+  .index__row-desc {
+    display: none;
+  }
+}
+
+/* ---------- AboutView ---------- */
+
+.about {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr;
+  padding: calc(var(--pad-y) * 5) var(--pad-x) calc(var(--pad-y) * 5);
+  max-width: 1280px;
+  width: 100%;
+  margin: 0 auto;
+  align-content: start;
+  gap: clamp(2rem, 6vh, 5rem);
+}
+
+.about__heading {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+}
+
+/* Top of the page — intro text spans the full container width, contact
+   block stacks below as a hairline-bracketed data strip. */
+.about__top {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2rem, 5vh, 4rem);
+}
+
+.about__intro {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.6rem, 3.4vw, 2.8rem);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  /* No max-width — the introductory paragraph is meant to read like a
+     wide hero spread. Soft hyphenation handles long German compounds. */
+  max-width: none;
+  margin: 0;
+  text-wrap: pretty;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  word-break: normal;
+  overflow-wrap: break-word;
+}
+
+.about__intro em {
+  font-style: italic;
+}
+
+/* Contact block below the intro. The H2 sits on top as a small-caps
+   eyebrow, then a 4-column data grid lays out E-Mail, Telefon, Studio
+   and Folgen as labelled cells with hairline separators. */
+.about__top-contact {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1rem, 2.5vh, 1.75rem);
+  padding-top: clamp(1.25rem, 3vh, 2rem);
+  border-top: 1px solid var(--line);
+}
+
+.about__contact-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  border-top: 1px solid var(--line);
+}
+
+@media (min-width: 640px) {
+  .about__contact-grid {
+    grid-template-columns: 1.4fr 1fr;
+  }
+}
+
+@media (min-width: 1024px) {
+  .about__contact-grid {
+    /* On wide screens the email gets ~2x width so the long booking@
+       address doesn't truncate, while phone/address/socials sit in
+       equal smaller cells. */
+    grid-template-columns: 2fr 1fr 1.2fr 1fr;
+  }
+}
+
+.about__contact-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  padding: clamp(1rem, 2vh, 1.4rem) 0;
+  border-bottom: 1px solid var(--line);
+  min-width: 0;
+}
+
+@media (min-width: 640px) {
+  .about__contact-cell {
+    padding: clamp(1rem, 2vh, 1.4rem) clamp(1rem, 2vw, 2rem);
+    border-bottom: 0;
+    border-right: 1px solid var(--line);
+  }
+  .about__contact-cell:first-child {
+    padding-left: 0;
+  }
+  .about__contact-cell:last-child {
+    border-right: 0;
+    padding-right: 0;
+  }
+}
+
+@media (max-width: 1023px) and (min-width: 640px) {
+  /* In the 2-column phase, every other cell terminates a row. */
+  .about__contact-cell:nth-child(2n) {
+    border-right: 0;
+    padding-right: 0;
+  }
+  .about__contact-cell:nth-child(2n + 1) {
+    padding-left: 0;
+  }
+  .about__contact-cell:nth-child(-n + 2) {
+    border-bottom: 1px solid var(--line);
+  }
+}
+
+.about__contact-label {
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--muted);
+  margin: 0;
+}
+
+.about__contact-value {
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: var(--fg);
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+  position: relative;
+  display: inline-block;
+  width: fit-content;
+}
+
+a.about__contact-value::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.5s var(--ease-out);
+}
+
+a.about__contact-value:hover::after {
+  transform: scaleX(1);
+}
+
+/* Tighten the email + socials when they live inside a contact cell so
+   all four cells line up at the same vertical rhythm. */
+.about__contact-cell .about__email {
+  font-size: clamp(1rem, 1.5vw, 1.25rem);
+  font-style: italic;
+  letter-spacing: -0.005em;
+  width: fit-content;
+}
+
+.about__contact-cell .about__socials {
+  gap: 0.85rem 1.1rem;
+  flex-wrap: wrap;
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  margin: 0;
+}
+
+.about__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(2rem, 5vw, 4rem);
+}
+
+@media (min-width: 900px) {
+  .about__grid {
+    grid-template-columns: 1.4fr 1fr;
+  }
+}
+
+.about__body p {
+  font-size: 1rem;
+  color: var(--muted);
+  max-width: 56ch;
+}
+.about__body p + p {
+  margin-top: 1rem;
+}
+
+.about__capabilities {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.about__capabilities li {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.1rem, 1.6vw, 1.3rem);
+  padding: 0.9rem 0;
+  border-bottom: 1px solid var(--line);
+}
+.about__capabilities li:first-child {
+  border-top: 1px solid var(--line);
+}
+
+.about__contact {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.about__email {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-style: italic;
+  font-size: clamp(1.4rem, 2.8vw, 2rem);
+  position: relative;
+  display: inline-block;
+  width: fit-content;
+}
+
+.about__email::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 4px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0.3);
+  transform-origin: left center;
+  transition: transform 0.6s var(--ease-out);
+}
+.about__email:hover::after {
+  transform: scaleX(1);
+}
+
+.about__line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  align-items: baseline;
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-top: -0.4rem;
+}
+
+.about__line a {
+  position: relative;
+  color: inherit;
+}
+
+.about__line a:hover {
+  color: var(--fg);
+}
+
+.about__line-sep {
+  opacity: 0.4;
+}
+
+.about__socials {
+  display: flex;
+  gap: 1.5rem;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--muted);
+}
+
+.about__socials a {
+  position: relative;
+}
+.about__socials a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -3px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.4s var(--ease-out);
+}
+.about__socials a:hover {
+  color: var(--fg);
+}
+.about__socials a:hover::after {
+  transform: scaleX(1);
+}
+
+/* AboutView — sub-element styles (sections after the intro). All blocks
+   share a top hairline rule and a generous vertical rhythm so the page
+   reads as an editorial spread. */
+
+/* Each section is a vertical stack: H2 spans the full width on top, the
+   content sits below in a two-column grid (text-left / data-right). On
+   narrow screens columns collapse to a single stack. */
+.about__section {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.25rem, 2.4vw, 2rem);
+  padding-top: clamp(1.5rem, 4vh, 3rem);
+  border-top: 1px solid var(--line);
+}
+
+.about__h2 {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-style: italic;
+  font-size: clamp(1.4rem, 2.4vw, 1.9rem);
+  line-height: 1.2;
+  letter-spacing: -0.005em;
+  color: var(--fg);
+  margin: 0;
+  max-width: 32ch;
+  text-wrap: pretty;
+}
+
+/* Reset the editorial display style for the contact card heading at the
+   page top, where the surrounding aside already reads as compact data. */
+.about__top-contact .about__h2 {
+  font-family: var(--font-sans);
+  font-style: normal;
+  font-weight: 400;
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--muted);
+}
+
+/* Two-column grid that sits underneath each H2. Text content typically
+   lives on the left, supporting data (services / clients / capabilities)
+   on the right. Single-column sections place their content in the left
+   slot and let the right slot stay empty for breathing room. */
+.about__section-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(1.5rem, 3vw, 3rem);
+  align-items: start;
+}
+
+@media (min-width: 900px) {
+  .about__section-grid {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    column-gap: clamp(2rem, 5vw, 5rem);
+  }
+}
+
+.about__body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.about__body p {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.05rem, 1.4vw, 1.25rem);
+  line-height: 1.55;
+  color: var(--fg);
+  max-width: 56ch;
+}
+
+.about__founders {
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+@media (min-width: 720px) {
+  .about__founders {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.about__founder {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.about__founder-name {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(1.4rem, 2.4vw, 1.9rem);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+}
+
+.about__founder-role {
+  font-family: var(--font-sans);
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  margin-bottom: 0.5rem;
+}
+
+.about__founder-bio {
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--muted);
+  max-width: 48ch;
+}
+
+.about__clients-intro {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.05rem, 1.4vw, 1.25rem);
+  line-height: 1.55;
+  max-width: 56ch;
+  margin-bottom: 0.5rem;
+}
+
+.about__clients-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--line);
+}
+
+.about__clients-list li {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1rem, 1.4vw, 1.2rem);
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.about__faq-list {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--line);
+  margin: 0;
+}
+
+.about__faq-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: clamp(1rem, 2vh, 1.5rem) 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.about__faq-q {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.1rem, 1.7vw, 1.4rem);
+  line-height: 1.3;
+  letter-spacing: -0.005em;
+  color: var(--fg);
+}
+
+.about__faq-a {
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--muted);
+  margin: 0;
+  max-width: 64ch;
+}
+
+/* ---------- ServicesView ---------- */
+
+.services {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr;
+  padding: calc(var(--pad-y) * 5) var(--pad-x) calc(var(--pad-y) * 5);
+  max-width: 1280px;
+  width: 100%;
+  margin: 0 auto;
+  align-content: start;
+  gap: clamp(2rem, 6vh, 5rem);
+}
+
+.services__heading {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  margin: 0;
+}
+
+.services__intro {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.6rem, 3.2vw, 2.6rem);
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  max-width: 32ch;
+  margin: 0;
+}
+
+/* Editorial offering blocks. Three-column grid on wide screens with a
+   numeric anchor on the left, the editorial body in the middle, and the
+   pricing/turnaround data card aligned to the right rail. Stacks to a
+   single column on narrow screens. */
+.services__offerings {
+  display: flex;
+  flex-direction: column;
+}
+
+.services__offering {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "num"
+    "heading"
+    "summary"
+    "includes"
+    "meta";
+  row-gap: clamp(1rem, 2.2vh, 1.75rem);
+  padding: clamp(2.5rem, 5vh, 4rem) 0;
+  border-top: 1px solid var(--line);
+}
+
+.services__offering:last-child {
+  border-bottom: 1px solid var(--line);
+}
+
+@media (min-width: 900px) {
+  .services__offering {
+    grid-template-columns: 4.5rem minmax(0, 1.6fr) minmax(220px, 0.9fr);
+    grid-template-areas:
+      "num heading meta"
+      ".   summary meta"
+      ".   includes meta";
+    column-gap: clamp(2rem, 4vw, 4.5rem);
+    row-gap: clamp(1.25rem, 2vh, 1.75rem);
+    align-items: start;
+  }
+}
+
+.services__offering-num {
+  grid-area: num;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  /* Sit just above the H2 baseline on wide screens via padding. */
+  padding-top: 0.45rem;
+}
+
+.services__offering-h2 {
+  grid-area: heading;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.5rem, 2.6vw, 2.1rem);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  margin: 0;
+  max-width: 28ch;
+  color: var(--fg);
+}
+
+.services__offering-summary {
+  grid-area: summary;
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.05rem, 1.4vw, 1.2rem);
+  line-height: 1.55;
+  color: var(--fg);
+  max-width: 60ch;
+  margin: 0;
+}
+
+.services__offering-includes {
+  grid-area: includes;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: clamp(0.5rem, 1.5vh, 1rem);
+}
+
+.services__offering-includes-label {
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--muted);
+  margin: 0 0 0.25rem;
+}
+
+.services__offering-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-sans);
+  font-size: 0.92rem;
+  color: var(--fg);
+  margin: 0;
+}
+
+.services__offering-list li {
+  padding: 0.65rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.services__offering-list li:first-child {
+  border-top: 1px solid var(--line);
+}
+
+/* Meta data card — right rail on wide, full-width strip on narrow. Each
+   row is a hairline-separated label/value pair with the value in display
+   italic for that subtle tabular-tag-on-a-museum-wall feel. */
+.services__offering-meta {
+  grid-area: meta;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  margin: 0;
+  align-self: start;
+  border-top: 1px solid var(--line-strong);
+}
+
+@media (max-width: 899px) {
+  .services__offering-meta {
+    grid-template-columns: 1fr 1fr;
+    border-top: 1px solid var(--line-strong);
+    margin-top: 0.5rem;
+  }
+}
+
+.services__offering-meta > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+@media (max-width: 899px) {
+  .services__offering-meta > div + div {
+    border-left: 1px solid var(--line);
+    padding-left: 1rem;
+  }
+}
+
+.services__offering-meta dt {
+  font-family: var(--font-sans);
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--muted);
+  font-size: 0.68rem;
+}
+
+.services__offering-meta dd {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(1.1rem, 1.6vw, 1.4rem);
+  margin: 0;
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.005em;
+}
+
+/* Pricing block — table with the same hairline rhythm. Acts as the
+   reference index of starting prices and turnaround times. */
+.services__pricing {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1rem, 2.5vh, 2rem);
+}
+
+.services__pricing-h2 {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.5rem, 2.6vw, 2.2rem);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  margin: 0;
+  max-width: 24ch;
+}
+
+.services__pricing-lede {
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--muted);
+  max-width: 56ch;
+  margin: 0;
+}
+
+.services__pricing-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+  text-align: left;
+}
+
+.services__pricing-table thead th {
+  font-weight: 400;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  padding: 0.85rem 0.5rem 0.85rem 0;
+  border-bottom: 1px solid var(--line-strong);
+  text-align: left;
+}
+
+.services__pricing-table tbody th,
+.services__pricing-table tbody td {
+  padding: 1.15rem 0.75rem 1.15rem 0;
+  border-bottom: 1px solid var(--line);
+  vertical-align: baseline;
+  font-weight: 400;
+}
+
+.services__pricing-table tbody tr:last-child th,
+.services__pricing-table tbody tr:last-child td {
+  border-bottom: 1px solid var(--line-strong);
+}
+
+.services__pricing-table tbody th {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(1rem, 1.4vw, 1.15rem);
+  color: var(--fg);
+  width: 36%;
+}
+
+.services__pricing-table tbody td {
+  color: var(--muted);
+}
+
+.services__pricing-table tbody td:first-of-type {
+  /* "Ab" column — emphasised */
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 720px) {
+  .services__pricing-table {
+    font-size: 0.82rem;
+  }
+  .services__pricing-table thead th:nth-child(4),
+  .services__pricing-table tbody td:nth-child(4) {
+    /* Hide "Korrekturen inkl." on narrow screens to keep the table
+       readable; metadata still surfaces in the offering blocks above. */
+    display: none;
+  }
+}
+
+.services__pricing-notes {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: var(--muted);
+  max-width: 64ch;
+  border-top: 1px solid var(--line);
+  padding-top: clamp(1rem, 2vh, 1.5rem);
+  margin-top: clamp(0.5rem, 1.5vh, 1rem);
+}
+
+.services__pricing-notes li {
+  position: relative;
+  padding-left: 1.25rem;
+}
+
+.services__pricing-notes li::before {
+  content: '·';
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--muted-soft);
+  font-size: 1.1rem;
+  line-height: 1.2;
+}
+
+/* ---------- JournalView ---------- */
+
+.journal {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr;
+  padding: calc(var(--pad-y) * 5) var(--pad-x) calc(var(--pad-y) * 5);
+  max-width: 1280px;
+  width: 100%;
+  margin: 0 auto;
+  align-content: start;
+  gap: clamp(2rem, 6vh, 5rem);
+}
+
+.journal__heading {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  margin: 0;
+}
+
+.journal__intro {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.5rem, 2.8vw, 2.3rem);
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  max-width: 38ch;
+  margin: 0;
+  text-wrap: pretty;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+}
+
+.journal__list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--line);
+}
+
+.journal__entry {
+  display: grid;
+  grid-template-columns: 1fr;
+  padding: clamp(2.5rem, 5vh, 4rem) 0;
+  border-bottom: 1px solid var(--line);
+}
+
+@media (min-width: 900px) {
+  .journal__entry {
+    grid-template-columns: 4.5rem minmax(0, 1fr);
+    column-gap: clamp(2rem, 4vw, 4.5rem);
+  }
+  /* The number column stays empty; the article spans col 2. */
+  .journal__entry > article {
+    grid-column: 2;
+  }
+  .journal__entry-num {
+    grid-column: 1;
+    grid-row: 1;
+  }
+}
+
+.journal__entry-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: clamp(0.75rem, 1.5vw, 1.5rem);
+  margin-bottom: 1rem;
+}
+
+.journal__entry-num {
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 899px) {
+  .journal__entry-num {
+    /* Show inline at the start of the head row on narrow screens so the
+       number anchor doesn't disappear when columns collapse. */
+    order: -1;
+  }
+}
+
+.journal__entry-date {
+  font-family: var(--font-sans);
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.journal__entry-tags {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0;
+  padding: 0;
+}
+
+.journal__entry-tags li::before {
+  content: '·';
+  margin-right: 0.5rem;
+  opacity: 0.5;
+}
+
+.journal__entry-tags li:first-child::before {
+  content: none;
+}
+
+.journal__entry-badge {
+  font-family: var(--font-sans);
+  font-size: 0.66rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.6rem;
+  border: 1px solid var(--line-strong);
+  color: var(--fg);
+  margin-left: auto;
+}
+
+.journal__entry-title {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  margin: 0 0 1rem;
+  max-width: 32ch;
+  color: var(--fg);
+  text-wrap: pretty;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+}
+
+.journal__entry--featured .journal__entry-title {
+  font-size: clamp(1.8rem, 3.6vw, 2.8rem);
+}
+
+.journal__byline {
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin: 0 0 1.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+
+.journal__byline strong {
+  font-weight: 500;
+  color: var(--fg);
+}
+
+.journal__byline-sep {
+  opacity: 0.4;
+}
+
+.journal__entry-lede {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.1rem, 1.5vw, 1.3rem);
+  line-height: 1.55;
+  color: var(--fg);
+  max-width: 60ch;
+  margin: 0 0 1.5rem;
+  text-wrap: pretty;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+}
+
+/* Collapsible entry body — native <details>/<summary>. The summary is
+   styled as a hairline-bracketed disclosure link; the body fades in
+   below when opened. */
+.journal__entry-details {
+  margin: 0;
+  /* Reset native browser styles */
+}
+
+.journal__entry-toggle {
+  list-style: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.85rem;
+  font-family: var(--font-sans);
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--fg);
+  cursor: pointer;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--line-strong);
+  width: fit-content;
+  user-select: none;
+  transition: opacity 0.3s var(--ease-out);
+}
+
+.journal__entry-toggle:hover {
+  opacity: 0.65;
+}
+
+/* Hide native disclosure marker across browsers. */
+.journal__entry-toggle::-webkit-details-marker {
+  display: none;
+}
+.journal__entry-toggle::marker {
+  display: none;
+  content: '';
+}
+
+.journal__entry-toggle-open,
+.journal__entry-toggle-close {
+  display: inline-block;
+}
+
+/* Default state (closed) — show "Weiterlesen", hide "Schliessen". */
+.journal__entry-toggle-close {
+  display: none;
+}
+
+.journal__entry-details[open] .journal__entry-toggle-open {
+  display: none;
+}
+
+.journal__entry-details[open] .journal__entry-toggle-close {
+  display: inline-block;
+}
+
+/* Chevron icon — flips on open. */
+.journal__entry-toggle-icon {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-right: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  transform: rotate(45deg) translate(-2px, -2px);
+  transition: transform 0.4s var(--ease-out);
+}
+
+.journal__entry-details[open] .journal__entry-toggle-icon {
+  transform: rotate(-135deg) translate(-2px, -2px);
+}
+
+.journal__entry-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: var(--muted);
+  max-width: 64ch;
+  margin-top: 1.5rem;
+  animation: journalEntryReveal 0.5s var(--ease-out) both;
+}
+
+@keyframes journalEntryReveal {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .journal__entry-body {
+    animation: none;
+  }
+}
+
+.journal__entry-body p {
+  margin: 0;
+  text-wrap: pretty;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+}
+
+.journal__entry-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding-top: 1rem;
+}
+
+.journal__entry-section + .journal__entry-section {
+  margin-top: 0.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--line);
+}
+
+.journal__entry-h3 {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.15rem, 1.7vw, 1.45rem);
+  line-height: 1.25;
+  letter-spacing: -0.005em;
+  color: var(--fg);
+  margin: 0;
+  max-width: 40ch;
+}
+
+.journal__entry-inline-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  font-family: var(--font-sans);
+  font-size: 0.92rem;
+}
+
+.journal__entry-inline-list li {
+  padding: 0.55rem 0 0.55rem 1.1rem;
+  border-bottom: 1px solid var(--line);
+  position: relative;
+  color: var(--fg);
+}
+
+.journal__entry-inline-list li::before {
+  content: '·';
+  position: absolute;
+  left: 0;
+  top: 0.55rem;
+  color: var(--muted-soft);
+}
+
+.journal__entry-inline-list li:first-child {
+  border-top: 1px solid var(--line);
+}
+
+.journal__entry-updated {
+  font-family: var(--font-sans);
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  margin: 1.5rem 0 0;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+}
+
+/* ---------- Page transition wipe ---------- */
+
+.page-wipe {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  z-index: 80;
+  pointer-events: none;
+  transform-origin: bottom center;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 720px) {
+  .nav {
+    font-size: 0.7rem;
+  }
+  .nav__list {
+    gap: 1.25rem;
+  }
+  .footer {
+    font-size: 0.65rem;
+  }
+  .footer__location {
+    gap: 0.75rem;
+  }
+  .footer__credit {
+    display: none;
+  }
+
+  .slide {
+    padding-top: calc(var(--pad-y) * 6);
+  }
+  .slide__meta {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    text-align: left;
+  }
+  .slide__meta-right {
+    align-items: flex-start;
+    text-align: left;
+  }
+  .slide__tags {
+    justify-content: flex-start;
+  }
+  .slide__nav {
+    justify-content: flex-start;
+  }
+}
+
+/* ---------- Home (gallery composition) ---------- */
+
+.app[data-detail='open'] .app__main {
+  overflow: hidden;
+}
+
+.home {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  min-height: clamp(520px, 88vh, 920px);
+  overflow: hidden;
+  isolation: isolate;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: none;
+}
+
+.home__bg {
+  position: absolute;
+  inset: 0;
+  background: var(--home-bg);
+  z-index: 0;
+  transition: background-color 0.7s var(--ease-out);
+}
+
+.home__gl {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+/* Massive client name sits above the curved-stripe canvas but below the flat
+   preview image, so the letters wrap around the photo just like in the
+   Aristide Benoist composition. */
+.home__title-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.gallery-gl__stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.gallery-gl__canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
+/* Flat preview rectangle that overlays the curved stripes + massive title
+   when hovering. Sized to match the proportions of the original portfolio
+   screenshots — letters peek out either side. */
+.home__preview-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.home__preview {
+  position: relative;
+  width: clamp(280px, 36vw, 560px);
+  aspect-ratio: 16 / 11;
+  margin: 0;
+  overflow: hidden;
+  box-shadow: 0 40px 90px -40px rgba(0, 0, 0, 0.55);
+  will-change: transform, clip-path;
+}
+
+.home__preview img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.95) contrast(1.02);
+}
+
+/* ---------- Top progress: counter + tick scrubber ---------- */
+
+.home__top {
+  position: absolute;
+  top: calc(var(--pad-y) * 2.6);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  pointer-events: none;
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  color: var(--home-ink);
+  transition: color 0.7s var(--ease-out);
+}
+
+.home__counter {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.72rem;
+}
+
+.home__counter-frame {
+  width: 22px;
+  height: 12px;
+  border: 1px solid currentColor;
+  opacity: 0.9;
+}
+
+.home__counter-total {
+  opacity: 0.55;
+}
+
+.ticks {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ticks__bar {
+  display: block;
+  width: 2px;
+  height: 10px;
+  background: currentColor;
+  opacity: 0.32;
+  transition: height 0.4s var(--ease-out), opacity 0.4s var(--ease-out);
+}
+
+.ticks__bar--active {
+  height: 16px;
+  opacity: 1;
+}
+
+/* ---------- Bottom info strip ---------- */
+
+.home__bottom {
+  position: absolute;
+  left: var(--pad-x);
+  right: var(--pad-x);
+  bottom: calc(var(--pad-y) * 4);
+  z-index: 10;
+  display: grid;
+  grid-template-columns: minmax(160px, 1fr) minmax(220px, 2fr) minmax(220px, 1.4fr);
+  gap: clamp(1.5rem, 4vw, 4rem);
+  align-items: end;
+  pointer-events: none;
+  color: var(--home-ink);
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  transition: color 0.7s var(--ease-out);
+}
+
+/* Selected-state layout — Aristide's centred cluster:
+   role/avail anchored far left, then a centered triplet of
+   [meta a-d] · [Explore stack] · [description], with the right side
+   balanced by a 1fr spacer so the triplet sits on the page centre. */
+.home__bottom--centered {
+  --selected-info-drop: clamp(2.25rem, 6vh, 5rem);
+  grid-template-columns: 1fr auto auto auto 1fr;
+  column-gap: clamp(1.25rem, 3vw, 3rem);
+  align-items: start;
+  bottom: calc(var(--pad-y) * 3);
+}
+
+.home__bottom--centered .home__bottom-left {
+  grid-column: 1;
+  justify-self: start;
+  position: relative;
+  top: var(--selected-info-drop);
+}
+
+.home__bottom--centered .home__meta {
+  grid-column: 2;
+  justify-self: end;
+  text-align: left;
+  position: relative;
+  top: var(--selected-info-drop);
+}
+
+.home__bottom--centered .home__meta-row dt {
+  text-align: left;
+}
+
+.home__bottom--centered .home__center-stack {
+  grid-column: 3;
+  justify-self: center;
+  position: relative;
+  top: var(--selected-info-drop);
+}
+
+.home__bottom--centered .home__desc {
+  grid-column: 4;
+  justify-self: start;
+  text-align: right;
+  max-width: 32ch;
+  position: relative;
+  top: var(--selected-info-drop);
+}
+
+.home__center-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.65rem;
+  pointer-events: none;
+}
+
+.home__center-rule {
+  display: inline-block;
+  width: 1px;
+  height: clamp(28px, 5vh, 56px);
+  background: currentColor;
+  opacity: 0.65;
+}
+
+.home__center-plus {
+  font-size: 1.15rem;
+  line-height: 1;
+  opacity: 0.85;
+}
+
+.home__bottom-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.home__role {
+  letter-spacing: 0.18em;
+}
+
+.home__avail {
+  opacity: 0.55;
+}
+
+.home__meta {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 0.35rem 1.4rem;
+  justify-self: center;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.14em;
+  font-size: 0.7rem;
+}
+
+.home__meta-row {
+  display: contents;
+}
+
+.home__meta-row dt {
+  opacity: 0.55;
+  letter-spacing: 0.18em;
+  text-align: left;
+}
+
+.home__meta-row dd {
+  opacity: 0.95;
+  text-align: right;
+}
+
+.home__hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.85rem;
+  font-size: 0.66rem;
+  letter-spacing: 0.24em;
+  opacity: 0.65;
+  /* Centre the hint inside its grid cell so the Scroll · Drag · Click
+     copy reads as a balanced cluster across the bottom strip. */
+  justify-self: center;
+}
+
+.home__hint-rule {
+  display: inline-block;
+  width: 56px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.55;
+}
+
+/* Idle-state contact CTAs that occupy the right cell when no project is
+   focused. Two label/value pairs (E-Mail · Telefon) split by a hairline.
+   Hidden the moment a card is hovered or selected (the AnimatePresence
+   in HomeView swaps this for the project description). */
+.home__contact {
+  display: flex;
+  align-items: center;
+  gap: clamp(1rem, 2vw, 2rem);
+  justify-self: end;
+  pointer-events: auto;
+}
+
+.home__contact-cta {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  color: inherit;
+  font-family: var(--font-sans);
+  text-align: left;
+  position: relative;
+}
+
+.home__contact-label {
+  font-size: 0.62rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  opacity: 0.55;
+}
+
+.home__contact-value {
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: none;
+  font-variant-numeric: tabular-nums;
+  position: relative;
+  width: fit-content;
+}
+
+.home__contact-value::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.45s var(--ease-out);
+}
+
+.home__contact-cta:hover .home__contact-value::after,
+.home__contact-cta:focus-visible .home__contact-value::after {
+  transform: scaleX(1);
+}
+
+.home__contact-rule {
+  display: inline-block;
+  width: 1px;
+  height: clamp(28px, 4vh, 40px);
+  background: currentColor;
+  opacity: 0.35;
+}
+
+@media (max-width: 720px) {
+  .home__contact {
+    justify-self: start;
+    gap: 1rem;
+  }
+}
+
+.home__desc {
+  font-family: var(--font-sans);
+  font-size: 0.74rem;
+  letter-spacing: 0.06em;
+  line-height: 1.5;
+  text-transform: none;
+  max-width: 38ch;
+  text-align: right;
+  justify-self: end;
+  opacity: 0.92;
+}
+
+.home__desc--idle {
+  opacity: 0.6;
+}
+
+/* ---------- OPEN pill that follows the cursor (hover state) ---------- */
+
+.home__open {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 20;
+  /* Crucial — pointer-events: none so the cursor still hits the canvas
+     beneath the pill. With `auto` the pill captured the cursor and the
+     canvas hover state froze on the previously-hovered card. The actual
+     click is handled by the canvas's own pointerdown/up handler in
+     GalleryGL (which calls onSelect when no drag movement happened). */
+  pointer-events: none;
+  display: grid;
+  place-items: center;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: var(--home-ink);
+  color: var(--home-bg);
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  border: 0;
+  will-change: transform;
+  transform-origin: center;
+  margin: -48px 0 0 -48px;
+  mix-blend-mode: normal;
+  box-shadow: 0 18px 42px -16px rgba(0, 0, 0, 0.6);
+}
+
+.home__open:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+}
+
+/* ---------- Selected-state expansion (image + sliding title) ---------- */
+
+.home__expand {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* Shift the stack up so the bottom metadata strip has room to breathe. */
+  padding-block-start: 4vh;
+  padding-block-end: 22vh;
+  gap: clamp(1rem, 3vh, 2.5rem);
+}
+
+.home__expand-image {
+  position: relative;
+  width: clamp(320px, 48vw, 840px);
+  aspect-ratio: 16 / 9;
+  margin: 0;
+  overflow: hidden;
+  box-shadow: 0 60px 120px -50px rgba(0, 0, 0, 0.55);
+  will-change: transform, clip-path;
+}
+
+.home__expand-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Title clip-wrap — each row clips independently so multi-word client names
+   (WAKA / WAKA) can fold in from the left as a stacked composition. */
+.home__expand-title-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.home__expand-title-wrap .massive-title {
+  width: 100vw;
+  color: var(--home-ink);
+  mix-blend-mode: normal;
+}
+
+.home__expand-title-wrap .massive-title__main {
+  font-size: clamp(7rem, 17vw, 18rem);
+  line-height: 0.82;
+  letter-spacing: 0;
+}
+
+.home__expand-title-wrap .massive-title__row-wrap--bot {
+  margin-top: 0.80em;
+}
+
+.home__expand-title-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  gap: clamp(0.2rem, 0.8vw, 1rem);
+}
+
+.home__expand-title-row {
+  overflow: hidden;
+  width: 100%;
+  display: flex;
+}
+
+.home__expand-title {
+  font-family: 'Bebas Neue', 'Anton', 'Oswald', sans-serif;
+  font-weight: 400;
+  font-size: clamp(4.5rem, 14vw, 14rem);
+  line-height: 0.85;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  white-space: nowrap;
+  padding-left: clamp(1rem, 4vw, 4rem);
+  margin: 0;
+  display: inline-flex;
+  align-items: baseline;
+}
+
+/* Per-letter clip so each character can slide up from below into its slot
+   independently while the row-level overflow keeps the bottoms of the
+   in-flight letters hidden. */
+.home__expand-title-cell {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  line-height: 0.85;
+  /* preserve the visible width of a space character */
+  min-width: 0;
+}
+
+.home__expand-title-char {
+  display: inline-block;
+  line-height: 0.85;
+  will-change: transform;
+}
+
+/* When the title stack has 2+ rows, scale the rows down a touch so both fit
+   comfortably above and below the centred image. */
+.home__expand-title-stack:has(.home__expand-title-row + .home__expand-title-row) .home__expand-title {
+  font-size: clamp(3.8rem, 11vw, 11rem);
+}
+
+/* EXPLORE CTA below the expanded image — opens the deeper project detail
+   view. Visible only while a card is selected. Position via inset trio so
+   framer-motion's transform (used for the slide-in) doesn't fight the
+   centering. */
+.home__explore-cta {
+  /* Stacked under the image inside the .home__expand flex column. No
+     absolute positioning — flow handles centering and spacing. */
+  position: relative;
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.85rem;
+  background: none;
+  border: 0;
+  padding: 0.4rem 0.6rem;
+  color: var(--home-ink);
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 0.3s var(--ease-out);
+}
+
+.home__explore-cta:hover {
+  opacity: 0.65;
+}
+
+.home__explore-rule {
+  display: inline-block;
+  width: 64px;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.7;
+}
+
+.home__explore-plus {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+/* Close button — top-right of the expanded view */
+.home__close {
+  position: absolute;
+  top: calc(var(--pad-y) * 2.6);
+  right: var(--pad-x);
+  z-index: 25;
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: none;
+  border: 0;
+  padding: 0.4rem 0.6rem;
+  color: var(--home-ink);
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 0.3s var(--ease-out);
+}
+
+.home__close:hover {
+  opacity: 0.7;
+}
+
+.home__close span[aria-hidden='true'] {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.home__close-label {
+  font-size: 0.72rem;
+}
+
+/* When selected, the OPEN pill should never appear */
+.home--selected .home__open {
+  display: none;
+}
+
+/* ---------- Massive title ---------- */
+
+.massive {
+  font-family: 'Anton', 'Bebas Neue', 'Oswald', sans-serif;
+  font-weight: 400;
+  text-transform: uppercase;
+  pointer-events: none;
+  user-select: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  line-height: 0.84;
+  letter-spacing: -0.04em;
+  font-size: clamp(6rem, 30vw, 32rem);
+  white-space: nowrap;
+}
+
+.massive--idle {
+  color: rgba(236, 232, 225, 0.18);
+  font-size: clamp(4rem, 14vw, 12rem);
+  letter-spacing: -0.02em;
+}
+
+.massive__row {
+  display: flex;
+  align-items: baseline;
+  white-space: nowrap;
+}
+
+.massive__cell {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  line-height: 0.84;
+}
+
+.massive__char {
+  display: inline-block;
+  line-height: 0.84;
+}
+
+@media (max-width: 720px) {
+  .home__bottom {
+    grid-template-columns: 1fr;
+    gap: 0.9rem;
+  }
+  .home__desc {
+    text-align: left;
+    justify-self: start;
+  }
+  .massive {
+    font-size: clamp(3.5rem, 22vw, 7rem);
+    white-space: normal;
+  }
+}
+
+/* ---------- Massive Title ---------- */
+
+/* ---------- Text cascade primitive (used by titles, bio, etc.) ---------- */
+
+.cascade {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  white-space: pre-wrap;
+}
+
+/* Each word run is wrapped in `.cascade__word` so the line-break can only
+   happen at the space cells between words — never mid-word. */
+.cascade__word {
+  display: inline-flex;
+  align-items: baseline;
+  white-space: nowrap;
+}
+
+.cascade__cell {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  line-height: inherit;
+  /* Preserve visible width of trailing spaces so word boundaries stay intact. */
+  white-space: pre;
+}
+
+.cascade__char {
+  display: inline-block;
+  line-height: inherit;
+  will-change: transform;
+}
+
+.massive-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-weight: 400;
+  text-transform: uppercase;
+  pointer-events: none;
+  user-select: none;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  line-height: 0.85;
+}
+
+.massive-title__main {
+  margin: 0;
+  font-size: clamp(3.2rem, 10.5vw, 10.5rem);
+  line-height: 0.82;
+  letter-spacing: 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.massive-title__row-wrap {
+  display: flex;
+  width: 100%;
+  overflow: hidden;
+}
+
+.massive-title__row-wrap--top {
+  justify-content: flex-start;
+  padding-left: clamp(7rem, 16vw, 16rem);
+}
+
+.massive-title__row-wrap--bot {
+  justify-content: flex-end;
+  padding-right: clamp(7rem, 16vw, 16rem);
+  margin-top: 0.18em;
+}
+
+.massive-title__row {
+  display: flex;
+  align-items: baseline;
+  white-space: nowrap;
+}
+
+.massive-title__cell {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  line-height: 0.82;
+  margin-right: 0.05em;
+}
+
+.massive-title__cell.cascade__cell--space {
+  width: 0.32em;
+  flex: 0 0 0.32em;
+  margin-right: 0;
+}
+
+.massive-title__char {
+  display: inline-block;
+  line-height: 0.82;
+}
+
+.massive-title__sub {
+  display: inline-block;
+  overflow: hidden;
+  font-size: clamp(1.4rem, 3vw, 3rem);
+  line-height: 0.85;
+  margin-top: 0.4em;
+  letter-spacing: -0.01em;
+  align-self: center;
+}
+
+/* ---------- Project detail (Aristide-style takeover) ---------- */
+
+.detail {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: flex;
+  flex-direction: column;
+  isolation: isolate;
+  color: var(--detail-ink, #1a1a1a);
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+/* Per-project tinted curtain that slides up from the bottom on open. */
+.detail__bg {
+  position: fixed;
+  inset: 0;
+  background: var(--detail-bg, #f0e7e7);
+  z-index: -2;
+  transform-origin: center bottom;
+}
+
+.detail__top {
+  position: relative;
+  z-index: 5;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: var(--pad-y) var(--pad-x);
+  font-family: var(--font-sans);
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+}
+
+.detail__crumb {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.85;
+  justify-self: start;
+}
+
+.detail__top-spacer {
+  justify-self: end;
+}
+
+.detail__close {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: inherit;
+  background: none;
+  border: 0;
+  justify-self: center;
+}
+
+.detail__close-x {
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+.detail__close-rule {
+  display: inline-block;
+  width: 1px;
+  height: 18px;
+  background: currentColor;
+  opacity: 0.55;
+}
+
+.detail__close-label {
+  font-size: 0.7rem;
+}
+
+/* Centred-stack composition — hero picture sits at the same viewport anchor
+   as the project card view, with the giant client name layered BEHIND the
+   picture as a left-to-right clip-path reveal. Mirrors `.home__expand`'s
+   flex-column centering so the in-card → in-detail transition keeps the
+   picture in place. */
+.detail__main {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(2rem, 6vh, 5rem) var(--pad-x);
+  min-height: calc(100vh - 80px);
+}
+
+/* Title wrapper — full-bleed overlay sitting BEHIND the hero, flush to the
+   LEFT edge of the viewport. The clip-path on this wrapper handles the
+   left-to-right "build up" reveal; the inner MassiveTitle renders
+   statically (no per-letter slide). */
+.detail__title-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding-top: clamp(1rem, 4vh, 3rem);
+  pointer-events: none;
+  user-select: none;
+  overflow: hidden;
+}
+
+.detail .massive-title {
+  align-items: flex-start;
+  width: 100vw;
+}
+
+.detail .massive-title__main {
+  font-size: clamp(5rem, 14vw, 14rem);
+  line-height: 0.82;
+  letter-spacing: 0;
+}
+
+/* Both rows hug the left edge of the viewport — no inset padding. */
+.detail .massive-title__row-wrap--top,
+.detail .massive-title__row-wrap--bot {
+  justify-content: flex-start;
+  padding-left: clamp(2rem, 5vw, 5rem);
+  padding-right: 0;
+}
+
+.detail .massive-title__row-wrap--bot {
+  margin-top: 0.18em;
+}
+
+.detail .massive-title__sub {
+  align-self: flex-start;
+  font-size: clamp(1.1rem, 2vw, 2rem);
+}
+
+.detail__hero {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  /* Width-driven sizing — height is computed from the asset's inline
+     `aspect-ratio` (set in ProjectDetail.jsx). Width tracks the card-view
+     scale (~46vw, capped at 720px) but the figure box always matches the
+     asset's natural ratio, so the WHOLE image is visible — no crop. */
+  width: clamp(320px, 46vw, 720px);
+  overflow: hidden;
+}
+
+.detail__hero img,
+.detail__hero video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  /* Contain as a safety net — figure ratio matches asset ratio, so no
+     letterbox is produced in normal cases, but if any cap ever breaks the
+     box's aspect-ratio the image still renders fully. */
+  object-fit: contain;
+  filter: saturate(1.04);
+}
+
+/* Scrollable image strip beneath the hero — every additional frame from
+   THIS project, stacked in a centered single-column flow so the user
+   scrolls down through the rest of the project after the hero. */
+.detail__strip {
+  position: relative;
+  z-index: 4;
+  padding: clamp(2rem, 6vh, 5rem) var(--pad-x) clamp(2rem, 4vh, 3rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(1.5rem, 3vh, 2.5rem);
+}
+
+.detail__strip-heading {
+  font-family: var(--font-sans);
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  opacity: 0.6;
+  margin: 0;
+  align-self: center;
+}
+
+.detail__strip-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(2rem, 6vh, 5rem);
+  width: 100%;
+}
+
+.detail__strip-item {
+  margin: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.detail__strip-figure {
+  margin: 0;
+  width: clamp(420px, 60vw, 1080px);
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.detail__strip-figure img,
+.detail__strip-figure video {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 80vh;
+  object-fit: contain;
+  filter: saturate(1.04);
+}
+
+.detail__strip-caption {
+  display: flex;
+  align-items: baseline;
+  gap: 0.85rem;
+  font-family: var(--font-sans);
+  font-size: 0.74rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+.detail__strip-num {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.55;
+  letter-spacing: 0.1em;
+}
+
+/* Bottom strip — role left, meta a/b/c/d in centre,
+   VISIT SITE marker, SEO description on the right. */
+.detail__footer {
+  position: relative;
+  z-index: 4;
+  display: grid;
+  grid-template-columns: minmax(140px, 1fr) auto auto auto minmax(140px, 1.2fr);
+  align-items: start;
+  column-gap: clamp(1.5rem, 3vw, 3rem);
+  row-gap: 0.5rem;
+  padding: clamp(1.5rem, 4vh, 3rem) var(--pad-x) clamp(2rem, 5vh, 3.5rem);
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+}
+
+.detail__footer-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  grid-column: 1;
+  justify-self: start;
+}
+
+.detail__footer-muted {
+  opacity: 0.55;
+}
+
+.detail__meta-grid {
+  grid-column: 2;
+  justify-self: end;
+  display: grid;
+  grid-template-columns: auto auto auto;
+  column-gap: clamp(0.8rem, 1.6vw, 1.6rem);
+  row-gap: 0.35rem;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+}
+
+.detail__meta-row {
+  display: contents;
+}
+
+.detail__meta-row dt {
+  opacity: 0.55;
+  text-align: left;
+  font-weight: 400;
+}
+
+.detail__meta-key {
+  opacity: 0.55;
+  margin: 0;
+}
+
+.detail__meta-val {
+  margin: 0;
+}
+
+.detail__footer-cta {
+  grid-column: 3;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-self: center;
+  gap: 0.25rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+}
+
+.detail__footer-arrow {
+  font-size: 1rem;
+  line-height: 1;
+  opacity: 0.85;
+}
+
+.detail__footer-cta-label {
+  position: relative;
+  padding-bottom: 2px;
+}
+
+.detail__footer-cta-label::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: currentColor;
+}
+
+.detail__seo {
+  grid-column: 5;
+  justify-self: start;
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  line-height: 1.55;
+  text-transform: none;
+  max-width: 38ch;
+  opacity: 0.92;
+}
+
+@media (max-width: 980px) {
+  .detail__main {
+    padding-top: clamp(2rem, 12vh, 10rem);
+    min-height: calc(100vh - 60px);
+  }
+  .detail .massive-title__main {
+    font-size: clamp(3.5rem, 12vw, 7rem);
+  }
+  .detail__hero {
+    width: min(92vw, 640px);
+  }
+  .detail__strip-figure {
+    width: 100%;
+  }
+  .detail__footer {
+    grid-template-columns: 1fr;
+    row-gap: 1rem;
+  }
+  .detail__footer-left,
+  .detail__meta-grid,
+  .detail__footer-cta,
+  .detail__seo {
+    grid-column: 1;
+    justify-self: start;
+  }
+}
+
+.detail__title-layer {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  align-content: start;
+  padding: clamp(2rem, 12vh, 9rem) var(--pad-x) 0;
+  z-index: 5;
+}
+
+.detail__layout {
+  position: relative;
+  z-index: 3;
+  flex: 0 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 360px);
+  gap: clamp(1.5rem, 3vw, 3rem);
+  padding: clamp(2rem, 6vh, 6rem) var(--pad-x) calc(var(--pad-y) * 4);
+  align-items: end;
+  /* Fixed minimum height so the hero block always gets a comfortable hero
+     area; the scroll-gallery below pushes total content past viewport, so
+     the .detail container starts scrolling. */
+  min-height: calc(100vh - 60px);
+}
+
+/* (Legacy `.detail__hero` overrides removed — the canonical rules live
+   above with the rest of the explore-view layout.) */
+
+.detail__caption {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1.2rem;
+  align-items: end;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+.detail__caption-eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  opacity: 0.7;
+  white-space: nowrap;
+}
+
+.detail__caption-text {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(0.95rem, 1.3vw, 1.1rem);
+  max-width: 55ch;
+}
+
+.detail__aside {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.5rem, 3vh, 2.5rem);
+}
+
+.detail__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  border-top: 1px solid currentColor;
+  padding-top: 0.9rem;
+  opacity: 0.92;
+}
+
+.detail__title {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(1.3rem, 2.4vw, 2rem);
+  letter-spacing: -0.01em;
+  line-height: 1.05;
+}
+
+.detail__tags {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+}
+
+.detail__sections {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.detail__section {
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  gap: 0.9rem;
+  align-items: center;
+  cursor: pointer;
+  transition: opacity 0.4s var(--ease-out), transform 0.4s var(--ease-out);
+}
+
+.detail__section:hover {
+  opacity: 0.72;
+  transform: translateX(4px);
+}
+
+.detail__section-thumb {
+  display: block;
+  width: 90px;
+  height: 56px;
+  background-size: cover;
+  background-position: center;
+  filter: saturate(0.9);
+}
+
+.detail__section-label {
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+}
+
+@media (max-width: 880px) {
+  .detail__layout {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding-top: clamp(18vh, 30vh, 22rem);
+    align-items: start;
+  }
+}
+
+/* ---------- Detail scroll gallery (below the hero) ---------- */
+
+.detail__scroll {
+  position: relative;
+  z-index: 4;
+  padding: clamp(4rem, 10vh, 8rem) var(--pad-x) clamp(4rem, 8vh, 6rem);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2rem, 4vh, 3.5rem);
+}
+
+.detail__scroll-heading {
+  font-family: var(--font-sans);
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  opacity: 0.6;
+  margin: 0;
+}
+
+.detail__scroll-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: clamp(1.5rem, 3vw, 3rem);
+}
+
+.detail__scroll-item {
+  margin: 0;
+}
+
+.detail__scroll-figure {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.detail__scroll-figure img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  filter: saturate(1.02);
+}
+
+.detail__scroll-caption {
+  display: flex;
+  align-items: baseline;
+  gap: 0.85rem;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+}
+
+.detail__scroll-num {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.55;
+  letter-spacing: 0.1em;
+}
+
+.detail__scroll-footer {
+  margin-top: clamp(1.5rem, 4vh, 3rem);
+  padding-top: clamp(1.5rem, 3vh, 2.5rem);
+  border-top: 1px solid currentColor;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-family: var(--font-sans);
+  font-size: 0.74rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+.detail__scroll-back {
+  background: none;
+  border: 0;
+  padding: 0.4rem 0;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  letter-spacing: 0.18em;
+  transition: opacity 0.3s var(--ease-out);
+}
+
+.detail__scroll-back:hover {
+  opacity: 0.6;
+}
+
+/* ===========================================================================
+   Tablet refinements — 640–1024px range. Tightens generous desktop spacing
+   without collapsing to the mobile stack.
+   =========================================================================== */
+
+@media (max-width: 1024px) {
+  :root {
+    --pad-x: clamp(1rem, 3vw, 2rem);
+  }
+
+  /* Slightly tighter view paddings so the editorial content gets enough
+     vertical room on iPad-sized screens. */
+  .index,
+  .about,
+  .services,
+  .journal {
+    padding: calc(var(--pad-y) * 4) var(--pad-x) calc(var(--pad-y) * 4);
+  }
+
+  /* Massive title rails ease the side padding so two-row titles fit. */
+  .home__expand-title-wrap .massive-title__row-wrap--top {
+    padding-left: clamp(2rem, 8vw, 6rem);
+  }
+  .home__expand-title-wrap .massive-title__row-wrap--bot {
+    padding-right: clamp(2rem, 8vw, 6rem);
+  }
+
+}
+
+/* ===========================================================================
+   Mobile — ≤640px. Collapses the bottom info strip to a vertical stack,
+   compacts the nav and footer, increases tap-target sizes, and reduces
+   typographic scale where it threatens overflow.
+   =========================================================================== */
+
+@media (max-width: 640px) {
+  :root {
+    --pad-x: 1rem;
+    --pad-y: 0.75rem;
+  }
+
+  /* ---- Nav ---- */
+  .nav {
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+  }
+  .nav__list {
+    gap: 0.85rem;
+  }
+  .nav__brand {
+    letter-spacing: 0.12em;
+  }
+  .nav__btn {
+    padding: 0.5rem 0;       /* taller tap target */
+    min-height: 36px;
+  }
+
+  /* ---- Footer — relative on mobile so it doesn't overlap content
+     and doesn't eat scroll space at the bottom. ---- */
+  .footer {
+    position: relative;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-size: 0.66rem;
+    letter-spacing: 0.12em;
+    padding: var(--pad-y) var(--pad-x) calc(var(--pad-y) * 1.5);
+  }
+  .footer__location {
+    gap: 0.85rem;
+  }
+  .footer__credit {
+    font-size: 0.78rem;
+  }
+
+  /* ---- HomeView bottom strip — vertical stack ---- */
+  .home__bottom {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    bottom: calc(var(--pad-y) * 2.5);
+    text-align: left;
+  }
+  .home__bottom-left {
+    flex-direction: row;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+  .home__hint {
+    justify-self: start;
+    font-size: 0.6rem;
+    gap: 0.5rem;
+  }
+  .home__hint-rule {
+    width: 32px;
+  }
+  .home__contact {
+    justify-self: start;
+    width: 100%;
+    gap: 0.85rem;
+  }
+  .home__contact-rule {
+    height: 24px;
+  }
+  .home__contact-label {
+    font-size: 0.58rem;
+  }
+  .home__contact-value {
+    font-size: 0.74rem;
+  }
+  .home__desc {
+    text-align: left;
+    justify-self: start;
+    max-width: 100%;
+  }
+
+  /* ---- HomeView selected-state cluster ---- */
+  .home__bottom--centered {
+    grid-template-columns: 1fr;
+    bottom: calc(var(--pad-y) * 2);
+  }
+  .home__bottom--centered .home__bottom-left,
+  .home__bottom--centered .home__meta,
+  .home__bottom--centered .home__center-stack,
+  .home__bottom--centered .home__desc {
+    grid-column: 1;
+    justify-self: start;
+    text-align: left;
+    top: 0;
+  }
+  .home__bottom--centered .home__center-stack {
+    align-items: flex-start;
+  }
+  .home__bottom--centered .home__desc {
+    max-width: 100%;
+  }
+  .home__top {
+    top: calc(var(--pad-y) * 1.8);
+    gap: 0.85rem;
+  }
+  .home__counter {
+    font-size: 0.66rem;
+  }
+  .ticks {
+    gap: 3px;
+  }
+
+  /* Selected-state massive title shrinks for narrow viewports so the
+     letters don't bleed off the canvas at unreadable sizes. */
+  .home__expand-title-wrap .massive-title__main {
+    font-size: clamp(3.5rem, 16vw, 8rem);
+  }
+  .home__expand-title-wrap .massive-title__row-wrap--top {
+    padding-left: 1rem;
+  }
+  .home__expand-title-wrap .massive-title__row-wrap--bot {
+    padding-right: 1rem;
+  }
+
+  /* ---- ProjectDetail — already collapses below 980px; tighten further ---- */
+  .detail__top {
+    padding: calc(var(--pad-y) * 1.5) var(--pad-x);
+    font-size: 0.66rem;
+    letter-spacing: 0.14em;
+  }
+  .detail__crumb,
+  .detail__close-label {
+    font-size: 0.62rem;
+  }
+  .detail__strip-figure {
+    width: 100%;
+  }
+  .detail__footer {
+    font-size: 0.66rem;
+    letter-spacing: 0.12em;
+    padding: var(--pad-y) var(--pad-x) calc(var(--pad-y) * 2);
+  }
+
+  /* ---- IndexView — denser rows ---- */
+  .index__row-content {
+    grid-template-columns: 3ch 1fr auto;
+    gap: 0.75rem;
+    padding: 0 0.5rem 0.8rem;
+  }
+  .index__row-client {
+    font-size: clamp(1.1rem, 5vw, 1.6rem);
+  }
+
+  /* ---- AboutView — tighten gaps and reduce intro scale ---- */
+  .about,
+  .services,
+  .journal {
+    padding: calc(var(--pad-y) * 3) var(--pad-x) calc(var(--pad-y) * 4);
+    gap: clamp(1.5rem, 4vh, 2.5rem);
+  }
+  .about__intro,
+  .services__intro,
+  .journal__intro {
+    font-size: clamp(1.3rem, 6vw, 1.9rem);
+    line-height: 1.3;
+  }
+  .about__h2 {
+    font-size: clamp(1.2rem, 5vw, 1.5rem);
+  }
+  .about__top-contact .about__h2 {
+    font-size: 0.7rem;
+  }
+
+  /* Contact grid stays 1-col on mobile (already handled), but the email
+     can break long addresses — keep it on its own line. */
+  .about__contact-cell .about__email {
+    font-size: 1rem;
+  }
+
+  /* Services offering meta — strip to 2 columns on mobile */
+  .services__offering-h2 {
+    font-size: clamp(1.2rem, 5vw, 1.6rem);
+  }
+  .services__offering-meta dd {
+    font-size: clamp(0.95rem, 4vw, 1.15rem);
+  }
+  .services__pricing-h2 {
+    font-size: clamp(1.3rem, 5.5vw, 1.7rem);
+  }
+
+  /* ---- JournalView ---- */
+  .journal__entry {
+    padding: 2rem 0;
+  }
+  .journal__entry-title {
+    font-size: clamp(1.3rem, 6vw, 1.9rem);
+  }
+  .journal__entry--featured .journal__entry-title {
+    font-size: clamp(1.5rem, 7vw, 2.2rem);
+  }
+  .journal__entry-head {
+    gap: 0.6rem;
+  }
+  .journal__entry-badge {
+    margin-left: 0;
+    font-size: 0.6rem;
+    padding: 0.2rem 0.5rem;
+  }
+  .journal__entry-h3 {
+    font-size: clamp(1.05rem, 4.5vw, 1.3rem);
+  }
+
+  /* ---- ProjectDetail strip captions ---- */
+  .detail__strip {
+    padding: clamp(1.5rem, 4vh, 3rem) var(--pad-x) clamp(1.5rem, 3vh, 2rem);
+  }
+  .detail__strip-list {
+    gap: 1.5rem;
+  }
+}
+
+/* ===========================================================================
+   Touch / coarse pointer — no hover, ensure all hover-only affordances have
+   a baseline visible state. Index-row thumbnails are already hidden on
+   coarse pointers above; here we shore up the rest.
+   =========================================================================== */
+
+@media (pointer: coarse) {
+  /* Tap targets — ensure interactive elements meet 44px guidance. */
+  .nav__btn,
+  .about__email,
+  .about__contact-value,
+  .home__contact-cta,
+  .journal__entry-toggle,
+  .footer a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+  .footer a {
+    padding: 0.25rem 0;
+  }
+
+  /* Underline animations baseline-visible on touch (no hover). */
+  .nav__btn[aria-current='page']::after {
+    transform: scaleX(1);
+  }
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .stripe {
+    transform: none !important;
+  }
+  .gallery__strip {
+    transform-style: flat;
+  }
+}
