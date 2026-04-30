@@ -32,6 +32,25 @@ function pad(n) {
   return String(n).padStart(2, '0');
 }
 
+// Split a description string into 1–3 visually balanced fragments at major
+// punctuation pause points (—, comma, period). Each fragment becomes its own
+// overflow-hidden mask so the line-by-line drop reveal cascades through the
+// description the same way the ABCD rows do.
+function splitDescLines(text) {
+  if (!text) return [];
+  const trimmed = text.trim();
+  if (!trimmed) return [];
+  const parts = trimmed.split(/(?<=[—,.])\s+/).filter(Boolean);
+  if (parts.length <= 1) return [trimmed];
+  if (parts.length <= 3) return parts;
+  const groupSize = Math.ceil(parts.length / 3);
+  const out = [];
+  for (let i = 0; i < parts.length; i += groupSize) {
+    out.push(parts.slice(i, i + groupSize).join(' '));
+  }
+  return out;
+}
+
 export function HomeView({ onSelect, onExplore, selectedId }) {
   const reduced = usePrefersReducedMotion();
   const [hoveredId, setHoveredId] = useState(null);
@@ -304,31 +323,34 @@ export function HomeView({ onSelect, onExplore, selectedId }) {
           </AnimatePresence>
         )}
 
-        {selected ? (
-          <motion.div
-            className="home__center-stack"
-            initial={{ opacity: 0, y: -80 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -40 }}
-            transition={{ duration: 0.7, ease: EASE, delay: 0.35 }}
-          >
-            <button
-              type="button"
-              className="home__explore-cta"
-              onClick={(event) => {
-                event.stopPropagation();
-                onExplore?.();
-              }}
-              style={{ pointerEvents: 'auto' }}
+        <AnimatePresence mode="wait">
+          {selected ? (
+            <motion.div
+              key={`explore-${focused?.id}`}
+              className="home__center-stack"
+              initial={{ opacity: 0, y: -80 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -40 }}
+              transition={{ duration: 0.7, ease: EASE, delay: 0.18 }}
             >
-              <span>Explore</span>
-            </button>
-            <span className="home__center-rule" aria-hidden="true" />
-            <span className="home__center-plus" aria-hidden="true">
-              +
-            </span>
-          </motion.div>
-        ) : null}
+              <button
+                type="button"
+                className="home__explore-cta"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  onExplore?.();
+                }}
+                style={{ pointerEvents: 'auto' }}
+              >
+                <span>Explore</span>
+              </button>
+              <span className="home__center-rule" aria-hidden="true" />
+              <span className="home__center-plus" aria-hidden="true">
+                +
+              </span>
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
 
         <AnimatePresence mode="wait">
           {focused && selected ? (
@@ -339,13 +361,17 @@ export function HomeView({ onSelect, onExplore, selectedId }) {
               initial="hidden"
               animate="visible"
               exit="exit"
-              transition={{ delayChildren: 0.46 }}
             >
-              <span className="home__desc-line">
-                <motion.span variants={REVEAL_LINE} className="home__desc-line-inner">
-                  {focused.description}
-                </motion.span>
-              </span>
+              {splitDescLines(focused.description).map((line, i) => (
+                <span key={i} className="home__desc-line">
+                  <motion.span
+                    variants={REVEAL_LINE}
+                    className="home__desc-line-inner"
+                  >
+                    {line}
+                  </motion.span>
+                </span>
+              ))}
             </motion.div>
           ) : focused ? (
             <motion.p
