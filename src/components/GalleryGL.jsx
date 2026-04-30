@@ -753,8 +753,26 @@ export function GalleryGL({
           const dist = Math.abs(distance);
 
           const baseAspect = selStripe ? selStripe.imageAspect : s.imageAspect;
-          const baseH = Math.min(stage.clientHeight * 0.62, 720);
-          const baseW = Math.min(baseH * baseAspect, w * 0.46);
+          // Phone gets a much wider width cap so the selected photo dominates
+          // the viewport — desktop stays at ~46% so the row reads as a row,
+          // not a single overpowering card. Aspect is then preserved by
+          // recomputing the smaller dimension from whichever axis hit the cap
+          // first (classic "fit into rectangle" math).
+          const isNarrow = w < 640;
+          const heightCap = Math.min(
+            stage.clientHeight * (isNarrow ? 0.58 : 0.62),
+            720,
+          );
+          const widthCap = w * (isNarrow ? 0.88 : 0.46);
+          let baseW;
+          let baseH;
+          if (heightCap * baseAspect <= widthCap) {
+            baseH = heightCap;
+            baseW = baseH * baseAspect;
+          } else {
+            baseW = widthCap;
+            baseH = baseW / baseAspect;
+          }
 
           const expandedScaleX = baseW / STRIPE_WIDTH;
           const expandedScaleY = baseH / STRIPE_HEIGHT;

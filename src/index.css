@@ -3194,10 +3194,27 @@ a.about__contact-value:hover::after {
    2.5.5 / iOS guidelines, and the strip caption can drop a size for
    breathing room. */
 @media (max-width: 640px) {
+  /* Phone close: horizontal "× CLOSE" pattern matching the home close. The
+     vertical rule is hidden — too cramped on phone — and the label stays
+     "Projects" since this control returns to the gallery. */
   .detail__close {
-    min-width: 44px;
+    flex-direction: row;
+    gap: 0.55rem;
     min-height: 44px;
-    padding: 6px 12px;
+    padding: 8px 14px;
+  }
+  .detail__close-rule {
+    display: none;
+  }
+  /* Hide the side crumb so the close button is the only top affordance —
+     mirrors the home selected-state treatment. */
+  .detail__top {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+  .detail__crumb,
+  .detail__top-spacer {
+    display: none;
   }
   .detail .massive-title__main {
     /* Tighter floor on small phones — 14vw was bumping into the hero. */
