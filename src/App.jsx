@@ -23,8 +23,14 @@ const JournalView = lazy(() =>
 const ProjectDetail = lazy(() =>
   import('./components/ProjectDetail').then((m) => ({ default: m.ProjectDetail })),
 );
+const ImpressumView = lazy(() =>
+  import('./components/ImpressumView').then((m) => ({ default: m.ImpressumView })),
+);
+const DatenschutzView = lazy(() =>
+  import('./components/DatenschutzView').then((m) => ({ default: m.DatenschutzView })),
+);
 
-const VIEWS = ['home', 'index', 'services', 'journal', 'about'];
+const VIEWS = ['home', 'index', 'services', 'journal', 'about', 'impressum', 'datenschutz'];
 
 export default function App() {
   const reduced = usePrefersReducedMotion();
@@ -133,6 +139,8 @@ export default function App() {
               {view === 'services' && <ServicesView />}
               {view === 'journal' && <JournalView />}
               {view === 'about' && <AboutView />}
+              {view === 'impressum' && <ImpressumView />}
+              {view === 'datenschutz' && <DatenschutzView />}
             </Suspense>
           </motion.div>
         </AnimatePresence>
@@ -147,7 +155,7 @@ export default function App() {
         </LayoutGroup>
       </main>
 
-      <Footer />
+      <Footer onNavigate={navigate} />
     </div>
   );
 }

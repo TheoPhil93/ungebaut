@@ -529,6 +529,164 @@ button {
   color: var(--muted);
 }
 
+/* ---------- Footer legal nav ---------- */
+
+.footer__legal {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-family: var(--font-sans);
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.footer__legal a {
+  position: relative;
+  padding-bottom: 1px;
+  color: inherit;
+}
+
+.footer__legal a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.4s var(--ease-out);
+}
+
+.footer__legal a:hover::after,
+.footer__legal a:focus-visible::after {
+  transform: scaleX(1);
+}
+
+.footer__legal-sep {
+  opacity: 0.45;
+}
+
+.footer__phone-legal {
+  display: none;
+  width: 100%;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  font-family: var(--font-sans);
+  font-size: 0.66rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.footer__phone-legal a {
+  color: inherit;
+}
+
+/* ---------- Legal views (Impressum / Datenschutz) ---------- */
+
+.legal {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2rem, 5vh, 3.5rem);
+  padding: calc(var(--pad-y) * 5) var(--pad-x) calc(var(--pad-y) * 5);
+  max-width: 920px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.legal__header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: clamp(1rem, 2vh, 1.5rem);
+}
+
+.legal__eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  margin: 0;
+}
+
+.legal__title {
+  font-family: var(--font-display);
+  font-weight: 300;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.legal__meta {
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin: 0.4rem 0 0;
+}
+
+.legal__body {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.25rem, 3vh, 2rem);
+}
+
+.legal__block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: clamp(1rem, 2vh, 1.5rem);
+}
+
+.legal__block:last-child {
+  border-bottom: 0;
+}
+
+.legal__block h2 {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--fg);
+  margin: 0;
+}
+
+.legal__block p {
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--fg);
+  max-width: 64ch;
+  margin: 0;
+}
+
+.legal__block p + p {
+  margin-top: 0.4rem;
+}
+
+.legal__block a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+  text-decoration-color: var(--line-strong);
+  transition: text-decoration-color 0.25s var(--ease-out);
+}
+
+.legal__block a:hover {
+  text-decoration-color: currentColor;
+}
+
 /* ---------- Views (shared) ---------- */
 
 .view {
@@ -3615,15 +3773,23 @@ a.about__contact-value:hover::after {
   }
 
   /* ---- Footer — phone shows contact links only. Desktop set
-     (location + credit) is hidden via .footer__desktop. ---- */
+     (location + credit + legal nav) is hidden via .footer__desktop.
+     Phone-only legal nav (Impressum / Datenschutz) renders below the
+     contact rows. ---- */
   .footer {
     position: relative;
+    flex-direction: column;
+    align-items: stretch;
     padding: var(--pad-y) var(--pad-x) calc(var(--pad-y) * 1.5);
   }
   .footer__desktop {
     display: none;
   }
   .footer__phone {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .footer__phone-legal {
     display: flex;
   }
 

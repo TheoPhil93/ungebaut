@@ -10,6 +10,8 @@ const PATH_TO_VIEW = {
   '/services': 'services',
   '/journal': 'journal',
   '/about': 'about',
+  '/impressum': 'impressum',
+  '/datenschutz': 'datenschutz',
 };
 
 const VIEW_TO_PATH = Object.fromEntries(

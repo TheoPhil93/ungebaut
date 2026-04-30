@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { pathFromView } from '../hooks/useUrlSync';
 
 function formatTime(date) {
   return new Intl.DateTimeFormat('en-GB', {
@@ -9,13 +10,21 @@ function formatTime(date) {
   }).format(date);
 }
 
-export function Footer() {
+export function Footer({ onNavigate }) {
   const [time, setTime] = useState(() => formatTime(new Date()));
 
   useEffect(() => {
     const id = setInterval(() => setTime(formatTime(new Date())), 30_000);
     return () => clearInterval(id);
   }, []);
+
+  const handleLegalClick = (event, view) => {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0)
+      return;
+    if (!onNavigate) return;
+    event.preventDefault();
+    onNavigate(view);
+  };
 
   return (
     <footer className="footer">
@@ -28,6 +37,23 @@ export function Footer() {
             {time} CET
           </span>
         </div>
+        <nav className="footer__legal" aria-label="Rechtliches">
+          <a
+            href={pathFromView('impressum')}
+            onClick={(e) => handleLegalClick(e, 'impressum')}
+          >
+            Impressum
+          </a>
+          <span className="footer__legal-sep" aria-hidden="true">
+            ·
+          </span>
+          <a
+            href={pathFromView('datenschutz')}
+            onClick={(e) => handleLegalClick(e, 'datenschutz')}
+          >
+            Datenschutz
+          </a>
+        </nav>
         <div className="footer__credit">We elevate great ideas — Available 2026</div>
       </div>
 
@@ -38,6 +64,21 @@ export function Footer() {
         <a href="tel:+41775210295" className="footer__phone-link">
           +41 77 521 02 95
         </a>
+        <nav className="footer__phone-legal" aria-label="Rechtliches">
+          <a
+            href={pathFromView('impressum')}
+            onClick={(e) => handleLegalClick(e, 'impressum')}
+          >
+            Impressum
+          </a>
+          <span aria-hidden="true">·</span>
+          <a
+            href={pathFromView('datenschutz')}
+            onClick={(e) => handleLegalClick(e, 'datenschutz')}
+          >
+            Datenschutz
+          </a>
+        </nav>
       </div>
     </footer>
   );
