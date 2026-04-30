@@ -182,17 +182,21 @@ export function HomeView({ onSelect, onExplore, selectedId }) {
                 key={selected.id}
                 className="home__expand-title-wrap"
                 layoutId={`massive-title-${selected.id}`}
-                initial={{ clipPath: 'inset(0 100% 0 0)' }}
-                animate={{ clipPath: 'inset(0 0% 0 0)' }}
-                exit={{ clipPath: 'inset(0 0 0 100%)' }}
-                transition={{
-                  clipPath: {
-                    duration: isSwitchingSelected ? 1.05 : 1.15,
-                    ease: EASE,
-                    delay: isSwitchingSelected ? 0 : 0.24,
-                  },
-                  layout: { duration: 1.05, ease: EASE },
-                }}
+                initial={reduced ? { opacity: 0 } : { clipPath: 'inset(0 100% 0 0)' }}
+                animate={reduced ? { opacity: 1 } : { clipPath: 'inset(0 0% 0 0)' }}
+                exit={reduced ? { opacity: 0 } : { clipPath: 'inset(0 0 0 100%)' }}
+                transition={
+                  reduced
+                    ? { duration: 0.3, ease: EASE }
+                    : {
+                        clipPath: {
+                          duration: isSwitchingSelected ? 1.05 : 1.15,
+                          ease: EASE,
+                          delay: isSwitchingSelected ? 0 : 0.24,
+                        },
+                        layout: { duration: 1.05, ease: EASE },
+                      }
+                }
                 aria-hidden="true"
               >
                 <MassiveTitle

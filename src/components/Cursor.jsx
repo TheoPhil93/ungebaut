@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
 import { useFinePointer } from '../hooks/useFinePointer';
+import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 
 const SPRING = { stiffness: 380, damping: 30, mass: 0.6 };
 const SIZE_REST = 8;
@@ -9,6 +10,7 @@ const SIZE_GALLERY = 54;
 
 export function Cursor() {
   const fine = useFinePointer();
+  const reduced = usePrefersReducedMotion();
   const x = useMotionValue(-100);
   const y = useMotionValue(-100);
   const sx = useSpring(x, SPRING);
@@ -73,7 +75,10 @@ export function Cursor() {
     };
   }, [fine, x, y]);
 
-  if (!fine) return null;
+  // Custom cursor is decorative chrome — fall back to native cursor when the
+  // user has requested reduced motion. The spring follow + size morph would
+  // otherwise be a constant low-grade movement on screen.
+  if (!fine || reduced) return null;
 
   const size =
     cursorMode === 'gallery'

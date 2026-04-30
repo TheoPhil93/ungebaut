@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { MassiveTitle } from './MassiveTitle';
+import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 
 // Aristide's `o6` (expo-out) approximated as cubic-bezier — see HomeView.
 const ease = [0.16, 1, 0.3, 1];
@@ -35,10 +36,12 @@ function isVideoSrc(src = '') {
 }
 
 export function ProjectDetail({ project, onClose }) {
+  const reduced = usePrefersReducedMotion();
   const galleryItems = useMemo(() => buildProjectGallery(project), [project]);
   const heroSrc = galleryItems[0] || project.detailImage || project.image;
   const [heroRatio, setHeroRatio] = useState(null);
   const scrollRef = useRef(null);
+  const closeRef = useRef(null);
 
   useEffect(() => {
     const onKey = (event) => {
@@ -47,6 +50,16 @@ export function ProjectDetail({ project, onClose }) {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [onClose]);
+
+  // ProjectDetail is a takeover view — without explicit focus management
+  // keyboard users land on whatever was focused before, often hidden behind
+  // the panel. Move focus to the close button on mount so Tab + Escape are
+  // the natural exit. rAF gives the slide-in motion a frame to start before
+  // the focus ring appears, which avoids a jarring focus-then-animate flicker.
+  useEffect(() => {
+    const id = requestAnimationFrame(() => closeRef.current?.focus());
+    return () => cancelAnimationFrame(id);
+  }, []);
 
   // SEO meta description while a project is open.
   useEffect(() => {
@@ -144,6 +157,7 @@ export function ProjectDetail({ project, onClose }) {
           {project.id} · {project.year}
         </span>
         <button
+          ref={closeRef}
           type="button"
           className="detail__close"
           onClick={onClose}
@@ -167,12 +181,14 @@ export function ProjectDetail({ project, onClose }) {
       <div className="detail__main">
         <motion.div
           className="detail__title-wrap"
-          initial={{ clipPath: 'inset(0 100% 0 0)' }}
-          animate={{ clipPath: 'inset(0 0% 0 0)' }}
-          exit={{ clipPath: 'inset(0 100% 0 0)' }}
-          transition={{
-            clipPath: { duration: 1.05, ease, delay: 0.18 },
-          }}
+          initial={reduced ? { opacity: 0 } : { clipPath: 'inset(0 100% 0 0)' }}
+          animate={reduced ? { opacity: 1 } : { clipPath: 'inset(0 0% 0 0)' }}
+          exit={reduced ? { opacity: 0 } : { clipPath: 'inset(0 100% 0 0)' }}
+          transition={
+            reduced
+              ? { duration: 0.3, ease }
+              : { clipPath: { duration: 1.05, ease, delay: 0.18 } }
+          }
           aria-hidden="true"
         >
           <MassiveTitle text={detailTitleText} ink={ink} animate={false} />
