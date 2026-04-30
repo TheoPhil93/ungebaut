@@ -3557,31 +3557,40 @@ a.about__contact-value:hover::after {
     display: none;
   }
 
-  /* Close button — moved to top-center on phone since the hamburger and
-     brand are hidden in detail mode. Larger tap target. */
+  /* Close button — top-center on phone. position:fixed escapes the
+     .home isolation stacking context so a high z-index can sit above
+     the fixed Nav (z-50). Without this the Nav was eating the click. */
   .home__close {
+    position: fixed;
     top: var(--pad-y);
     right: auto;
     left: 50%;
     transform: translateX(-50%);
     padding: 0.6rem 0.9rem;
     min-height: 44px;
+    z-index: 80;
   }
 
-  /* Expanded image — taller portrait crop, wider so it dominates the
-     phone screen the way the deep ProjectDetail hero does. */
+  /* Expanded image — fills almost the full phone width, taller portrait
+     crop so the photo dominates the way the deep ProjectDetail hero does. */
   .home__expand-image {
-    width: 78vw;
-    max-width: 360px;
-    aspect-ratio: 3 / 4;
+    width: 92vw;
+    max-width: none;
+    aspect-ratio: 4 / 5;
   }
   .home__expand-image img,
   .home__expand-image video {
     object-fit: cover;
   }
 
-  /* EXPLORE CTA — phone treats it as a primary action: filled pill with
-     stronger contrast so it reads as a button, not metadata. */
+  /* EXPLORE CTA — centered, filled pill, primary action. The earlier
+     `.home__bottom--centered .home__center-stack { align-items: flex-start;
+     justify-self: start }` left it pinned to the left edge; override here. */
+  .home__bottom--centered .home__center-stack {
+    align-items: center;
+    justify-self: center;
+    width: 100%;
+  }
   .home__explore-cta {
     background: var(--home-ink);
     color: var(--home-bg);
@@ -3590,6 +3599,7 @@ a.about__contact-value:hover::after {
     font-size: 0.74rem;
     letter-spacing: 0.22em;
     box-shadow: 0 12px 28px -12px rgba(0, 0, 0, 0.35);
+    align-self: center;
   }
   .home__explore-cta:hover {
     opacity: 1;
@@ -3605,11 +3615,12 @@ a.about__contact-value:hover::after {
     flex-wrap: wrap;
   }
 
-  /* "Independent Studio / Available 2026" — centered. */
-  .detail__footer-left {
-    text-align: center;
-    justify-self: center;
-    align-items: center;
+  /* "Independent Studio / Available 2026" and "↗ View Site" hidden on
+     phone — they read as duplicate chrome alongside the meta and SEO
+     description. */
+  .detail__footer-left,
+  .detail__footer-cta {
+    display: none;
   }
 
   /* Meta dl: full width, values right-aligned. */
@@ -3620,12 +3631,6 @@ a.about__contact-value:hover::after {
   }
   .detail__meta-val {
     text-align: right;
-  }
-
-  /* "↗ View Site" — centered block. */
-  .detail__footer-cta {
-    justify-self: center;
-    align-self: center;
   }
 
   /* SEO description — Blocksatz (justified text). */
