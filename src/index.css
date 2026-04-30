@@ -2540,22 +2540,19 @@ a.about__contact-value:hover::after {
    balanced by a 1fr spacer so the triplet sits on the page centre. */
 .home__bottom--centered {
   --selected-info-drop: clamp(2.25rem, 6vh, 5rem);
-  grid-template-columns: 1fr auto auto auto 1fr;
+  grid-template-columns: 1fr auto 1fr;
   column-gap: clamp(1.25rem, 3vw, 3rem);
   align-items: start;
   bottom: calc(var(--pad-y) * 3);
 }
 
 .home__bottom--centered .home__bottom-left {
-  grid-column: 1;
-  justify-self: start;
-  position: relative;
-  top: var(--selected-info-drop);
+  display: none;
 }
 
 .home__bottom--centered .home__meta {
-  grid-column: 2;
-  justify-self: end;
+  grid-column: 1;
+  justify-self: start;
   text-align: left;
   position: relative;
   top: var(--selected-info-drop);
@@ -2566,15 +2563,15 @@ a.about__contact-value:hover::after {
 }
 
 .home__bottom--centered .home__center-stack {
-  grid-column: 3;
+  grid-column: 2;
   justify-self: center;
   position: relative;
   top: var(--selected-info-drop);
 }
 
 .home__bottom--centered .home__desc {
-  grid-column: 4;
-  justify-self: start;
+  grid-column: 3;
+  justify-self: end;
   text-align: right;
   max-width: 32ch;
   position: relative;

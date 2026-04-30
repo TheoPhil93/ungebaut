@@ -290,10 +290,10 @@ export function HomeView({ onSelect, onExplore, selectedId }) {
         {selected ? (
           <motion.div
             className="home__center-stack"
-            initial={{ opacity: 0, y: 8 }}
+            initial={{ opacity: 0, y: -80 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5, ease: EASE }}
+            exit={{ opacity: 0, y: -40 }}
+            transition={{ duration: 0.6, ease: EASE }}
           >
             <button
               type="button"
