@@ -353,6 +353,15 @@ button {
     display: block;
     z-index: 61;
   }
+  /* The default .nav uses align-items:baseline so brand text and the
+     desktop nav list share a typographic baseline. With the hamburger
+     button replacing the list, baseline alignment puts the empty
+     button's box-bottom at the brand's baseline — visually too high.
+     Center is the correct vertical alignment when the trigger is a
+     square icon button. */
+  .nav {
+    align-items: center;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -384,9 +384,11 @@ export function GalleryGL({
 
       // Compute a single fit-factor that shrinks every stripe just enough so
       // the entire row (PAD + 27 stripes + 26 gaps + PAD) lands inside the
-      // viewport. fit > 1 is clamped — on viewports wider than the natural
-      // strip we render at full size and centre the row.
-      fit = Math.min(1.06, Math.max(0.68, (h * 0.62) / STRIPE_HEIGHT));
+      // viewport. On short viewports (landscape phones) we use much more of
+      // the available height — 0.62 leaves ~40% of the canvas as padding
+      // which feels like the gallery is floating in empty space.
+      const fitFactor = h < 540 ? 0.92 : 0.62;
+      fit = Math.min(1.2, Math.max(0.68, (h * fitFactor) / STRIPE_HEIGHT));
 
       const effW = STRIPE_WIDTH * fit;
       const effG = STRIPE_GAP * fit;
