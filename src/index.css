@@ -2539,8 +2539,8 @@ a.about__contact-value:hover::after {
    [meta a-d] · [Explore stack] · [description], with the right side
    balanced by a 1fr spacer so the triplet sits on the page centre. */
 .home__bottom--centered {
-  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
-  column-gap: clamp(2rem, 5vw, 5rem);
+  grid-template-columns: 1fr auto auto auto 1fr;
+  column-gap: clamp(1.5rem, 3vw, 3rem);
   align-items: start;
   bottom: calc(var(--pad-y) * 2.5);
 }
@@ -2549,17 +2549,22 @@ a.about__contact-value:hover::after {
   display: none;
 }
 
-.home__bottom--centered .home__desc {
-  grid-column: 1;
-  justify-self: start;
-  text-align: left;
-  max-width: 56ch;
-}
-
 .home__bottom--centered .home__meta {
   grid-column: 2;
   justify-self: end;
   text-align: left;
+}
+
+.home__bottom--centered .home__center-stack {
+  grid-column: 3;
+  justify-self: center;
+}
+
+.home__bottom--centered .home__desc {
+  grid-column: 4;
+  justify-self: start;
+  text-align: left;
+  max-width: 32ch;
 }
 
 /* ----- Selected-state meta: stacked rows with overflow-hidden line masks
@@ -2588,8 +2593,7 @@ a.about__contact-value:hover::after {
   align-items: baseline;
   justify-content: space-between;
   gap: 1.5rem;
-  width: 100%;
-  min-width: 18rem;
+  width: 14rem;
   white-space: nowrap;
 }
 
@@ -2639,19 +2643,6 @@ a.about__contact-value:hover::after {
   pointer-events: none;
 }
 
-/* Wrapper sits absolutely positioned just below the expanded canvas
-   stripe; the inner motion.div is free to use transform for the drop-in
-   animation without fighting CSS centering. */
-.home__center-stack-wrap {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: clamp(10vh, 14vh, 18vh);
-  display: flex;
-  justify-content: center;
-  pointer-events: none;
-  z-index: 12;
-}
 
 .home__center-rule {
   display: inline-block;
