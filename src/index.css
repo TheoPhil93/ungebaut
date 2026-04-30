@@ -2539,9 +2539,7 @@ a.about__contact-value:hover::after {
    [meta a-d] · [Explore stack] · [description], with the right side
    balanced by a 1fr spacer so the triplet sits on the page centre. */
 .home__bottom--centered {
-  grid-template-columns: 1fr auto 1fr;
-  grid-template-rows: auto auto;
-  row-gap: clamp(1rem, 2.4vh, 1.75rem);
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
   column-gap: clamp(2rem, 5vw, 5rem);
   align-items: start;
   bottom: calc(var(--pad-y) * 2.5);
@@ -2551,25 +2549,17 @@ a.about__contact-value:hover::after {
   display: none;
 }
 
-.home__bottom--centered .home__center-stack {
-  grid-column: 1 / -1;
-  grid-row: 1;
-  justify-self: center;
+.home__bottom--centered .home__desc {
+  grid-column: 1;
+  justify-self: start;
+  text-align: left;
+  max-width: 56ch;
 }
 
 .home__bottom--centered .home__meta {
-  grid-column: 1;
-  grid-row: 2;
-  justify-self: start;
-  text-align: left;
-}
-
-.home__bottom--centered .home__desc {
-  grid-column: 3;
-  grid-row: 2;
+  grid-column: 2;
   justify-self: end;
-  text-align: right;
-  max-width: 32ch;
+  text-align: left;
 }
 
 /* ----- Selected-state meta: stacked rows with overflow-hidden line masks
@@ -2594,10 +2584,19 @@ a.about__contact-value:hover::after {
 }
 
 .home__meta-line-inner {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1.5rem;
+  width: 100%;
+  min-width: 18rem;
+  white-space: nowrap;
+}
+
+.home__meta-key-group {
   display: inline-flex;
   align-items: baseline;
-  gap: 0.6rem;
-  white-space: nowrap;
+  gap: 0.7rem;
 }
 
 .home__meta-key {
@@ -2608,11 +2607,11 @@ a.about__contact-value:hover::after {
 
 .home__meta-label {
   opacity: 0.55;
-  min-width: 5.5em;
 }
 
 .home__meta-val {
   opacity: 0.95;
+  text-align: right;
 }
 
 .home__desc.home__desc--selected {
@@ -2638,6 +2637,20 @@ a.about__contact-value:hover::after {
   align-items: center;
   gap: 0.65rem;
   pointer-events: none;
+}
+
+/* Wrapper sits absolutely positioned just below the expanded canvas
+   stripe; the inner motion.div is free to use transform for the drop-in
+   animation without fighting CSS centering. */
+.home__center-stack-wrap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: clamp(10vh, 14vh, 18vh);
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 12;
 }
 
 .home__center-rule {

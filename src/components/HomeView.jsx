@@ -204,6 +204,35 @@ export function HomeView({ onSelect, onExplore, selectedId }) {
               <span aria-hidden="true">×</span>
               <span className="home__close-label">Close</span>
             </motion.button>
+
+            {/* Explore CTA sits directly under the expanded image stripe.
+                The wrapper handles absolute centering; the motion.div is
+                free to use transform for the y drop-in animation. */}
+            <div className="home__center-stack-wrap">
+              <motion.div
+                className="home__center-stack"
+                initial={{ opacity: 0, y: -80 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -40 }}
+                transition={{ duration: 0.7, ease: EASE, delay: 0.35 }}
+              >
+              <button
+                type="button"
+                className="home__explore-cta"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  onExplore?.();
+                }}
+                style={{ pointerEvents: 'auto' }}
+              >
+                <span>Explore</span>
+              </button>
+              <span className="home__center-rule" aria-hidden="true" />
+              <span className="home__center-plus" aria-hidden="true">
+                +
+              </span>
+              </motion.div>
+            </div>
           </motion.div>
         ) : null}
       </AnimatePresence>
@@ -259,10 +288,12 @@ export function HomeView({ onSelect, onExplore, selectedId }) {
               ].map(([letter, label, value]) => (
                 <span key={letter} className="home__meta-line">
                   <motion.span variants={REVEAL_LINE} className="home__meta-line-inner">
-                    <span className="home__meta-key" aria-hidden="true">
-                      {letter}
+                    <span className="home__meta-key-group">
+                      <span className="home__meta-key" aria-hidden="true">
+                        {letter}
+                      </span>
+                      <span className="home__meta-label">{label}</span>
                     </span>
-                    <span className="home__meta-label">{label}</span>
                     <span className="home__meta-val">{value}</span>
                   </motion.span>
                 </span>
@@ -300,32 +331,6 @@ export function HomeView({ onSelect, onExplore, selectedId }) {
             ) : null}
           </AnimatePresence>
         )}
-
-        {selected ? (
-          <motion.div
-            className="home__center-stack"
-            initial={{ opacity: 0, y: -80 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -40 }}
-            transition={{ duration: 0.6, ease: EASE }}
-          >
-            <button
-              type="button"
-              className="home__explore-cta"
-              onClick={(event) => {
-                event.stopPropagation();
-                onExplore?.();
-              }}
-              style={{ pointerEvents: 'auto' }}
-            >
-              <span>Explore</span>
-            </button>
-            <span className="home__center-rule" aria-hidden="true" />
-            <span className="home__center-plus" aria-hidden="true">
-              +
-            </span>
-          </motion.div>
-        ) : null}
 
         <AnimatePresence mode="wait">
           {focused && selected ? (
