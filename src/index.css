@@ -2674,6 +2674,11 @@ a.about__contact-value:hover::after {
   pointer-events: auto;
 }
 
+.home__contact .home__contact-cta {
+  align-items: flex-end;
+  text-align: right;
+}
+
 .home__contact-cta {
   display: inline-flex;
   flex-direction: column;
