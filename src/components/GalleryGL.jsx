@@ -386,8 +386,10 @@ export function GalleryGL({
       // the entire row (PAD + 27 stripes + 26 gaps + PAD) lands inside the
       // viewport. On short viewports (landscape phones) we use much more of
       // the available height — 0.62 leaves ~40% of the canvas as padding
-      // which feels like the gallery is floating in empty space.
-      const fitFactor = h < 540 ? 0.92 : 0.62;
+      // which feels like the gallery is floating in empty space. Tablets
+      // sit between (0.78) so the row still has breathing room but uses
+      // most of the available canvas.
+      const fitFactor = h < 540 ? 0.92 : (w < 1180 ? 0.78 : 0.62);
       fit = Math.min(1.2, Math.max(0.68, (h * fitFactor) / STRIPE_HEIGHT));
 
       const effW = STRIPE_WIDTH * fit;
@@ -762,11 +764,13 @@ export function GalleryGL({
           // Phone + tablet + landscape phone all get a much wider width cap
           // so the selected photo dominates the viewport — desktop stays at
           // ~46% so the row reads as a row, not a single overpowering card.
-          // Width<900 covers portrait phones, iPad portrait, normal landscape
-          // phones; height<540 catches wide landscape phones (iPhone 14 Pro
-          // Max is 932×430 in landscape).
+          // Width<1180 covers portrait phones, iPad portrait, iPad Mini
+          // landscape (1024) and standard iPad landscape (1180);
+          // height<540 catches wide landscape phones (iPhone 14 Pro Max
+          // is 932×430 in landscape). iPad Pro 12.9 landscape (1366) stays
+          // in the desktop branch.
           const stageH = stage.clientHeight;
-          const isNarrow = w < 900 || stageH < 540;
+          const isNarrow = w < 1180 || stageH < 540;
           const heightCap = Math.min(
             stageH * (isNarrow ? 0.74 : 0.62),
             720,

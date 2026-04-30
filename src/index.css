@@ -342,7 +342,7 @@ button {
   transform: scaleX(0.9);
 }
 
-@media (max-width: 900px), (max-height: 540px) {
+@media (max-width: 1180px), (max-height: 540px) {
   /* Hamburger drawer applies through tablet portrait + landscape phone.
      Width: 900 covers iPad portrait. Height: 540 catches landscape phones
      up to iPhone 14 Pro Max (932×430). */
@@ -3202,7 +3202,7 @@ a.about__contact-value:hover::after {
 /* Phone + tablet + landscape phone tightening for detail close and strip.
    At ≤900 the close button needs a 44px tap target per WCAG 2.5.5 / iOS
    guidelines, the rule is hidden, and the strip caption drops a size. */
-@media (max-width: 900px), (max-height: 540px) {
+@media (max-width: 1180px), (max-height: 540px) {
   /* Phone/tablet close: horizontal "× CLOSE" matching the home close. The
      vertical rule is hidden — too cramped — and the label stays
      "Projects" since this control returns to the gallery. */
@@ -3506,7 +3506,7 @@ a.about__contact-value:hover::after {
    iPhone 14 Pro Max (932×430). Above both = desktop layout.
    =========================================================================== */
 
-@media (max-width: 900px), (max-height: 540px) {
+@media (max-width: 1180px), (max-height: 540px) {
   /* Mobile/landscape: drop the 520px min-height floor that overflowed
      short viewports and pushed the footer (and its contact info) below
      the fold. flex:1 on .home makes it fill available space inside
@@ -3514,6 +3514,14 @@ a.about__contact-value:hover::after {
      the .app flex column. */
   .home {
     min-height: 0;
+  }
+
+  /* Inset the WebGL canvas from the top so stripes don't render behind
+     the fixed nav (the nav is transparent — without this, the brand and
+     hamburger sit on top of the gallery instead of on the cream backdrop,
+     which user pointed out as "gallery is in the menu"). */
+  .home__gl {
+    top: clamp(56px, 9vh, 80px);
   }
 
   :root {
