@@ -342,9 +342,10 @@ button {
   transform: scaleX(0.9);
 }
 
-@media (max-width: 900px) {
+@media (max-width: 900px), (max-height: 540px) {
   /* Hamburger drawer applies through tablet portrait + landscape phone.
-     Above 900 the inline nav fits comfortably. */
+     Width: 900 covers iPad portrait. Height: 540 catches landscape phones
+     up to iPhone 14 Pro Max (932×430). */
   .nav__list {
     display: none;
   }
@@ -3192,7 +3193,7 @@ a.about__contact-value:hover::after {
 /* Phone + tablet + landscape phone tightening for detail close and strip.
    At ≤900 the close button needs a 44px tap target per WCAG 2.5.5 / iOS
    guidelines, the rule is hidden, and the strip caption drops a size. */
-@media (max-width: 900px) {
+@media (max-width: 900px), (max-height: 540px) {
   /* Phone/tablet close: horizontal "× CLOSE" matching the home close. The
      vertical rule is hidden — too cramped — and the label stays
      "Projects" since this control returns to the gallery. */
@@ -3484,18 +3485,26 @@ a.about__contact-value:hover::after {
 }
 
 /* ===========================================================================
-   Mobile + tablet + landscape phone — ≤900px. Collapses the bottom info
-   strip to a vertical stack, compacts the nav and footer, increases
-   tap-target sizes, and reduces typographic scale where it threatens
-   overflow. 900 catches:
+   Mobile + tablet + landscape phone — ≤900px width OR ≤540px height.
+   Collapses the bottom info strip to a vertical stack, compacts the nav
+   and footer, increases tap-target sizes, and reduces typographic scale
+   where it threatens overflow. The width branch catches:
      • portrait phone        375×812
      • landscape phone       812×375 / 667×375
      • iPad mini portrait    768×1024
      • iPad portrait         820×1180
-   Above 900 = desktop layout (full row, ticks, location/credit footer).
+   The height branch catches wide landscape phones above 900w like
+   iPhone 14 Pro Max (932×430). Above both = desktop layout.
    =========================================================================== */
 
-@media (max-width: 900px) {
+@media (max-width: 900px), (max-height: 540px) {
+  /* Landscape phone: home view's min-height of clamp(520px, 88vh, 920px)
+     is taller than the viewport (~430px) so the canvas overflows below
+     the fold. Lock the section to the dynamic viewport instead. */
+  .home {
+    min-height: 100dvh;
+  }
+
   :root {
     --pad-x: 1rem;
     --pad-y: 0.75rem;

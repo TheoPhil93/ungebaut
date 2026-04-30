@@ -760,11 +760,13 @@ export function GalleryGL({
           // Phone + tablet + landscape phone all get a much wider width cap
           // so the selected photo dominates the viewport — desktop stays at
           // ~46% so the row reads as a row, not a single overpowering card.
-          // 900px covers iPad portrait and landscape phones (667/812 wide);
-          // above that we treat as desktop.
-          const isNarrow = w < 900;
+          // Width<900 covers portrait phones, iPad portrait, normal landscape
+          // phones; height<540 catches wide landscape phones (iPhone 14 Pro
+          // Max is 932×430 in landscape).
+          const stageH = stage.clientHeight;
+          const isNarrow = w < 900 || stageH < 540;
           const heightCap = Math.min(
-            stage.clientHeight * (isNarrow ? 0.58 : 0.62),
+            stageH * (isNarrow ? 0.74 : 0.62),
             720,
           );
           const widthCap = w * (isNarrow ? 0.86 : 0.46);
