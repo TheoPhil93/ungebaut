@@ -3547,13 +3547,95 @@ a.about__contact-value:hover::after {
     visibility: hidden;
   }
 
-  /* Project (selected) view — hide secondary decoration and the
-     A/B/C/D meta dl. Keep title overlay, image, EXPLORE CTA, description,
-     and footer contact. */
+  /* Project (selected) view — hide all secondary text + decoration on
+     phone. Keep title overlay, image, EXPLORE CTA. Description and meta
+     are removed; contact lives in footer. */
   .home__bottom--centered .home__meta,
   .home__bottom--centered .home__center-rule,
-  .home__bottom--centered .home__center-plus {
+  .home__bottom--centered .home__center-plus,
+  .home__bottom--centered .home__desc {
     display: none;
+  }
+
+  /* Close button — moved to top-center on phone since the hamburger and
+     brand are hidden in detail mode. Larger tap target. */
+  .home__close {
+    top: var(--pad-y);
+    right: auto;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.6rem 0.9rem;
+    min-height: 44px;
+  }
+
+  /* Expanded image — taller portrait crop, wider so it dominates the
+     phone screen the way the deep ProjectDetail hero does. */
+  .home__expand-image {
+    width: 78vw;
+    max-width: 360px;
+    aspect-ratio: 3 / 4;
+  }
+  .home__expand-image img,
+  .home__expand-image video {
+    object-fit: cover;
+  }
+
+  /* EXPLORE CTA — phone treats it as a primary action: filled pill with
+     stronger contrast so it reads as a button, not metadata. */
+  .home__explore-cta {
+    background: var(--home-ink);
+    color: var(--home-bg);
+    padding: 0.85rem 1.4rem;
+    border-radius: 999px;
+    font-size: 0.74rem;
+    letter-spacing: 0.22em;
+    box-shadow: 0 12px 28px -12px rgba(0, 0, 0, 0.35);
+  }
+  .home__explore-cta:hover {
+    opacity: 1;
+    transform: translateY(-1px);
+  }
+
+  /* ===== ProjectDetail (deep view) phone treatment ===== */
+
+  /* Phone footer (booking@ / phone) centered instead of edges. */
+  .footer__phone {
+    justify-content: center;
+    gap: clamp(1rem, 6vw, 2rem);
+    flex-wrap: wrap;
+  }
+
+  /* "Independent Studio / Available 2026" — centered. */
+  .detail__footer-left {
+    text-align: center;
+    justify-self: center;
+    align-items: center;
+  }
+
+  /* Meta dl: full width, values right-aligned. */
+  .detail__meta-grid {
+    width: 100%;
+    grid-template-columns: auto auto 1fr;
+    column-gap: clamp(0.6rem, 3vw, 1.2rem);
+  }
+  .detail__meta-val {
+    text-align: right;
+  }
+
+  /* "↗ View Site" — centered block. */
+  .detail__footer-cta {
+    justify-self: center;
+    align-self: center;
+  }
+
+  /* SEO description — Blocksatz (justified text). */
+  .detail__seo {
+    text-align: justify;
+    text-justify: inter-word;
+    hyphens: auto;
+    -webkit-hyphens: auto;
+    width: 100%;
+    max-width: 100%;
   }
 
   /* ---- HomeView selected-state cluster ---- */
