@@ -459,7 +459,7 @@ button {
   align-items: baseline;
   justify-content: space-between;
   padding: var(--pad-y) var(--pad-x);
-  font-size: 0.72rem;
+  font-size: 0.62rem;
   text-transform: uppercase;
   letter-spacing: 0.16em;
   /* Plain dark text on the off-white backdrop (no blend inversion). */
@@ -2539,10 +2539,10 @@ a.about__contact-value:hover::after {
    [meta a-d] · [Explore stack] · [description], with the right side
    balanced by a 1fr spacer so the triplet sits on the page centre. */
 .home__bottom--centered {
-  grid-template-columns: 1.4fr auto auto auto 1fr;
+  grid-template-columns: 1fr auto auto auto 1fr;
   column-gap: clamp(2.5rem, 5vw, 5rem);
-  align-items: start;
-  bottom: calc(var(--pad-y) * 2.5);
+  align-items: end;
+  bottom: var(--pad-y);
 }
 
 .home__bottom--centered .home__bottom-left {
