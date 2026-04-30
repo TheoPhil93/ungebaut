@@ -328,12 +328,20 @@ export function HomeView({ onSelect, onExplore, selectedId }) {
             <motion.div
               key={`explore-${focused?.id}`}
               className="home__center-stack"
-              initial={{ opacity: 0, y: -80 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -40 }}
-              transition={{ duration: 0.7, ease: EASE, delay: 0.18 }}
+              variants={{
+                hidden: {},
+                visible: {
+                  transition: { staggerChildren: 0.12, delayChildren: 0.2 },
+                },
+                exit: {
+                  transition: { staggerChildren: 0.06, staggerDirection: -1 },
+                },
+              }}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
             >
-              <button
+              <motion.button
                 type="button"
                 className="home__explore-cta"
                 onClick={(event) => {
@@ -341,13 +349,58 @@ export function HomeView({ onSelect, onExplore, selectedId }) {
                   onExplore?.();
                 }}
                 style={{ pointerEvents: 'auto' }}
+                variants={{
+                  hidden: { opacity: 0, y: -60 },
+                  visible: {
+                    opacity: 1,
+                    y: 0,
+                    transition: { duration: 0.6, ease: EASE },
+                  },
+                  exit: {
+                    opacity: 0,
+                    y: -30,
+                    transition: { duration: 0.3, ease: EASE },
+                  },
+                }}
               >
                 <span>Explore</span>
-              </button>
-              <span className="home__center-rule" aria-hidden="true" />
-              <span className="home__center-plus" aria-hidden="true">
+              </motion.button>
+              <motion.span
+                className="home__center-rule"
+                aria-hidden="true"
+                variants={{
+                  hidden: { opacity: 0, scaleY: 0, transformOrigin: 'top' },
+                  visible: {
+                    opacity: 1,
+                    scaleY: 1,
+                    transition: { duration: 0.55, ease: EASE },
+                  },
+                  exit: {
+                    opacity: 0,
+                    scaleY: 0,
+                    transition: { duration: 0.3, ease: EASE },
+                  },
+                }}
+              />
+              <motion.span
+                className="home__center-plus"
+                aria-hidden="true"
+                variants={{
+                  hidden: { opacity: 0, y: -20 },
+                  visible: {
+                    opacity: 1,
+                    y: 0,
+                    transition: { duration: 0.5, ease: EASE },
+                  },
+                  exit: {
+                    opacity: 0,
+                    y: -12,
+                    transition: { duration: 0.3, ease: EASE },
+                  },
+                }}
+              >
                 +
-              </span>
+              </motion.span>
             </motion.div>
           ) : null}
         </AnimatePresence>
