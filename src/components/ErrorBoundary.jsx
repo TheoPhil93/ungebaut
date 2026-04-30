@@ -31,11 +31,7 @@ export class ErrorBoundary extends Component {
           <p className="error-boundary__body">
             The page hit an unexpected error and could not finish rendering.
           </p>
-          <button
-            type="button"
-            className="error-boundary__cta"
-            onClick={this.handleReload}
-          >
+          <button type="button" className="error-boundary__cta" onClick={this.handleReload}>
             Reload
           </button>
         </div>

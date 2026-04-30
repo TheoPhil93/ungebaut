@@ -59,9 +59,9 @@ export function MassiveTitle({ text, subtitle, ink = '#241a4a', animate = true }
               range={110}
               enterFrom="right"
               exitTo="right"
-            totalDuration={1.2}
-            letterDelay={0.022}
-            startDelay={0.28}
+              totalDuration={1.2}
+              letterDelay={0.022}
+              startDelay={0.28}
               ease="o6"
               className="massive-title__row"
               cellClassName="massive-title__cell"

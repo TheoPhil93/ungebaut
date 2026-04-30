@@ -11,11 +11,11 @@
 
 Tested across ChatGPT/Perplexity/Google-style category queries. Ungebaut is not cited anywhere. Competitors getting all the citations:
 
-| Query | Cited studios | Ungebaut? |
-|---|---|---|
-| "best archviz studio Zurich 2026" | GRAPHEX, Slashcube, Total Real, OVA Studio, VisEngine | No |
-| "top 3D rendering studios Europe" | MIR, Hayes Davidson, ZOA, Render Vision, VisEngine | No |
-| Direct brand search | Only own Facebook + own site | Barely |
+| Query                             | Cited studios                                         | Ungebaut? |
+| --------------------------------- | ----------------------------------------------------- | --------- |
+| "best archviz studio Zurich 2026" | GRAPHEX, Slashcube, Total Real, OVA Studio, VisEngine | No        |
+| "top 3D rendering studios Europe" | MIR, Hayes Davidson, ZOA, Render Vision, VisEngine    | No        |
+| Direct brand search               | Only own Facebook + own site                          | Barely    |
 
 ### Why you're invisible
 
@@ -38,29 +38,17 @@ Tested across ChatGPT/Perplexity/Google-style category queries. Ungebaut is not 
 ### Priority fixes
 
 **Tier 1 — Third-party listings (biggest lever)**
+
 1. Submit to swiss-architects.com
 2. Pitch 2+ "top archviz" listicles (Architizer, Maverickframe, CGconnect, OMEGARENDER)
 3. Build Wikipedia-eligible footprint (press, awards, publications) — Wikipedia = 7.8% of all ChatGPT citations
 4. Behance / CGconnect / ArchDaily project submissions
 
-**Tier 2 — Make own site extractable**
-5. Homepage definition block (see Part 2 — already partly handled in new About page)
-6. Named founders + credentials on About
-7. FAQ section (pricing model, turnaround, file formats, competition vs commercial, languages)
-8. Named case studies with client, project type, location, year
-9. `Organization` + `LocalBusiness` + `Service` schema
-10. `/pricing.md` and `/llms.txt` at site root
-11. Visible dates on blog and project entries
+**Tier 2 — Make own site extractable** 5. Homepage definition block (see Part 2 — already partly handled in new About page) 6. Named founders + credentials on About 7. FAQ section (pricing model, turnaround, file formats, competition vs commercial, languages) 8. Named case studies with client, project type, location, year 9. `Organization` + `LocalBusiness` + `Service` schema 10. `/pricing.md` and `/llms.txt` at site root 11. Visible dates on blog and project entries
 
-**Tier 3 — Cornerstone content**
-12. Write 3–5 cornerstone articles targeting citable queries:
-    - "Architectural Visualization in Switzerland: A Studio Guide"
-    - "How Much Does Architectural Rendering Cost in 2026?" (with CHF ranges)
-    - "Competition Renderings vs Marketing Renderings: What's the Difference?"
-    - "Choosing an Archviz Studio: 8 Questions to Ask"
+**Tier 3 — Cornerstone content** 12. Write 3–5 cornerstone articles targeting citable queries: - "Architectural Visualization in Switzerland: A Studio Guide" - "How Much Does Architectural Rendering Cost in 2026?" (with CHF ranges) - "Competition Renderings vs Marketing Renderings: What's the Difference?" - "Choosing an Archviz Studio: 8 Questions to Ask"
 
-**Tier 4 — Monitor**
-13. Manual monthly check of top 10 queries across ChatGPT/Perplexity/Google.
+**Tier 4 — Monitor** 13. Manual monthly check of top 10 queries across ChatGPT/Perplexity/Google.
 
 ---
 
@@ -78,20 +66,20 @@ Tested across ChatGPT/Perplexity/Google-style category queries. Ungebaut is not 
 
 ### Gaps that will limit AI citation
 
-| # | Gap | Fix |
-|---|---|---|
-| 1 | **No founding year.** "Founded by ..." but no date. AI weights dated entities. | Add "Founded in [YYYY]" to `about.body[0]`. |
-| 2 | **No founder credentials.** Names alone, no "architect, MSc ETH Zürich" etc. | Add 1-line bio per founder (background, training, years in field). |
-| 3 | **No client names.** "Architects, developers and brands" is generic. | Add 3–5 named clients or "Selected clients:" list (with permission). |
-| 4 | **No FAQ block.** Highest-leverage citable format for archviz queries. | Add FAQ section: pricing model, turnaround, formats, competition vs commercial, revisions, languages. |
-| 5 | **No schema markup.** SPA renders client-side; AI parsers may miss it entirely. | Add SSR/prerender for `/about` + JSON-LD `Organization` and `LocalBusiness` schema in `index.html` or per-route head. |
-| 6 | **SPA = no per-route `<title>` / meta.** Single `index.html` serves all routes; About page has no unique title or description for crawlers. | Add `react-helmet-async` (or migrate to Next.js/Astro) to set per-route `<title>`, `<meta description>`, canonical URL. |
-| 7 | **Aristide-style letter-cascade animation on H1.** If implemented as per-letter spans without proper text content, screen readers and AI parsers may see fragmented text. | Verify the rendered DOM contains the full readable string in a single accessible node (or use `aria-label` with the full string and `aria-hidden` on the animated layer). |
-| 8 | **Social links are placeholder URLs** (`https://www.instagram.com/`, `https://www.linkedin.com/`, `https://www.behance.net/`). | Replace with real profile URLs — these are external trust signals and citation pathways. |
-| 9 | **`lang="en"` but address/phone are Swiss + alt locale `de_CH`.** No `hreflang` for de version. | If a German version exists/will exist, add `hreflang` alternates. |
-| 10 | **Email mismatch:** copy uses `booking@ungebaut.ch` but live site footer is also `.ch`; new domain is `.com`. Check inbox routing. | Confirm and unify. |
-| 11 | **No "Last updated" on About.** | Add `<time dateTime="2026-04-29">Last updated April 2026</time>` somewhere in the footer or About. |
-| 12 | **No pricing or service-tier detail visible from About.** | Link to `/pricing` from capabilities, and ship a `/pricing.md` for AI agents. |
+| #   | Gap                                                                                                                                                                       | Fix                                                                                                                                                                       |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | **No founding year.** "Founded by ..." but no date. AI weights dated entities.                                                                                            | Add "Founded in [YYYY]" to `about.body[0]`.                                                                                                                               |
+| 2   | **No founder credentials.** Names alone, no "architect, MSc ETH Zürich" etc.                                                                                              | Add 1-line bio per founder (background, training, years in field).                                                                                                        |
+| 3   | **No client names.** "Architects, developers and brands" is generic.                                                                                                      | Add 3–5 named clients or "Selected clients:" list (with permission).                                                                                                      |
+| 4   | **No FAQ block.** Highest-leverage citable format for archviz queries.                                                                                                    | Add FAQ section: pricing model, turnaround, formats, competition vs commercial, revisions, languages.                                                                     |
+| 5   | **No schema markup.** SPA renders client-side; AI parsers may miss it entirely.                                                                                           | Add SSR/prerender for `/about` + JSON-LD `Organization` and `LocalBusiness` schema in `index.html` or per-route head.                                                     |
+| 6   | **SPA = no per-route `<title>` / meta.** Single `index.html` serves all routes; About page has no unique title or description for crawlers.                               | Add `react-helmet-async` (or migrate to Next.js/Astro) to set per-route `<title>`, `<meta description>`, canonical URL.                                                   |
+| 7   | **Aristide-style letter-cascade animation on H1.** If implemented as per-letter spans without proper text content, screen readers and AI parsers may see fragmented text. | Verify the rendered DOM contains the full readable string in a single accessible node (or use `aria-label` with the full string and `aria-hidden` on the animated layer). |
+| 8   | **Social links are placeholder URLs** (`https://www.instagram.com/`, `https://www.linkedin.com/`, `https://www.behance.net/`).                                            | Replace with real profile URLs — these are external trust signals and citation pathways.                                                                                  |
+| 9   | **`lang="en"` but address/phone are Swiss + alt locale `de_CH`.** No `hreflang` for de version.                                                                           | If a German version exists/will exist, add `hreflang` alternates.                                                                                                         |
+| 10  | **Email mismatch:** copy uses `booking@ungebaut.ch` but live site footer is also `.ch`; new domain is `.com`. Check inbox routing.                                        | Confirm and unify.                                                                                                                                                        |
+| 11  | **No "Last updated" on About.**                                                                                                                                           | Add `<time dateTime="2026-04-29">Last updated April 2026</time>` somewhere in the footer or About.                                                                        |
+| 12  | **No pricing or service-tier detail visible from About.**                                                                                                                 | Link to `/pricing` from capabilities, and ship a `/pricing.md` for AI agents.                                                                                             |
 
 ### Suggested rewrite of `about.intro` (AI-optimized)
 
@@ -115,33 +103,33 @@ Wrap in `FAQPage` JSON-LD schema for direct AI extraction.
 
 ```html
 <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": ["Organization", "LocalBusiness"],
-  "name": "UNGEBAUT",
-  "description": "Architectural visualisation studio in Zürich. Renderings, 3D design, animation, VR/AR and drone documentation.",
-  "url": "https://www.ungebaut.com",
-  "email": "booking@ungebaut.ch",
-  "telephone": "+41775210295",
-  "founder": [
-    { "@type": "Person", "name": "Philippos Theofanidis" },
-    { "@type": "Person", "name": "Luna Theofanidis" }
-  ],
-  "foundingDate": "YYYY",
-  "address": {
-    "@type": "PostalAddress",
-    "streetAddress": "Röntgenstrasse 10",
-    "postalCode": "8005",
-    "addressLocality": "Zürich",
-    "addressCountry": "CH"
-  },
-  "areaServed": ["CH", "DE", "AT", "IT", "GB", "ES"],
-  "sameAs": [
-    "https://www.instagram.com/...",
-    "https://www.linkedin.com/...",
-    "https://www.behance.net/..."
-  ]
-}
+  {
+    "@context": "https://schema.org",
+    "@type": ["Organization", "LocalBusiness"],
+    "name": "UNGEBAUT",
+    "description": "Architectural visualisation studio in Zürich. Renderings, 3D design, animation, VR/AR and drone documentation.",
+    "url": "https://www.ungebaut.com",
+    "email": "booking@ungebaut.ch",
+    "telephone": "+41775210295",
+    "founder": [
+      { "@type": "Person", "name": "Philippos Theofanidis" },
+      { "@type": "Person", "name": "Luna Theofanidis" }
+    ],
+    "foundingDate": "YYYY",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Röntgenstrasse 10",
+      "postalCode": "8005",
+      "addressLocality": "Zürich",
+      "addressCountry": "CH"
+    },
+    "areaServed": ["CH", "DE", "AT", "IT", "GB", "ES"],
+    "sameAs": [
+      "https://www.instagram.com/...",
+      "https://www.linkedin.com/...",
+      "https://www.behance.net/..."
+    ]
+  }
 </script>
 ```
 

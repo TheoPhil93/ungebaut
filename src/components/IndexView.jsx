@@ -101,18 +101,15 @@ export function IndexView({ onSelect }) {
                     autoPlay={isHovered}
                   />
                 ) : (
-                  <img
-                    src={project.image}
-                    alt=""
-                    loading="lazy"
-                    decoding="async"
-                  />
+                  <img src={project.image} alt="" loading="lazy" decoding="async" />
                 )}
                 <span className="index__row-media-shade" />
               </motion.div>
 
               <span className="index__row-content">
-                <span className="index__row-num">{String(project.id).padStart(3, '0')}</span>
+                <span className="index__row-num">
+                  {String(project.id).padStart(3, '0')}
+                </span>
                 <span className="index__row-client">{project.client}</span>
                 <span className="index__row-title">{project.title}</span>
                 <span className="index__row-year">

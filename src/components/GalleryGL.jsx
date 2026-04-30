@@ -45,9 +45,7 @@ function projectStripe(stripe, current, viewportW, latencyX, waveRange) {
 
   const k = Math.abs(worldX);
   const waveZ =
-    k < waveRange
-      ? (waveRange - easeInOutQuad(k / waveRange) * waveRange) * latencyX
-      : 0;
+    k < waveRange ? (waveRange - easeInOutQuad(k / waveRange) * waveRange) * latencyX : 0;
 
   const proj = CAMERA_Z / (CAMERA_Z - waveZ);
   // viewportW only mattered for the (now-removed) cylindrical bend.
@@ -60,13 +58,7 @@ function projectStripe(stripe, current, viewportW, latencyX, waveRange) {
   };
 }
 
-export function GalleryGL({
-  onSelect,
-  onHoverChange,
-  onExplore,
-  selectedId,
-  hoveredId,
-}) {
+export function GalleryGL({ onSelect, onHoverChange, onExplore, selectedId, hoveredId }) {
   const reduced = usePrefersReducedMotion();
   const stageRef = useRef(null);
   const canvasRef = useRef(null);
@@ -397,7 +389,7 @@ export function GalleryGL({
       // which feels like the gallery is floating in empty space. Tablets
       // sit between (0.78) so the row still has breathing room but uses
       // most of the available canvas.
-      const fitFactor = h < 540 ? 0.92 : (w < 1180 ? 0.78 : 0.62);
+      const fitFactor = h < 540 ? 0.92 : w < 1180 ? 0.78 : 0.62;
       fit = Math.min(1.2, Math.max(0.68, (h * fitFactor) / STRIPE_HEIGHT));
 
       const effW = STRIPE_WIDTH * fit;
@@ -463,9 +455,7 @@ export function GalleryGL({
 
     const onWheel = (event) => {
       const dy =
-        Math.abs(event.deltaY) > Math.abs(event.deltaX)
-          ? event.deltaY
-          : event.deltaX;
+        Math.abs(event.deltaY) > Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
       if (dy === 0) return;
       event.preventDefault();
       // While a project is open, scroll-down opens the deeper detail view
@@ -495,8 +485,7 @@ export function GalleryGL({
         // larger threshold for `pointerType === 'touch'` to prevent every tap
         // from being misclassified as a drag.
         const dragThreshold = event.pointerType === 'touch' ? 8 : 4;
-        if (Math.abs(event.clientX - dragStartX) > dragThreshold)
-          dragMoved = true;
+        if (Math.abs(event.clientX - dragStartX) > dragThreshold) dragMoved = true;
         target = clamp(target - dx, minScroll, maxScroll);
         dragLastX = event.clientX;
       }
@@ -542,7 +531,8 @@ export function GalleryGL({
       // matches `hoveredIndex` (already kept fresh by hover); for touch we
       // fall back to a synchronous hit-test because there is no hover prior
       // to the tap.
-      pressedIndex = hoveredIndex >= 0 ? hoveredIndex : hitTestAt(event.clientX, event.clientY);
+      pressedIndex =
+        hoveredIndex >= 0 ? hoveredIndex : hitTestAt(event.clientX, event.clientY);
       try {
         canvas.setPointerCapture(event.pointerId);
       } catch {
@@ -648,12 +638,11 @@ export function GalleryGL({
       // Threshold + range so the wave only activates with deliberate scroll.
       // Below 120px lag → completely flat; rises to full strength at +480px
       // additional lag. The smoothing keeps the ramp gentle.
-      
 
       // Phase 2 — signed scroll velocity drives stripe Y-rotation. Clamp to
       // ±2 (Aristide's hard cap) and lerp toward the target so quick flicks
       // don't snap the row.
-      
+
       const externalHoverId = hoveredIdRef.current;
       hoveredIndex = -1;
       if (!dragging) {
@@ -674,8 +663,7 @@ export function GalleryGL({
       }
 
       // Bridge hover state to React. Only emit on edges to avoid spam.
-      const newHoverId =
-        hoveredIndex >= 0 ? stripes[hoveredIndex].project.id : null;
+      const newHoverId = hoveredIndex >= 0 ? stripes[hoveredIndex].project.id : null;
       if (newHoverId !== lastEmittedHoverId) {
         lastEmittedHoverId = newHoverId;
         onHoverRef.current?.(newHoverId);
@@ -693,8 +681,7 @@ export function GalleryGL({
         // right-side off-screen stripes to play out their slide before the
         // left edge populates.
         if (entranceActive) {
-          const localT =
-            (elapsed - i * ENTRANCE_PER_STRIPE_MS) / ENTRANCE_DURATION_MS;
+          const localT = (elapsed - i * ENTRANCE_PER_STRIPE_MS) / ENTRANCE_DURATION_MS;
           const phase = Math.max(0, Math.min(1, localT));
           const eased = 1 - Math.pow(1 - phase, 4); // easeOutQuart
           s.mesh.position.x = s.x - current + (1 - eased) * ENTRANCE_OFFSET_X;
@@ -705,8 +692,7 @@ export function GalleryGL({
           s.opacity = 1;
         }
 
-        const isHovered =
-          i === hoveredIndex || s.project.id === externalHoverId;
+        const isHovered = i === hoveredIndex || s.project.id === externalHoverId;
         s.targetHover = isHovered ? 1 : 0;
 
         // The neighbours of the focused card take a HEAVY wash of the
@@ -779,10 +765,7 @@ export function GalleryGL({
           // in the desktop branch.
           const stageH = stage.clientHeight;
           const isNarrow = w < 1180 || stageH < 540;
-          const heightCap = Math.min(
-            stageH * (isNarrow ? 0.74 : 0.62),
-            720,
-          );
+          const heightCap = Math.min(stageH * (isNarrow ? 0.74 : 0.62), 720);
           const widthCap = w * (isNarrow ? 0.86 : 0.46);
           let baseW;
           let baseH;
@@ -917,8 +900,8 @@ export function GalleryGL({
             s.video.parentNode?.removeChild(s.video);
           }
         } catch {
-        // best-effort — context may already be gone
-      }
+          // best-effort — context may already be gone
+        }
       });
       // Intentionally NOT calling WEBGL_lose_context here — under React
       // StrictMode the effect mounts → cleans up → re-mounts immediately, and

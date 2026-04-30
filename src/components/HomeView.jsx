@@ -2,9 +2,7 @@ import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { TextCascade } from './TextCascade';
 
-const GalleryGL = lazy(() =>
-  import('./GalleryGL').then((m) => ({ default: m.GalleryGL })),
-);
+const GalleryGL = lazy(() => import('./GalleryGL').then((m) => ({ default: m.GalleryGL })));
 import { MassiveTitle } from './MassiveTitle';
 import { projects, getProject } from '../data/projects';
 import { SeoHead } from './SeoHead';
@@ -113,10 +111,7 @@ export function HomeView({ onSelect, onExplore, selectedId }) {
           GalleryGL scales the chosen stripe to its photo's natural aspect
           ratio and pushes neighbours off-screen. We do NOT dim the canvas
           anymore — it IS the picture. */}
-      <div
-        className="home__gl"
-        data-cursor={hovered ? 'gallery' : undefined}
-      >
+      <div className="home__gl" data-cursor={hovered ? 'gallery' : undefined}>
         <Suspense fallback={null}>
           <GalleryGL
             onSelect={onSelect}
@@ -212,9 +207,7 @@ export function HomeView({ onSelect, onExplore, selectedId }) {
           total={TICK_TOTAL}
           activeRatio={(displayIndex - 1) / Math.max(1, projects.length - 1)}
         />
-        <span className="home__top-label">
-          {focused ? focused.client : ''}
-        </span>
+        <span className="home__top-label">{focused ? focused.client : ''}</span>
       </div>
 
       {/* Bottom strip — role on the left, project meta in the middle,
@@ -321,7 +314,9 @@ export function HomeView({ onSelect, onExplore, selectedId }) {
               <span>Explore</span>
             </button>
             <span className="home__center-rule" aria-hidden="true" />
-            <span className="home__center-plus" aria-hidden="true">+</span>
+            <span className="home__center-plus" aria-hidden="true">
+              +
+            </span>
           </motion.div>
         ) : null}
 
@@ -355,11 +350,7 @@ export function HomeView({ onSelect, onExplore, selectedId }) {
                 <span className="home__contact-value">booking@ungebaut.ch</span>
               </a>
               <span className="home__contact-rule" aria-hidden="true" />
-              <a
-                className="home__contact-cta"
-                href="tel:+41775210295"
-                data-cursor="hover"
-              >
+              <a className="home__contact-cta" href="tel:+41775210295" data-cursor="hover">
                 <span className="home__contact-label">Telefon</span>
                 <span className="home__contact-value">+41 77 521 02 95</span>
               </a>
@@ -403,7 +394,6 @@ export function HomeView({ onSelect, onExplore, selectedId }) {
   );
 }
 
-
 // ---------------------------------------------------------------------------
 // Progress ticks
 // ---------------------------------------------------------------------------
@@ -416,10 +406,7 @@ function ProgressTicks({ total, activeRatio }) {
         const dist = Math.abs(i - activeIndex);
         const active = dist <= 1;
         return (
-          <span
-            key={i}
-            className={`ticks__bar${active ? ' ticks__bar--active' : ''}`}
-          />
+          <span key={i} className={`ticks__bar${active ? ' ticks__bar--active' : ''}`} />
         );
       })}
     </div>

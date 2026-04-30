@@ -47,7 +47,9 @@ export function Cursor() {
       x.set(event.clientX);
       y.set(event.clientY);
       const target = findHoverTarget(event.target);
-      setCursorMode(target?.dataset.cursor === 'gallery' ? 'gallery' : target ? 'hover' : 'rest');
+      setCursorMode(
+        target?.dataset.cursor === 'gallery' ? 'gallery' : target ? 'hover' : 'rest',
+      );
     };
 
     const onOver = (event) => {

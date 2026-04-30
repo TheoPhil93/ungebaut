@@ -7,7 +7,7 @@
 
 ## 1. swiss-architects.com (höchste Priorität)
 
-**Warum:** Das *Swiss architecture directory*. KI-Tools zitieren es ständig für Anfragen wie "Architekturstudios in der Schweiz". OVA Studio ist hier gelistet — deshalb erscheint OVA in KI-Antworten und wir nicht.
+**Warum:** Das _Swiss architecture directory_. KI-Tools zitieren es ständig für Anfragen wie "Architekturstudios in der Schweiz". OVA Studio ist hier gelistet — deshalb erscheint OVA in KI-Antworten und wir nicht.
 
 **Aktion:** Bezahltes Profil beantragen. Kategorie "Architectural Visualisers" existiert.
 
@@ -26,6 +26,7 @@
 **Warum:** Beide veröffentlichen kuratierte Rendering-Studio-Übersichten, die KI stark zitiert. Architizers "Best Architectural Visualization Firms"-Listen sind eine primäre Zitatquelle.
 
 ### Architizer
+
 **Aktion:** 5–8 stärkste Projekte zu Architizer Vault einreichen (kostenlos). Sobald 5+ Projekte veröffentlicht sind, das Editorial-Team für die nächste "Visualization Studios"-Feature anpitchen.
 
 **Pitch-E-Mail (EN):**
@@ -55,6 +56,7 @@ UNGEBAUT · ungebaut.com · @ungebaut_visu
 ```
 
 ### ArchDaily
+
 **Aktion:** Projekte über ArchDaily "Submit a Project" einreichen. Als "Visualization" taggen. Nach 3+ akzeptierten Einreichungen Feature anpitchen.
 
 ---
@@ -75,9 +77,10 @@ UNGEBAUT · ungebaut.com · @ungebaut_visu
 
 ## 4. Behance — Featured Project Push
 
-**Warum:** KI-Tools zitieren Behance-Featured-Projekte stark, besonders für "best archviz portfolio"-Anfragen. Account vorhanden, aber *featured* fehlt.
+**Warum:** KI-Tools zitieren Behance-Featured-Projekte stark, besonders für "best archviz portfolio"-Anfragen. Account vorhanden, aber _featured_ fehlt.
 
 **Aktion:**
+
 1. Stärkste 3 Projekte auswählen
 2. Als separate Behance-Projekte hochladen (nicht zusammengefasst) im vollständigen Case-Study-Format: Brief, Prozess, Final, Kundenname
 3. Tags: Architectural Visualization · 3D Rendering · Switzerland · V-Ray (oder genutzte Engine)
@@ -117,6 +120,7 @@ ungebaut.com
 ```
 
 **Weitere DACH-Outlets (gleiche Story, leicht angepasst):**
+
 - Hochparterre (Schweizer Architekturmagazin)
 - Werk, Bauen + Wohnen
 - Espazium / TEC21
@@ -130,6 +134,7 @@ ungebaut.com
 **Warum:** Reddit = 1,8 % der ChatGPT-Zitate. Kein Spam — natürlich zitiert werden, indem man nützlich ist.
 
 **Aktionsplan (4 Wochen):**
+
 - Subreddits: r/architecture, r/3DRendering, r/Switzerland, r/zurich, r/Archviz
 - Woche 1–2: nur hilfreich auf andere Posts kommentieren. Account-History aufbauen.
 - Woche 3: einen Breakdown posten ("How we approached lighting on this competition render — 3 iterations") mit 2–3 Bildern. Kein Site-Link im Body; Profil-Bio verlinkt auf ungebaut.com.
@@ -143,31 +148,31 @@ Kritisch: nie mit Eigenwerbung führen — Reddit löscht Post und Marke.
 
 Mit derselben deutschen + englischen Bio einreichen:
 
-| Verzeichnis | URL | Kosten |
-|---|---|---|
-| ensun (von KI für Schweizer Tech-Directory genutzt) | ensun.io → Firma vorschlagen | Frei |
-| Local.ch Business-Listing | local.ch | Frei |
-| search.ch | search.ch | Frei |
-| Schweizer Architektur (offene Registry) | schweizer-architektur.ch | Frei |
-| Hochparterre Werkplatz | hochparterre.ch/werkplatz | Frei |
-| Chaos Corona partners | corona-renderer.com/partners | Frei |
-| The Rookies (jährlicher Archviz-Wettbewerb) | therookies.co | Frei |
+| Verzeichnis                                         | URL                          | Kosten |
+| --------------------------------------------------- | ---------------------------- | ------ |
+| ensun (von KI für Schweizer Tech-Directory genutzt) | ensun.io → Firma vorschlagen | Frei   |
+| Local.ch Business-Listing                           | local.ch                     | Frei   |
+| search.ch                                           | search.ch                    | Frei   |
+| Schweizer Architektur (offene Registry)             | schweizer-architektur.ch     | Frei   |
+| Hochparterre Werkplatz                              | hochparterre.ch/werkplatz    | Frei   |
+| Chaos Corona partners                               | corona-renderer.com/partners | Frei   |
+| The Rookies (jährlicher Archviz-Wettbewerb)         | therookies.co                | Frei   |
 
 ---
 
 ## 8. Empfohlene Ausführungsreihenfolge
 
-| Woche | Aufgabe | Ergebnis |
-|---|---|---|
-| 1 | swiss-architects.com Profil | Meistzitiertes Schweizer Verzeichnis |
-| 1 | Behance — Top 3 als Case Studies neu hochladen | Portfolio-Authority |
-| 2 | Architizer Vault Einreichungen | Pfad zur Listicle-Aufnahme |
-| 2 | ArchDaily Einreichungen | Dito |
-| 3 | CGconnect Einreichung | Chaos-Ökosystem-Sichtbarkeit |
-| 3 | Nischen-Verzeichnis-Batch (1 Stunde) | Kumulative Präsenz |
-| 4 | Newlyswissed Pitch | Unabhängige Presse für Wikipedia-Pfad |
-| 5 | Hochparterre / Werk / BauNetz Pitches | DACH-Medien |
-| 6+ | Reddit Slow Build | Langfristige Zitatquelle |
+| Woche | Aufgabe                                        | Ergebnis                              |
+| ----- | ---------------------------------------------- | ------------------------------------- |
+| 1     | swiss-architects.com Profil                    | Meistzitiertes Schweizer Verzeichnis  |
+| 1     | Behance — Top 3 als Case Studies neu hochladen | Portfolio-Authority                   |
+| 2     | Architizer Vault Einreichungen                 | Pfad zur Listicle-Aufnahme            |
+| 2     | ArchDaily Einreichungen                        | Dito                                  |
+| 3     | CGconnect Einreichung                          | Chaos-Ökosystem-Sichtbarkeit          |
+| 3     | Nischen-Verzeichnis-Batch (1 Stunde)           | Kumulative Präsenz                    |
+| 4     | Newlyswissed Pitch                             | Unabhängige Presse für Wikipedia-Pfad |
+| 5     | Hochparterre / Werk / BauNetz Pitches          | DACH-Medien                           |
+| 6+    | Reddit Slow Build                              | Langfristige Zitatquelle              |
 
 ---
 

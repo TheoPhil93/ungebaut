@@ -47,7 +47,9 @@ export function AboutView() {
         </h1>
 
         <aside className="about__top-contact" id="contact" aria-labelledby="contact-h2">
-          <h2 className="about__h2" id="contact-h2">{about.contact.heading}</h2>
+          <h2 className="about__h2" id="contact-h2">
+            {about.contact.heading}
+          </h2>
 
           <div className="about__contact-grid">
             <div className="about__contact-cell">
@@ -121,7 +123,9 @@ export function AboutView() {
             <li key={person.name} className="about__founder">
               <p className="about__founder-name">{person.name}</p>
               <p className="about__founder-role">{person.role}</p>
-              <p className="about__founder-bio" lang="de">{person.bio}</p>
+              <p className="about__founder-bio" lang="de">
+                {person.bio}
+              </p>
             </li>
           ))}
         </ul>
@@ -130,7 +134,9 @@ export function AboutView() {
       <div className="about__section" id="clients">
         <h2 className="about__h2">{about.clients.heading}</h2>
         <div className="about__section-grid">
-          <p className="about__clients-intro" lang="de">{about.clients.intro}</p>
+          <p className="about__clients-intro" lang="de">
+            {about.clients.intro}
+          </p>
           <ul className="about__clients-list">
             {about.clients.list.map((client) => (
               <li key={client}>{client}</li>
@@ -152,7 +158,6 @@ export function AboutView() {
           </dl>
         </div>
       </div>
-
     </section>
   );
 }

@@ -55,8 +55,8 @@ export const about = {
     address: 'Röntgenstrasse 10, 8005 Zürich',
     socials: [
       { label: 'Instagram', href: 'https://www.instagram.com/ungebaut_visu/' },
-      { label: 'LinkedIn',  href: 'https://www.linkedin.com/company/ungebaut/' },
-      { label: 'Behance',   href: 'https://www.behance.net/ungebaut' },
+      { label: 'LinkedIn', href: 'https://www.linkedin.com/company/ungebaut/' },
+      { label: 'Behance', href: 'https://www.behance.net/ungebaut' },
     ],
   },
 };

@@ -52,16 +52,12 @@ async function startPreview() {
   }
 
   const isWin = process.platform === 'win32';
-  const child = spawn(
-    'npx',
-    ['vite', 'preview', '--port', String(PORT), '--strictPort'],
-    {
-      cwd: resolve(__dirname, '..'),
-      stdio: ['ignore', 'pipe', 'pipe'],
-      // Windows: .cmd shims (npx.cmd) require shell to launch correctly.
-      shell: isWin,
-    },
-  );
+  const child = spawn('npx', ['vite', 'preview', '--port', String(PORT), '--strictPort'], {
+    cwd: resolve(__dirname, '..'),
+    stdio: ['ignore', 'pipe', 'pipe'],
+    // Windows: .cmd shims (npx.cmd) require shell to launch correctly.
+    shell: isWin,
+  });
 
   child.stderr.on('data', (chunk) => {
     process.stderr.write(`[preview] ${chunk}`);
@@ -73,9 +69,7 @@ async function startPreview() {
 
 async function snapshot(browser, route) {
   const page = await browser.newPage();
-  await page.setUserAgent(
-    'Mozilla/5.0 (compatible; UngebautPrerender/1.0)',
-  );
+  await page.setUserAgent('Mozilla/5.0 (compatible; UngebautPrerender/1.0)');
   await page.goto(`${ORIGIN}${route}`, { waitUntil: 'networkidle0', timeout: 30000 });
 
   // Pause briefly to let TextCascade & Framer settle into their final state.

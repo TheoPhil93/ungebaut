@@ -96,11 +96,10 @@ export function JournalView() {
           >
             <article>
               <header className="journal__entry-head">
-                <span className="journal__entry-num" aria-hidden="true">01</span>
-                <time
-                  className="journal__entry-date"
-                  dateTime={cornerstone.publishedAt}
-                >
+                <span className="journal__entry-num" aria-hidden="true">
+                  01
+                </span>
+                <time className="journal__entry-date" dateTime={cornerstone.publishedAt}>
                   {formatDate(cornerstone.publishedAt)}
                 </time>
                 <ul className="journal__entry-tags" aria-label="Schlagworte">
@@ -116,9 +115,10 @@ export function JournalView() {
               <h2 className="journal__entry-title">{cornerstone.title}</h2>
 
               <p className="journal__byline">
-                Von <strong>{cornerstone.author.name}</strong> —{' '}
-                {cornerstone.author.role}
-                <span className="journal__byline-sep" aria-hidden="true">·</span>
+                Von <strong>{cornerstone.author.name}</strong> — {cornerstone.author.role}
+                <span className="journal__byline-sep" aria-hidden="true">
+                  ·
+                </span>
                 <span>{cornerstone.readingTimeMin} min Lesezeit</span>
               </p>
 

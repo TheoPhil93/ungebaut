@@ -8,8 +8,7 @@ import { pathFromView } from '../hooks/useUrlSync';
 // it from the index even when the host returns 200.
 export function NotFoundView({ onNavigate }) {
   const handleHome = (event) => {
-    if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0)
-      return;
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
     if (!onNavigate) return;
     event.preventDefault();
     onNavigate('home');
@@ -28,15 +27,11 @@ export function NotFoundView({ onNavigate }) {
         <p className="not-found__eyebrow">Error · 404</p>
         <h1 className="not-found__title">Diese Seite gibt es nicht.</h1>
         <p className="not-found__body">
-          Der angefragte Inhalt wurde verschoben, gelöscht oder hat eine neue
-          Adresse. Zurück zur Übersicht oder direkt zum Kontakt.
+          Der angefragte Inhalt wurde verschoben, gelöscht oder hat eine neue Adresse.
+          Zurück zur Übersicht oder direkt zum Kontakt.
         </p>
         <div className="not-found__cta-row">
-          <a
-            href={pathFromView('home')}
-            className="not-found__cta"
-            onClick={handleHome}
-          >
+          <a href={pathFromView('home')} className="not-found__cta" onClick={handleHome}>
             Zurück zur Startseite
           </a>
           <a className="not-found__cta-secondary" href="mailto:booking@ungebaut.ch">

@@ -12,13 +12,65 @@ const SERVICES_SCHEMA = {
   inLanguage: 'de-CH',
   provider: { '@type': 'Organization', name: 'UNGEBAUT' },
   itemListElement: [
-    { '@type': 'Offer', name: 'Aussenrendering', priceCurrency: 'CHF', price: '1800', priceSpecification: { '@type': 'PriceSpecification', price: '1800', priceCurrency: 'CHF', valueAddedTaxIncluded: false }, description: 'Fotorealistische Aussenraum-Visualisierung. 5–10 Arbeitstage. Inklusive einer Korrekturrunde.' },
-    { '@type': 'Offer', name: 'Innenraum-Rendering', priceCurrency: 'CHF', price: '2200', description: 'Fotorealistische Innenraum-Visualisierung. 5–10 Arbeitstage. Inklusive einer Korrekturrunde.' },
-    { '@type': 'Offer', name: 'Wettbewerbs-Paket', priceCurrency: 'CHF', price: '8500', description: 'Atmosphärische Stills, Diagramme und Wettbewerbs-Plakate. 3–4 Wochen. Zwei Korrekturrunden.' },
-    { '@type': 'Offer', name: 'Architekturanimation (30 Sekunden)', priceCurrency: 'CHF', price: '6500', description: 'Cinematischer 30-Sekunden-Flythrough oder Motion-Sequenz. 3–4 Wochen.' },
-    { '@type': 'Offer', name: 'VR-Rundgang', priceCurrency: 'CHF', price: '9000', description: 'Immersiver VR-Rundgang (WebXR oder Headset). 4–6 Wochen.' },
-    { '@type': 'Offer', name: 'Drohnen-Fotoset', priceCurrency: 'CHF', price: '1200', description: 'Aerial-Standortfotografie für Kontextplatten und Standortanalysen. 3–5 Arbeitstage.' },
-    { '@type': 'Offer', name: 'Drohnen-Video', priceCurrency: 'CHF', price: '2400', description: 'Cinematisches Standortvideo. 5–7 Arbeitstage.' },
+    {
+      '@type': 'Offer',
+      name: 'Aussenrendering',
+      priceCurrency: 'CHF',
+      price: '1800',
+      priceSpecification: {
+        '@type': 'PriceSpecification',
+        price: '1800',
+        priceCurrency: 'CHF',
+        valueAddedTaxIncluded: false,
+      },
+      description:
+        'Fotorealistische Aussenraum-Visualisierung. 5–10 Arbeitstage. Inklusive einer Korrekturrunde.',
+    },
+    {
+      '@type': 'Offer',
+      name: 'Innenraum-Rendering',
+      priceCurrency: 'CHF',
+      price: '2200',
+      description:
+        'Fotorealistische Innenraum-Visualisierung. 5–10 Arbeitstage. Inklusive einer Korrekturrunde.',
+    },
+    {
+      '@type': 'Offer',
+      name: 'Wettbewerbs-Paket',
+      priceCurrency: 'CHF',
+      price: '8500',
+      description:
+        'Atmosphärische Stills, Diagramme und Wettbewerbs-Plakate. 3–4 Wochen. Zwei Korrekturrunden.',
+    },
+    {
+      '@type': 'Offer',
+      name: 'Architekturanimation (30 Sekunden)',
+      priceCurrency: 'CHF',
+      price: '6500',
+      description: 'Cinematischer 30-Sekunden-Flythrough oder Motion-Sequenz. 3–4 Wochen.',
+    },
+    {
+      '@type': 'Offer',
+      name: 'VR-Rundgang',
+      priceCurrency: 'CHF',
+      price: '9000',
+      description: 'Immersiver VR-Rundgang (WebXR oder Headset). 4–6 Wochen.',
+    },
+    {
+      '@type': 'Offer',
+      name: 'Drohnen-Fotoset',
+      priceCurrency: 'CHF',
+      price: '1200',
+      description:
+        'Aerial-Standortfotografie für Kontextplatten und Standortanalysen. 3–5 Arbeitstage.',
+    },
+    {
+      '@type': 'Offer',
+      name: 'Drohnen-Video',
+      priceCurrency: 'CHF',
+      price: '2400',
+      description: 'Cinematisches Standortvideo. 5–7 Arbeitstage.',
+    },
   ],
 };
 
@@ -50,11 +102,7 @@ export function ServicesView() {
 
       <div className="services__offerings">
         {services.offerings.map((offering, i) => (
-          <article
-            key={offering.id}
-            id={offering.id}
-            className="services__offering"
-          >
+          <article key={offering.id} id={offering.id} className="services__offering">
             <span className="services__offering-num" aria-hidden="true">
               {String(i + 1).padStart(2, '0')}
             </span>
@@ -83,12 +131,10 @@ export function ServicesView() {
       </div>
 
       <div className="services__pricing" id="pricing">
-        <h2 className="services__pricing-h2">
-          Was kostet eine Architekturvisualisierung?
-        </h2>
+        <h2 className="services__pricing-h2">Was kostet eine Architekturvisualisierung?</h2>
         <p className="services__pricing-lede">
-          Startpreise für die häufigsten Leistungen. Senden Sie Ihre Pläne —
-          Sie erhalten innerhalb von 24 Stunden ein Fix-Angebot.
+          Startpreise für die häufigsten Leistungen. Senden Sie Ihre Pläne — Sie erhalten
+          innerhalb von 24 Stunden ein Fix-Angebot.
         </p>
 
         <table className="services__pricing-table">

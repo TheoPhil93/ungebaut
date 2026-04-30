@@ -19,8 +19,7 @@ export function Footer({ onNavigate }) {
   }, []);
 
   const handleLegalClick = (event, view) => {
-    if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0)
-      return;
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
     if (!onNavigate) return;
     event.preventDefault();
     onNavigate(view);

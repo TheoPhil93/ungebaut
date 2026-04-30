@@ -44,8 +44,7 @@ export function ImpressumView() {
         <section className="legal__block">
           <h2>Kontakt</h2>
           <p>
-            E-Mail:{' '}
-            <a href="mailto:booking@ungebaut.ch">booking@ungebaut.ch</a>
+            E-Mail: <a href="mailto:booking@ungebaut.ch">booking@ungebaut.ch</a>
             <br />
             Telefon: <a href="tel:+41775210295">+41 77 521 02 95</a>
           </p>
@@ -68,26 +67,24 @@ export function ImpressumView() {
         <section className="legal__block">
           <h2>Haftungsausschluss</h2>
           <p>
-            Die Inhalte dieser Website wurden mit grösstmöglicher Sorgfalt
-            erstellt. UNGEBAUT übernimmt jedoch keine Gewähr für die
-            Richtigkeit, Vollständigkeit und Aktualität der bereitgestellten
-            Inhalte. Die Nutzung erfolgt auf eigenes Risiko.
+            Die Inhalte dieser Website wurden mit grösstmöglicher Sorgfalt erstellt.
+            UNGEBAUT übernimmt jedoch keine Gewähr für die Richtigkeit, Vollständigkeit und
+            Aktualität der bereitgestellten Inhalte. Die Nutzung erfolgt auf eigenes Risiko.
           </p>
           <p>
             Verweise und Links auf Websites Dritter liegen ausserhalb des
-            Verantwortungsbereichs von UNGEBAUT. Eine Haftung für die Inhalte
-            verlinkter Websites wird abgelehnt.
+            Verantwortungsbereichs von UNGEBAUT. Eine Haftung für die Inhalte verlinkter
+            Websites wird abgelehnt.
           </p>
         </section>
 
         <section className="legal__block">
           <h2>Urheberrecht</h2>
           <p>
-            Sämtliche auf dieser Website veröffentlichten Inhalte (Texte,
-            Bilder, Visualisierungen, Animationen) sind urheberrechtlich
-            geschützt. Eine Vervielfältigung, Bearbeitung, Verbreitung oder
-            Verwertung — auch in Auszügen — bedarf der vorherigen schriftlichen
-            Zustimmung von UNGEBAUT.
+            Sämtliche auf dieser Website veröffentlichten Inhalte (Texte, Bilder,
+            Visualisierungen, Animationen) sind urheberrechtlich geschützt. Eine
+            Vervielfältigung, Bearbeitung, Verbreitung oder Verwertung — auch in Auszügen —
+            bedarf der vorherigen schriftlichen Zustimmung von UNGEBAUT.
           </p>
         </section>
       </div>

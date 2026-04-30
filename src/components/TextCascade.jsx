@@ -50,10 +50,7 @@ export function TextCascade({
   const chars = useMemo(() => Array.from(text || ''), [text]);
   const n = chars.length;
 
-  const order = useMemo(
-    () => (random ? shuffleIndices(n) : null),
-    [random, n],
-  );
+  const order = useMemo(() => (random ? shuffleIndices(n) : null), [random, n]);
 
   const cascadeChars = Math.max(n, totalChars || n);
   const visiblePortion = Math.max(0.05, 1 - (cascadeChars - 1) * letterDelay);
@@ -76,18 +73,14 @@ export function TextCascade({
       ? { x: xOffset(enterFrom || (reverse ? 'right' : 'left')) }
       : { y: offset };
   const target = axis === 'x' ? { x: '0%' } : { y: '0%' };
-  const exit =
-    axis === 'x'
-      ? { x: xOffset(exitTo || (reverse ? 'right' : 'left')) }
-      : init;
+  const exit = axis === 'x' ? { x: xOffset(exitTo || (reverse ? 'right' : 'left')) } : init;
 
   // Build per-character cells, then bundle consecutive non-space cells
   // into `cascade__word` wrappers (white-space: nowrap) so paragraphs
   // wrap at word boundaries instead of mid-word in narrow columns.
   const renderCell = (ch, i) => {
     const orderIdx = order ? order.indexOf(i) : i;
-    const delay =
-      startDelay + (startIndex + orderIdx) * letterDelay * totalDuration;
+    const delay = startDelay + (startIndex + orderIdx) * letterDelay * totalDuration;
     const isSpace = ch === ' ';
 
     return (

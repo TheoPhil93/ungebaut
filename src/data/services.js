@@ -54,13 +54,48 @@ export const services = {
   ],
 
   pricingTable: [
-    { service: 'Aussenrendering', from: 'CHF 1’800', turnaround: '5–10 Tage', revisions: '1 Runde' },
-    { service: 'Innenraum-Rendering', from: 'CHF 2’200', turnaround: '5–10 Tage', revisions: '1 Runde' },
-    { service: 'Wettbewerbs-Paket', from: 'CHF 8’500', turnaround: '3–4 Wochen', revisions: '2 Runden' },
-    { service: 'Animation (30 s)', from: 'CHF 6’500', turnaround: '3–4 Wochen', revisions: '1 Runde' },
-    { service: 'VR-Rundgang', from: 'CHF 9’000', turnaround: '4–6 Wochen', revisions: '1 Runde' },
-    { service: 'Drohnen-Fotoset', from: 'CHF 1’200', turnaround: '3–5 Tage', revisions: '—' },
-    { service: 'Drohnen-Video', from: 'CHF 2’400', turnaround: '5–7 Tage', revisions: '1 Runde' },
+    {
+      service: 'Aussenrendering',
+      from: 'CHF 1’800',
+      turnaround: '5–10 Tage',
+      revisions: '1 Runde',
+    },
+    {
+      service: 'Innenraum-Rendering',
+      from: 'CHF 2’200',
+      turnaround: '5–10 Tage',
+      revisions: '1 Runde',
+    },
+    {
+      service: 'Wettbewerbs-Paket',
+      from: 'CHF 8’500',
+      turnaround: '3–4 Wochen',
+      revisions: '2 Runden',
+    },
+    {
+      service: 'Animation (30 s)',
+      from: 'CHF 6’500',
+      turnaround: '3–4 Wochen',
+      revisions: '1 Runde',
+    },
+    {
+      service: 'VR-Rundgang',
+      from: 'CHF 9’000',
+      turnaround: '4–6 Wochen',
+      revisions: '1 Runde',
+    },
+    {
+      service: 'Drohnen-Fotoset',
+      from: 'CHF 1’200',
+      turnaround: '3–5 Tage',
+      revisions: '—',
+    },
+    {
+      service: 'Drohnen-Video',
+      from: 'CHF 2’400',
+      turnaround: '5–7 Tage',
+      revisions: '1 Runde',
+    },
   ],
 
   pricingNotes: [

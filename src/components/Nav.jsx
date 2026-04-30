@@ -16,8 +16,7 @@ export function Nav({ view, onNavigate }) {
   const triggerRef = useRef(null);
 
   const handleClick = (event, id) => {
-    if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0)
-      return;
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
     event.preventDefault();
     onNavigate(id);
     setOpen(false);

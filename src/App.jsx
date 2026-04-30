@@ -33,7 +33,16 @@ const NotFoundView = lazy(() =>
   import('./components/NotFoundView').then((m) => ({ default: m.NotFoundView })),
 );
 
-const VIEWS = ['home', 'index', 'services', 'journal', 'about', 'impressum', 'datenschutz', 'not-found'];
+const VIEWS = [
+  'home',
+  'index',
+  'services',
+  'journal',
+  'about',
+  'impressum',
+  'datenschutz',
+  'not-found',
+];
 
 export default function App() {
   const reduced = usePrefersReducedMotion();
@@ -123,39 +132,39 @@ export default function App() {
 
       <main id="main" className="app__main">
         <LayoutGroup id="project-title-transition">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={view}
-            {...transition}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            style={{ display: 'flex', flexDirection: 'column', flex: 1 }}
-          >
-            <Suspense fallback={null}>
-              {view === 'home' && (
-                <HomeView
-                  onSelect={openProject}
-                  onExplore={exploreProject}
-                  selectedId={selectedId}
-                />
-              )}
-              {view === 'index' && <IndexView onSelect={indexHandleSelect} />}
-              {view === 'services' && <ServicesView />}
-              {view === 'journal' && <JournalView />}
-              {view === 'about' && <AboutView />}
-              {view === 'impressum' && <ImpressumView />}
-              {view === 'datenschutz' && <DatenschutzView />}
-              {view === 'not-found' && <NotFoundView onNavigate={navigate} />}
-            </Suspense>
-          </motion.div>
-        </AnimatePresence>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={view}
+              {...transition}
+              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+              style={{ display: 'flex', flexDirection: 'column', flex: 1 }}
+            >
+              <Suspense fallback={null}>
+                {view === 'home' && (
+                  <HomeView
+                    onSelect={openProject}
+                    onExplore={exploreProject}
+                    selectedId={selectedId}
+                  />
+                )}
+                {view === 'index' && <IndexView onSelect={indexHandleSelect} />}
+                {view === 'services' && <ServicesView />}
+                {view === 'journal' && <JournalView />}
+                {view === 'about' && <AboutView />}
+                {view === 'impressum' && <ImpressumView />}
+                {view === 'datenschutz' && <DatenschutzView />}
+                {view === 'not-found' && <NotFoundView onNavigate={navigate} />}
+              </Suspense>
+            </motion.div>
+          </AnimatePresence>
 
-        <AnimatePresence>
-          {selected && detailMode ? (
-            <Suspense fallback={null}>
-              <ProjectDetail project={selected} onClose={closeProject} />
-            </Suspense>
-          ) : null}
-        </AnimatePresence>
+          <AnimatePresence>
+            {selected && detailMode ? (
+              <Suspense fallback={null}>
+                <ProjectDetail project={selected} onClose={closeProject} />
+              </Suspense>
+            ) : null}
+          </AnimatePresence>
         </LayoutGroup>
       </main>
 

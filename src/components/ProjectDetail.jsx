@@ -14,7 +14,7 @@ function buildProjectGallery(project, max = 8, minPad = 4) {
     ...(project.gallery || []),
     project.detailImage,
     project.image,
-    ...((project.sections || []).map((s) => s.image)),
+    ...(project.sections || []).map((s) => s.image),
   ].filter(Boolean);
   const seen = new Set();
   const unique = [];
@@ -150,7 +150,9 @@ export function ProjectDetail({ project, onClose }) {
           data-cursor="hover"
           aria-label="Close project"
         >
-          <span className="detail__close-x" aria-hidden="true">×</span>
+          <span className="detail__close-x" aria-hidden="true">
+            ×
+          </span>
           <span className="detail__close-rule" aria-hidden="true" />
           <span className="detail__close-label">Projects</span>
         </button>
@@ -173,11 +175,7 @@ export function ProjectDetail({ project, onClose }) {
           }}
           aria-hidden="true"
         >
-          <MassiveTitle
-            text={detailTitleText}
-            ink={ink}
-            animate={false}
-          />
+          <MassiveTitle text={detailTitleText} ink={ink} animate={false} />
         </motion.div>
 
         <motion.figure
@@ -228,7 +226,9 @@ export function ProjectDetail({ project, onClose }) {
                       <img src={src} alt="" loading="lazy" />
                     )}
                     <figcaption className="detail__strip-caption">
-                      <span className="detail__strip-num">{String(i + 2).padStart(2, '0')}</span>
+                      <span className="detail__strip-num">
+                        {String(i + 2).padStart(2, '0')}
+                      </span>
                       <span>{project.title}</span>
                     </figcaption>
                   </figure>
@@ -275,7 +275,9 @@ export function ProjectDetail({ project, onClose }) {
         </dl>
 
         <div className="detail__footer-cta">
-          <span aria-hidden="true" className="detail__footer-arrow">↗</span>
+          <span aria-hidden="true" className="detail__footer-arrow">
+            ↗
+          </span>
           <span className="detail__footer-cta-label">View Site</span>
         </div>
 

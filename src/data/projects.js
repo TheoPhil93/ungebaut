@@ -180,9 +180,7 @@ const richProjects = [
     image: local('002/main.jpg'),
     detailImage: local('002/detail.jpg'),
     gallery: [local('002/main.jpg'), local('002/detail.jpg'), local('002/thumb-1.jpg')],
-    sections: [
-      { label: 'Detail', image: local('002/thumb-1.jpg') },
-    ],
+    sections: [{ label: 'Detail', image: local('002/thumb-1.jpg') }],
   },
   {
     id: '003',
@@ -274,7 +272,8 @@ const richProjects = [
     accentSoft: '#0e1610',
     detailBg: '#3d5d4c',
     detailInk: '#e8e3cf',
-    description: 'A composition test — wall, floor, and the single object that decides the rest.',
+    description:
+      'A composition test — wall, floor, and the single object that decides the rest.',
     image: local('008/main.png'),
     detailImage: local('008/main.png'),
     gallery: [local('008/main.png'), local('008/thumb-1.png')],
@@ -311,7 +310,8 @@ const richProjects = [
     accentSoft: '#1c1712',
     detailBg: '#7d6242',
     detailInk: '#f4ead7',
-    description: 'A still from the studio archive — material, light, and the moment we chose. Weitere Infos:www.moosbuehl-wohnen.ch',
+    description:
+      'A still from the studio archive — material, light, and the moment we chose. Weitere Infos:www.moosbuehl-wohnen.ch',
     image: local('012/main.png'),
     detailImage: local('012/main.png'),
     gallery: [local('012/main.png'), local('012/thumb-1.png'), local('012/thumb-2.png')],
@@ -343,7 +343,7 @@ const richProjects = [
   },
   {
     id: 'f004',
-    massiveTitle: 'T  i  m/e  x', 
+    massiveTitle: 'T  i  m/e  x',
     client: 'Timex',
     title: 'Timex',
     tags: ['Product', 'Advertising'],
@@ -381,7 +381,7 @@ const richProjects = [
   {
     id: 'f003',
     client: 'UNGEBAUT',
-    title: 'THE GOLDEN/Sanctum', 
+    title: 'THE GOLDEN/Sanctum',
     tags: ['Motion', 'Interior'],
     year: 2026,
     location: 'Studio archive',
@@ -409,7 +409,8 @@ const richProjects = [
     accentSoft: '#0e1610',
     detailBg: '#3d5d4c',
     detailInk: '#e8e3cf',
-    description: 'A motion pass over the model — the camera holds longer than expected, then drifts off.',
+    description:
+      'A motion pass over the model — the camera holds longer than expected, then drifts off.',
     image: local('015/main.mp4'),
     video: local('015/main.mp4'),
     detailImage: local('015/main.mp4'),
@@ -428,7 +429,8 @@ const richProjects = [
     accentSoft: '#1c0a0e',
     detailBg: '#6f1d2a',
     detailInk: '#f5dfd1',
-    description: 'A working frame from a longer sequence: the geometry studied at one chosen angle.',
+    description:
+      'A working frame from a longer sequence: the geometry studied at one chosen angle.',
     image: local('016/main.jpg'),
     detailImage: local('016/main.jpg'),
     gallery: [local('016/main.jpg'), local('016/thumb-1.jpg')],
@@ -448,11 +450,7 @@ const richProjects = [
     description: 'A study held over three frames — the same room, three apertures.',
     image: local('017/main.jpg'),
     detailImage: local('017/main.jpg'),
-    gallery: [
-      local('017/main.jpg'),
-      local('017/thumb-1.jpg'),
-      local('017/thumb-2.jpg'),
-    ],
+    gallery: [local('017/main.jpg'), local('017/thumb-1.jpg'), local('017/thumb-2.jpg')],
     sections: [],
   },
   {
@@ -466,7 +464,8 @@ const richProjects = [
     accentSoft: '#1c0f0a',
     detailBg: '#c54e3a',
     detailInk: '#fae6cf',
-    description: 'A still from the studio archive — material, light, and the moment we wanted the camera to land on.',
+    description:
+      'A still from the studio archive — material, light, and the moment we wanted the camera to land on.',
     image: local('018/main.png'),
     detailImage: local('018/main.png'),
     gallery: [local('018/main.png'), local('018/thumb-1.png')],
@@ -589,7 +588,8 @@ const richProjects = [
     year: 2026,
     location: 'Studio archive',
     ...PALETTES[1],
-    description: 'A second working capture — slow camera, the room composed for one decisive frame.',
+    description:
+      'A second working capture — slow camera, the room composed for one decisive frame.',
     image: local('028/main.mp4'),
     video: local('028/main.mp4'),
     detailImage: local('028/main.mp4'),
@@ -634,11 +634,7 @@ const richProjects = [
     description: LOOSE_CAPTIONS[3],
     image: local('033/main.png'),
     detailImage: local('033/main.png'),
-    gallery: [
-      local('033/main.png'),
-      local('033/thumb-1.png'),
-      local('033/thumb-2.png'),
-    ],
+    gallery: [local('033/main.png'), local('033/thumb-1.png'), local('033/thumb-2.png')],
     sections: [],
   },
   {
@@ -649,7 +645,8 @@ const richProjects = [
     year: 2026,
     location: 'Studio archive',
     ...PALETTES[5],
-    description: 'A longer working pass — light pulled almost out of the room, the camera barely moving.',
+    description:
+      'A longer working pass — light pulled almost out of the room, the camera barely moving.',
     image: local('034/main.mp4'),
     video: local('034/main.mp4'),
     detailImage: local('034/main.mp4'),
@@ -690,10 +687,12 @@ const looseCards = LOOSE_FILES.map((file, i) => {
   };
 });
 
-export const projects = [...featuredCards, ...richProjects, ...looseCards].map((project, i) => ({
-  ...project,
-  massiveInk: project.massiveInk || MASSIVE_TITLE_INKS[i % MASSIVE_TITLE_INKS.length],
-}));
+export const projects = [...featuredCards, ...richProjects, ...looseCards].map(
+  (project, i) => ({
+    ...project,
+    massiveInk: project.massiveInk || MASSIVE_TITLE_INKS[i % MASSIVE_TITLE_INKS.length],
+  }),
+);
 
 export function getProject(id) {
   return projects.find((p) => p.id === id);

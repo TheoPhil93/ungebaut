@@ -16,8 +16,7 @@ export const articles = [
     updatedAt: '2026-04-29',
     readingTimeMin: 7,
     tags: ['Preise', 'Architekturvisualisierung', 'Schweiz', 'Wettbewerb'],
-    lede:
-      'Eine Architekturvisualisierung in der Schweiz kostet 2026 zwischen CHF 1’800 für ein einzelnes Aussenrendering und CHF 25’000+ für ein vollständiges Wettbewerbs- oder Animationspaket. Der Preis hängt von Detailgrad, Anzahl der Ansichten, Lieferzeit und der Komplexität des Modells ab.',
+    lede: 'Eine Architekturvisualisierung in der Schweiz kostet 2026 zwischen CHF 1’800 für ein einzelnes Aussenrendering und CHF 25’000+ für ein vollständiges Wettbewerbs- oder Animationspaket. Der Preis hängt von Detailgrad, Anzahl der Ansichten, Lieferzeit und der Komplexität des Modells ab.',
     sections: [
       {
         h2: 'Was kostet ein einzelnes Architekturrendering?',
@@ -63,9 +62,7 @@ export const articles = [
       },
       {
         h2: 'Welche Faktoren verändern den Preis am stärksten?',
-        body: [
-          'Sechs Faktoren bestimmen den Endpreis einer Architekturvisualisierung:',
-        ],
+        body: ['Sechs Faktoren bestimmen den Endpreis einer Architekturvisualisierung:'],
         list: [
           'Detailgrad: Wettbewerbs-Skizzen-Look ist günstiger als fotorealistisches Marketing-Material.',
           'Anzahl Ansichten: Jede zusätzliche Kamera erhöht Render- und Korrekturaufwand.',
@@ -84,9 +81,7 @@ export const articles = [
       },
       {
         h2: 'Wie wählt man das richtige Studio?',
-        body: [
-          'Drei Kriterien zählen mehr als der Preis:',
-        ],
+        body: ['Drei Kriterien zählen mehr als der Preis:'],
         list: [
           'Architektonischer Hintergrund: Studios mit ausgebildeten Architekten verstehen Pläne, Schnitte und Detailfragen ohne Übersetzungsverlust.',
           'Spezialisierung: Wettbewerbs-Atmosphären, Marketing-Hochglanz und technische Baueingabe-Visualisierungen verlangen unterschiedliche Skill-Sets.',
@@ -109,5 +104,4 @@ export const articles = [
   },
 ];
 
-export const getArticle = (slug) =>
-  articles.find((a) => a.slug === slug) ?? null;
+export const getArticle = (slug) => articles.find((a) => a.slug === slug) ?? null;

@@ -1,5 +1,5 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
 
 /**
  * Inject a <link rel="preload"> for the LCP-rendering font face. Vite
@@ -18,18 +18,18 @@ function fontPreloadPlugin() {
     transformIndexHtml: {
       order: 'post',
       handler(html, ctx) {
-        const bundle = ctx.bundle || {}
+        const bundle = ctx.bundle || {};
         const fontFile = Object.keys(bundle).find(
           (k) => k.includes('inter-latin-400-normal') && k.endsWith('.woff2'),
-        )
-        if (!fontFile) return html
+        );
+        if (!fontFile) return html;
         const link =
           `<link rel="preload" href="/${fontFile}" as="font" ` +
-          `type="font/woff2" crossorigin="anonymous">`
-        return html.replace('</head>', `    ${link}\n  </head>`)
+          `type="font/woff2" crossorigin="anonymous">`;
+        return html.replace('</head>', `    ${link}\n  </head>`);
       },
     },
-  }
+  };
 }
 
 // https://vite.dev/config/
@@ -48,4 +48,4 @@ export default defineConfig({
       },
     },
   },
-})
+});
