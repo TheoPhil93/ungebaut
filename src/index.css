@@ -342,7 +342,9 @@ button {
   transform: scaleX(0.9);
 }
 
-@media (max-width: 640px) {
+@media (max-width: 900px) {
+  /* Hamburger drawer applies through tablet portrait + landscape phone.
+     Above 900 the inline nav fits comfortably. */
   .nav__list {
     display: none;
   }
@@ -350,8 +352,6 @@ button {
     display: block;
     z-index: 61;
   }
-  /* Drawer trigger needs to stay above the drawer overlay so it remains
-     clickable to close the menu. */
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -3189,13 +3189,12 @@ a.about__contact-value:hover::after {
   }
 }
 
-/* Phone-specific tightening for the close affordance and detail strip
-   typography. At ≤640 the close button needs a 44px tap target per WCAG
-   2.5.5 / iOS guidelines, and the strip caption can drop a size for
-   breathing room. */
-@media (max-width: 640px) {
-  /* Phone close: horizontal "× CLOSE" pattern matching the home close. The
-     vertical rule is hidden — too cramped on phone — and the label stays
+/* Phone + tablet + landscape phone tightening for detail close and strip.
+   At ≤900 the close button needs a 44px tap target per WCAG 2.5.5 / iOS
+   guidelines, the rule is hidden, and the strip caption drops a size. */
+@media (max-width: 900px) {
+  /* Phone/tablet close: horizontal "× CLOSE" matching the home close. The
+     vertical rule is hidden — too cramped — and the label stays
      "Projects" since this control returns to the gallery. */
   .detail__close {
     flex-direction: row;
@@ -3485,12 +3484,18 @@ a.about__contact-value:hover::after {
 }
 
 /* ===========================================================================
-   Mobile — ≤640px. Collapses the bottom info strip to a vertical stack,
-   compacts the nav and footer, increases tap-target sizes, and reduces
-   typographic scale where it threatens overflow.
+   Mobile + tablet + landscape phone — ≤900px. Collapses the bottom info
+   strip to a vertical stack, compacts the nav and footer, increases
+   tap-target sizes, and reduces typographic scale where it threatens
+   overflow. 900 catches:
+     • portrait phone        375×812
+     • landscape phone       812×375 / 667×375
+     • iPad mini portrait    768×1024
+     • iPad portrait         820×1180
+   Above 900 = desktop layout (full row, ticks, location/credit footer).
    =========================================================================== */
 
-@media (max-width: 640px) {
+@media (max-width: 900px) {
   :root {
     --pad-x: 1rem;
     --pad-y: 0.75rem;

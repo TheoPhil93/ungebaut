@@ -590,9 +590,13 @@ export function GalleryGL({
 
       // Phase 3 — when a project is selected, snap the scroll target so the
       // selected stripe's centre lands at world x = 0 (centre of viewport).
+      // No clamping while a project is selected — the first/last stripe sits
+      // at originX = -w*0.1 / +(n-1)*scrollStep which is outside [minScroll,
+      // maxScroll], so clamping there would prevent edge stripes from
+      // centering properly. Drag/wheel handlers still clamp normally.
       if (sel) {
         const selStripe = stripes.find((s) => s.project.id === sel);
-        if (selStripe) target = clamp(selStripe.x, minScroll, maxScroll);
+        if (selStripe) target = selStripe.x;
       }
 
       // Phase 4 — latency lerp jumps from 0.08 (browsing) to 0.30 (selected)
@@ -753,17 +757,17 @@ export function GalleryGL({
           const dist = Math.abs(distance);
 
           const baseAspect = selStripe ? selStripe.imageAspect : s.imageAspect;
-          // Phone gets a much wider width cap so the selected photo dominates
-          // the viewport — desktop stays at ~46% so the row reads as a row,
-          // not a single overpowering card. Aspect is then preserved by
-          // recomputing the smaller dimension from whichever axis hit the cap
-          // first (classic "fit into rectangle" math).
-          const isNarrow = w < 640;
+          // Phone + tablet + landscape phone all get a much wider width cap
+          // so the selected photo dominates the viewport — desktop stays at
+          // ~46% so the row reads as a row, not a single overpowering card.
+          // 900px covers iPad portrait and landscape phones (667/812 wide);
+          // above that we treat as desktop.
+          const isNarrow = w < 900;
           const heightCap = Math.min(
             stage.clientHeight * (isNarrow ? 0.58 : 0.62),
             720,
           );
-          const widthCap = w * (isNarrow ? 0.88 : 0.46);
+          const widthCap = w * (isNarrow ? 0.86 : 0.46);
           let baseW;
           let baseH;
           if (heightCap * baseAspect <= widthCap) {
