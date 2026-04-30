@@ -490,15 +490,47 @@ export function GalleryGL({
       }
     };
 
+    // Synchronous hit-test using the latest tick's `current`/`latencyX`/
+    // `waveRange`. Needed so a touch tap (which has no preceding hover) can
+    // still resolve to the stripe under the finger — without this, every
+    // touch tap was missing because `hoveredIndex` stayed -1 between
+    // pointerleave and the next rAF tick.
+    const hitTestAt = (clientX, clientY) => {
+      const rect = stage.getBoundingClientRect();
+      const localX = clientX - rect.left - rect.width / 2;
+      const localY = -(clientY - rect.top - rect.height / 2);
+      const sel = selectedIdRef.current;
+      for (let i = stripes.length - 1; i >= 0; i--) {
+        const s = stripes[i];
+        const p = projectStripe(s, current, stage.clientWidth, latencyX, waveRange);
+        if (
+          (!sel || s.project.id !== sel) &&
+          localX >= p.screenX - p.halfW &&
+          localX <= p.screenX + p.halfW &&
+          localY >= p.screenY - p.halfH &&
+          localY <= p.screenY + p.halfH
+        ) {
+          return i;
+        }
+      }
+      return -1;
+    };
+
     const onPointerDown = (event) => {
       dragging = true;
       dragMoved = false;
       dragStartX = event.clientX;
       dragLastX = event.clientX;
-      // Capture which stripe sits under the cursor RIGHT NOW. The render loop
-      // pauses hit-testing while dragging is true, so hoveredIndex would
-      // otherwise be reset to -1 before pointerup runs.
-      pressedIndex = hoveredIndex;
+      // Update mouseX/Y so the next render tick's hover system also sees the
+      // finger position immediately.
+      const rect = stage.getBoundingClientRect();
+      mouseX = event.clientX - rect.left - rect.width / 2;
+      mouseY = -(event.clientY - rect.top - rect.height / 2);
+      // Capture which stripe sits under the pointer RIGHT NOW. For mouse this
+      // matches `hoveredIndex` (already kept fresh by hover); for touch we
+      // fall back to a synchronous hit-test because there is no hover prior
+      // to the tap.
+      pressedIndex = hoveredIndex >= 0 ? hoveredIndex : hitTestAt(event.clientX, event.clientY);
       try {
         canvas.setPointerCapture(event.pointerId);
       } catch {

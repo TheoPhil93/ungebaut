@@ -199,7 +199,9 @@ export function HomeView({ onSelect, onExplore, selectedId }) {
         ) : null}
       </AnimatePresence>
 
-      {/* Top progress: counter + tick scrubber. */}
+      {/* Top progress: counter + tick scrubber + (when something is in
+          focus) the focused project's client name. The label is what gives
+          phone users a "current project" indicator since touch has no hover. */}
       <div className="home__top" aria-hidden="true">
         <div className="home__counter">
           <span>{pad(displayIndex)}</span>
@@ -210,6 +212,9 @@ export function HomeView({ onSelect, onExplore, selectedId }) {
           total={TICK_TOTAL}
           activeRatio={(displayIndex - 1) / Math.max(1, projects.length - 1)}
         />
+        <span className="home__top-label">
+          {focused ? focused.client : 'Selected work — 2018 / 2024'}
+        </span>
       </div>
 
       {/* Bottom strip — role on the left, project meta in the middle,
