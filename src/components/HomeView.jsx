@@ -14,6 +14,20 @@ const TICK_TOTAL = 32;
 // feel on every show animation.
 const EASE = [0.16, 1, 0.3, 1];
 
+// Per-line drop reveal for the selected-state meta + description. Each line
+// sits inside an overflow:hidden mask; the inner span starts above (y -110%)
+// and slides into place. staggerChildren cascades top → bottom.
+const REVEAL_CONTAINER = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.07, delayChildren: 0.18 } },
+  exit: { transition: { staggerChildren: 0.04, staggerDirection: -1 } },
+};
+const REVEAL_LINE = {
+  hidden: { y: '-110%' },
+  visible: { y: '0%', transition: { duration: 0.7, ease: EASE } },
+  exit: { y: '-110%', transition: { duration: 0.35, ease: EASE } },
+};
+
 function pad(n) {
   return String(n).padStart(2, '0');
 }
@@ -229,31 +243,31 @@ export function HomeView({ onSelect, onExplore, selectedId }) {
 
         {selected ? (
           <AnimatePresence mode="wait">
-            <motion.dl
+            <motion.div
               key={focused?.id}
-              className="home__meta"
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 6 }}
-              transition={{ duration: 0.5, ease: EASE }}
+              className="home__meta home__meta--selected"
+              variants={REVEAL_CONTAINER}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
             >
-              <div className="home__meta-row">
-                <dt>A · Completed</dt>
-                <dd>{focused?.year}</dd>
-              </div>
-              <div className="home__meta-row">
-                <dt>B · Type</dt>
-                <dd>{focused?.tags?.[0] || '—'}</dd>
-              </div>
-              <div className="home__meta-row">
-                <dt>C · Role</dt>
-                <dd>Visualisation &amp; Direction</dd>
-              </div>
-              <div className="home__meta-row">
-                <dt>D · Client</dt>
-                <dd>{focused?.client}</dd>
-              </div>
-            </motion.dl>
+              {[
+                ['A', 'Completed', focused?.year],
+                ['B', 'Type', focused?.tags?.[0] || '—'],
+                ['C', 'Role', 'Visualisation & Direction'],
+                ['D', 'Client', focused?.client],
+              ].map(([letter, label, value]) => (
+                <span key={letter} className="home__meta-line">
+                  <motion.span variants={REVEAL_LINE} className="home__meta-line-inner">
+                    <span className="home__meta-key" aria-hidden="true">
+                      {letter}
+                    </span>
+                    <span className="home__meta-label">{label}</span>
+                    <span className="home__meta-val">{value}</span>
+                  </motion.span>
+                </span>
+              ))}
+            </motion.div>
           </AnimatePresence>
         ) : (
           <AnimatePresence mode="wait">
@@ -314,7 +328,23 @@ export function HomeView({ onSelect, onExplore, selectedId }) {
         ) : null}
 
         <AnimatePresence mode="wait">
-          {focused ? (
+          {focused && selected ? (
+            <motion.div
+              key={`${focused.id}-desc-sel`}
+              className="home__desc home__desc--selected"
+              variants={REVEAL_CONTAINER}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              transition={{ delayChildren: 0.46 }}
+            >
+              <span className="home__desc-line">
+                <motion.span variants={REVEAL_LINE} className="home__desc-line-inner">
+                  {focused.description}
+                </motion.span>
+              </span>
+            </motion.div>
+          ) : focused ? (
             <motion.p
               key={`${focused.id}-desc`}
               className="home__desc"

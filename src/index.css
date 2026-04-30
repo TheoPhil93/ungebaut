@@ -2539,43 +2539,96 @@ a.about__contact-value:hover::after {
    [meta a-d] · [Explore stack] · [description], with the right side
    balanced by a 1fr spacer so the triplet sits on the page centre. */
 .home__bottom--centered {
-  --selected-info-drop: clamp(2.25rem, 6vh, 5rem);
-  grid-template-columns: 1fr auto 1fr;
-  column-gap: clamp(1.25rem, 3vw, 3rem);
+  grid-template-columns: 1fr auto auto 1fr;
+  grid-template-rows: auto auto;
+  row-gap: clamp(1rem, 2.4vh, 1.75rem);
+  column-gap: clamp(2rem, 5vw, 5rem);
   align-items: start;
-  bottom: calc(var(--pad-y) * 3);
+  bottom: calc(var(--pad-y) * 2.5);
 }
 
 .home__bottom--centered .home__bottom-left {
   display: none;
 }
 
-.home__bottom--centered .home__meta {
-  grid-column: 1;
-  justify-self: start;
-  text-align: left;
-  position: relative;
-  top: var(--selected-info-drop);
-}
-
-.home__bottom--centered .home__meta-row dt {
-  text-align: left;
-}
-
 .home__bottom--centered .home__center-stack {
-  grid-column: 2;
+  grid-column: 1 / -1;
+  grid-row: 1;
   justify-self: center;
-  position: relative;
-  top: var(--selected-info-drop);
+}
+
+.home__bottom--centered .home__meta {
+  grid-column: 2;
+  grid-row: 2;
+  justify-self: end;
+  text-align: left;
 }
 
 .home__bottom--centered .home__desc {
   grid-column: 3;
-  justify-self: end;
-  text-align: right;
-  max-width: 32ch;
-  position: relative;
-  top: var(--selected-info-drop);
+  grid-row: 2;
+  justify-self: start;
+  text-align: left;
+  max-width: 28ch;
+}
+
+/* ----- Selected-state meta: stacked rows with overflow-hidden line masks
+   for the per-row drop reveal. Each row reads "A — Completed   2023". ----- */
+.home__meta--selected {
+  display: flex;
+  flex-direction: column;
+  gap: 0.32rem;
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  font-variant-numeric: tabular-nums;
+  /* Reset grid behaviour the idle .home__meta uses */
+  grid-template-columns: none;
+}
+
+.home__meta-line {
+  display: block;
+  overflow: hidden;
+  line-height: 1.5;
+}
+
+.home__meta-line-inner {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  white-space: nowrap;
+}
+
+.home__meta-key {
+  opacity: 0.55;
+  letter-spacing: 0.24em;
+  width: 0.8em;
+}
+
+.home__meta-label {
+  opacity: 0.55;
+  min-width: 5.5em;
+}
+
+.home__meta-val {
+  opacity: 0.95;
+}
+
+.home__desc--selected {
+  font-size: 0.66rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1.55;
+  max-width: 28ch;
+}
+
+.home__desc-line {
+  display: block;
+  overflow: hidden;
+}
+
+.home__desc-line-inner {
+  display: inline-block;
 }
 
 .home__center-stack {
