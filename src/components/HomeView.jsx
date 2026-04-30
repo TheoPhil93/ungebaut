@@ -217,8 +217,14 @@ export function HomeView({ onSelect, onExplore, selectedId }) {
           focused image. */}
       <div className={`home__bottom${selected ? ' home__bottom--centered' : ''}`}>
         <div className="home__bottom-left">
-          <span className="home__role">Architectural Visualisation</span>
-          <span className="home__avail">Available {new Date().getFullYear()}</span>
+          <a
+            className="home__contact-cta"
+            href="mailto:booking@ungebaut.ch"
+            data-cursor="hover"
+          >
+            <span className="home__contact-label">E-Mail</span>
+            <span className="home__contact-value">booking@ungebaut.ch</span>
+          </a>
         </div>
 
         {selected ? (
@@ -277,20 +283,7 @@ export function HomeView({ onSelect, onExplore, selectedId }) {
                   <dd>{focused.client}</dd>
                 </div>
               </motion.dl>
-            ) : (
-              <motion.p
-                key="idle"
-                className="home__hint"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.4 }}
-              >
-                <span>Scroll · Drag</span>
-                <span className="home__hint-rule" />
-                <span>Click a card</span>
-              </motion.p>
-            )}
+            ) : null}
           </AnimatePresence>
         )}
 
@@ -341,15 +334,6 @@ export function HomeView({ onSelect, onExplore, selectedId }) {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.4 }}
             >
-              <a
-                className="home__contact-cta"
-                href="mailto:booking@ungebaut.ch"
-                data-cursor="hover"
-              >
-                <span className="home__contact-label">E-Mail</span>
-                <span className="home__contact-value">booking@ungebaut.ch</span>
-              </a>
-              <span className="home__contact-rule" aria-hidden="true" />
               <a className="home__contact-cta" href="tel:+41775210295" data-cursor="hover">
                 <span className="home__contact-label">Telefon</span>
                 <span className="home__contact-value">+41 77 521 02 95</span>
