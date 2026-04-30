@@ -12,6 +12,12 @@ dist
 dist-ssr
 *.local
 
+# Playwright — baselines (e2e/__screenshots__) ARE committed; per-run output
+# (failure diffs, traces, html report) regenerates each invocation.
+test-results/
+playwright-report/
+e2e/.cache/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

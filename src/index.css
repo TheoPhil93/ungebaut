@@ -18,8 +18,11 @@
   --bg: #f4f0e8;
   --bg-elev: #ebe7df;
   --fg: #0b0b0b;
-  --muted: rgba(11, 11, 11, 0.55);
-  --muted-soft: rgba(11, 11, 11, 0.32);
+  /* alpha 0.65 blended on --bg (#f4f0e8) ≈ #5D5B58, contrast ~6.16:1 — passes
+     WCAG AA normal text (4.5:1). The previous 0.55 sat at 4.30:1 and failed
+     AA on every body-copy and meta-label use that wasn't large heading. */
+  --muted: rgba(11, 11, 11, 0.65);
+  --muted-soft: rgba(11, 11, 11, 0.4);
   --line: rgba(11, 11, 11, 0.14);
   --line-strong: rgba(11, 11, 11, 0.32);
   /* Constant CREAM colour for elements that use mix-blend-mode: difference.
@@ -2405,7 +2408,13 @@ a.about__contact-value:hover::after {
   display: block;
   width: 100%;
   height: 100%;
-  touch-action: none;
+  /* Single-finger drag is still consumed by JS pointer handlers (the user
+     agent does not initiate scroll/swipe on a single touch); pinch-zoom is
+     reserved for the browser so screen-magnifier users can zoom the page up
+     to 200% without the canvas swallowing the gesture. WCAG 1.4.10 Reflow
+     requires content to remain usable when zoomed; `touch-action: none`
+     would block that. */
+  touch-action: pinch-zoom;
 }
 
 /* Flat preview rectangle that overlays the curved stripes + massive title
@@ -2488,7 +2497,7 @@ a.about__contact-value:hover::after {
 }
 
 .home__counter-total {
-  opacity: 0.55;
+  opacity: 0.65;
 }
 
 .ticks {
@@ -2604,13 +2613,13 @@ a.about__contact-value:hover::after {
 }
 
 .home__meta-key {
-  opacity: 0.55;
+  opacity: 0.65;
   letter-spacing: 0.24em;
   width: 0.8em;
 }
 
 .home__meta-label {
-  opacity: 0.55;
+  opacity: 0.65;
 }
 
 .home__meta-val {
@@ -2669,7 +2678,7 @@ a.about__contact-value:hover::after {
 }
 
 .home__avail {
-  opacity: 0.55;
+  opacity: 0.65;
 }
 
 .home__meta {
@@ -2687,7 +2696,7 @@ a.about__contact-value:hover::after {
 }
 
 .home__meta-row dt {
-  opacity: 0.55;
+  opacity: 0.65;
   letter-spacing: 0.18em;
   text-align: left;
 }
@@ -2714,7 +2723,7 @@ a.about__contact-value:hover::after {
   width: 56px;
   height: 1px;
   background: currentColor;
-  opacity: 0.55;
+  opacity: 0.65;
 }
 
 /* Idle-state contact CTAs that occupy the right cell when no project is
@@ -2749,7 +2758,7 @@ a.about__contact-value:hover::after {
   font-size: 0.62rem;
   letter-spacing: 0.24em;
   text-transform: uppercase;
-  opacity: 0.55;
+  opacity: 0.65;
 }
 
 .home__contact-value {
@@ -3284,7 +3293,7 @@ a.about__contact-value:hover::after {
   width: 1px;
   height: 18px;
   background: currentColor;
-  opacity: 0.55;
+  opacity: 0.65;
 }
 
 .detail__close-label {
@@ -3449,7 +3458,7 @@ a.about__contact-value:hover::after {
 
 .detail__strip-num {
   font-variant-numeric: tabular-nums;
-  opacity: 0.55;
+  opacity: 0.65;
   letter-spacing: 0.1em;
 }
 
@@ -3479,7 +3488,7 @@ a.about__contact-value:hover::after {
 }
 
 .detail__footer-muted {
-  opacity: 0.55;
+  opacity: 0.65;
 }
 
 .detail__meta-grid {
@@ -3499,13 +3508,13 @@ a.about__contact-value:hover::after {
 }
 
 .detail__meta-row dt {
-  opacity: 0.55;
+  opacity: 0.65;
   text-align: left;
   font-weight: 400;
 }
 
 .detail__meta-key {
-  opacity: 0.55;
+  opacity: 0.65;
   margin: 0;
 }
 
@@ -3817,7 +3826,7 @@ a.about__contact-value:hover::after {
 
 .detail__scroll-num {
   font-variant-numeric: tabular-nums;
-  opacity: 0.55;
+  opacity: 0.65;
   letter-spacing: 0.1em;
 }
 
