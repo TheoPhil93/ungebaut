@@ -1,0 +1,8 @@
+dist
+node_modules
+public/images
+pnpm-lock.yaml
+package-lock.json
+.video_frames
+*.min.js
+*.min.css

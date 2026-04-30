@@ -29,8 +29,11 @@ const ImpressumView = lazy(() =>
 const DatenschutzView = lazy(() =>
   import('./components/DatenschutzView').then((m) => ({ default: m.DatenschutzView })),
 );
+const NotFoundView = lazy(() =>
+  import('./components/NotFoundView').then((m) => ({ default: m.NotFoundView })),
+);
 
-const VIEWS = ['home', 'index', 'services', 'journal', 'about', 'impressum', 'datenschutz'];
+const VIEWS = ['home', 'index', 'services', 'journal', 'about', 'impressum', 'datenschutz', 'not-found'];
 
 export default function App() {
   const reduced = usePrefersReducedMotion();
@@ -141,6 +144,7 @@ export default function App() {
               {view === 'about' && <AboutView />}
               {view === 'impressum' && <ImpressumView />}
               {view === 'datenschutz' && <DatenschutzView />}
+              {view === 'not-found' && <NotFoundView onNavigate={navigate} />}
             </Suspense>
           </motion.div>
         </AnimatePresence>

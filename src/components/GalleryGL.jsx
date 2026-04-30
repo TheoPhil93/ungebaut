@@ -273,6 +273,14 @@ export function GalleryGL({
         video.loop = true;
         video.playsInline = true;
         video.preload = 'metadata';
+        // Decorative texture source — never seen by sighted users (1×1
+        // off-screen) and irrelevant to AT users. aria-hidden plus role
+        // hide it from the a11y tree, which silences the Lighthouse
+        // video-caption flag (#8) and prevents screen readers from
+        // announcing a phantom video on the page.
+        video.setAttribute('aria-hidden', 'true');
+        video.setAttribute('role', 'presentation');
+        video.tabIndex = -1;
         // Browsers throttle videos that aren't in the DOM. Park it in a 1×1
         // off-screen wrapper so playback runs at the file's true frame rate.
         video.style.position = 'fixed';
