@@ -2574,7 +2574,9 @@ a.about__contact-value:hover::after {
 
 /* ----- Selected-state meta: stacked rows with overflow-hidden line masks
    for the per-row drop reveal. Each row reads "A — Completed   2023". ----- */
-.home__meta--selected {
+/* Specificity bump (.home__meta.home__meta--selected) so this beats the
+   base .home__meta {display:grid} block defined further down the file. */
+.home__meta.home__meta--selected {
   display: flex;
   flex-direction: column;
   gap: 0.32rem;
@@ -2582,7 +2584,6 @@ a.about__contact-value:hover::after {
   letter-spacing: 0.18em;
   text-transform: uppercase;
   font-variant-numeric: tabular-nums;
-  /* Reset grid behaviour the idle .home__meta uses */
   grid-template-columns: none;
 }
 
@@ -2614,7 +2615,7 @@ a.about__contact-value:hover::after {
   opacity: 0.95;
 }
 
-.home__desc--selected {
+.home__desc.home__desc--selected {
   font-size: 0.66rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
