@@ -3528,13 +3528,31 @@ a.about__contact-value:hover::after {
     justify-self: start;
     max-width: 100%;
   }
-  .home__top-label {
-    display: inline-block;
+  /* Top bar (counter + ticks + project label) hidden entirely on phone —
+     the massive-title overlay handles "current project" duty when one is
+     selected, and the gallery itself is the orientation cue otherwise. */
+  .home__top {
+    display: none;
   }
-  /* Tick scrubber is decorative — not useful on phone with no horizontal
-     visual room and no hover. Hide it so the top reads as a clean
-     "01/34 · CLIENT NAME" pair. */
-  .home__top .ticks {
+
+  /* When a project is open the hamburger trigger sits underneath the close
+     button and crowds it. Hide the trigger in detail/selected state — the
+     close button is the only navigation needed. */
+  .app[data-detail='open'] .nav__toggle {
+    display: none;
+  }
+  .app[data-detail='open'] .nav__brand {
+    /* Brand also competes with the close button on phone. Hide on selected
+       state so the close affordance has clear space. */
+    visibility: hidden;
+  }
+
+  /* Project (selected) view — hide secondary decoration and the
+     A/B/C/D meta dl. Keep title overlay, image, EXPLORE CTA, description,
+     and footer contact. */
+  .home__bottom--centered .home__meta,
+  .home__bottom--centered .home__center-rule,
+  .home__bottom--centered .home__center-plus {
     display: none;
   }
 

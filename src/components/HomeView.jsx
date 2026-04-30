@@ -213,7 +213,7 @@ export function HomeView({ onSelect, onExplore, selectedId }) {
           activeRatio={(displayIndex - 1) / Math.max(1, projects.length - 1)}
         />
         <span className="home__top-label">
-          {focused ? focused.client : 'Selected work — 2018 / 2024'}
+          {focused ? focused.client : ''}
         </span>
       </div>
 
