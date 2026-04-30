@@ -2442,7 +2442,7 @@ a.about__contact-value:hover::after {
 
 .home__top {
   position: absolute;
-  top: calc(var(--pad-y) * 2.6);
+  top: calc(var(--pad-y) * 4.2);
   left: 50%;
   transform: translateX(-50%);
   z-index: 10;
@@ -2942,14 +2942,17 @@ a.about__contact-value:hover::after {
   line-height: 1;
 }
 
-/* Close button — top-right of the expanded view */
+/* Close button — phone-only. On desktop the nav row + ESC keep the user
+   oriented and the button competes with the brand/menu. The mobile cascade
+   below re-enables it as a top-center fixed pill. */
 .home__close {
   position: absolute;
   top: calc(var(--pad-y) * 2.6);
   right: var(--pad-x);
   z-index: 25;
   pointer-events: auto;
-  display: inline-flex;
+  display: none;
+  align-items: center;
   align-items: center;
   gap: 0.6rem;
   background: none;
@@ -3942,6 +3945,7 @@ a.about__contact-value:hover::after {
      .home isolation stacking context so a high z-index can sit above
      the fixed Nav (z-50). Without this the Nav was eating the click. */
   .home__close {
+    display: inline-flex;
     position: fixed;
     top: var(--pad-y);
     right: auto;

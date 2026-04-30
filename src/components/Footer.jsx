@@ -53,7 +53,6 @@ export function Footer({ onNavigate }) {
             Datenschutz
           </a>
         </nav>
-        <div className="footer__credit">We elevate great ideas — Available 2026</div>
       </div>
 
       <div className="footer__phone">
