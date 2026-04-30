@@ -11,6 +11,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource-variable/fraunces": "^5.2.9",
+    "@fontsource/anton": "^5.2.7",
+    "@fontsource/bebas-neue": "^5.2.7",
+    "@fontsource/inter": "^5.2.8",
     "framer-motion": "^12.38.0",
     "lucide-react": "^1.11.0",
     "ogl": "^1.0.11",
