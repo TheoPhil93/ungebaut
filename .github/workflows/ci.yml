@@ -34,8 +34,10 @@ jobs:
 
       - run: pnpm lint
 
+      - run: pnpm test
+
       # Build also exercises the manualChunks split + font-preload plugin —
-      # catches Vite/plugin regressions that lint can't see.
+      # catches Vite/plugin regressions that lint + unit tests can't see.
       - run: pnpm build
 
   smoke:

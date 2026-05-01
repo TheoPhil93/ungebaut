@@ -52,6 +52,16 @@ const sentryPlugins = process.env.SENTRY_AUTH_TOKEN
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), fontPreloadPlugin(), ...sentryPlugins],
+  test: {
+    // happy-dom is ~3× faster than jsdom for hook tests and ships the same
+    // window/history/location surface that useUrlSync needs.
+    environment: 'happy-dom',
+    globals: true,
+    include: ['src/**/*.{test,spec}.{js,jsx}'],
+    // e2e/ is Playwright (different runner) — explicitly excluded so vitest
+    // doesn't try to import @playwright/test specs.
+    exclude: ['e2e/**', 'node_modules/**', 'dist/**'],
+  },
   build: {
     // Sentry needs sourcemaps to symbolicate stack traces. Hidden mode
     // emits the .map files for upload but keeps the //# sourceMappingURL
