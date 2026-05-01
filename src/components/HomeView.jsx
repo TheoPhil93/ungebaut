@@ -1,6 +1,5 @@
 import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { TextCascade } from './TextCascade';
 
 const GalleryGL = lazy(() => import('./GalleryGL').then((m) => ({ default: m.GalleryGL })));
 import { MassiveTitle } from './MassiveTitle';
@@ -61,15 +60,15 @@ export function HomeView({ onSelect, onExplore, selectedId }) {
   const focused = selected || hovered;
 
   const stageRef = useRef(null);
-  const previousSelectedIdRef = useRef(null);
+  // Track previous selectedId via the "store info from previous renders" pattern
+  // (https://react.dev/reference/react/useState#storing-information-from-previous-renders)
+  // so we can detect a project→project switch without reading a ref during render.
+  const [previousSelectedId, setPreviousSelectedId] = useState(selectedId);
+  if (previousSelectedId !== selectedId) {
+    setPreviousSelectedId(selectedId);
+  }
   const isSwitchingSelected =
-    Boolean(selectedId) &&
-    Boolean(previousSelectedIdRef.current) &&
-    previousSelectedIdRef.current !== selectedId;
-
-  useEffect(() => {
-    previousSelectedIdRef.current = selectedId;
-  }, [selectedId]);
+    Boolean(selectedId) && Boolean(previousSelectedId) && previousSelectedId !== selectedId;
 
   // Browse-mode backdrop matches the new light theme; opening a project
   // briefly tints to that project's palette before reverting on close.
@@ -227,7 +226,6 @@ export function HomeView({ onSelect, onExplore, selectedId }) {
               <span aria-hidden="true">×</span>
               <span className="home__close-label">Close</span>
             </motion.button>
-
           </motion.div>
         ) : null}
       </AnimatePresence>
@@ -421,10 +419,7 @@ export function HomeView({ onSelect, onExplore, selectedId }) {
             >
               {splitDescLines(focused.description).map((line, i) => (
                 <span key={i} className="home__desc-line">
-                  <motion.span
-                    variants={REVEAL_LINE}
-                    className="home__desc-line-inner"
-                  >
+                  <motion.span variants={REVEAL_LINE} className="home__desc-line-inner">
                     {line}
                   </motion.span>
                 </span>
@@ -458,38 +453,6 @@ export function HomeView({ onSelect, onExplore, selectedId }) {
           )}
         </AnimatePresence>
       </div>
-
-      {/* OPEN pill — follows the cursor while a stripe is hovered (only when
-          nothing is selected yet). Clicking commits to the project. */}
-      <AnimatePresence>
-        {false ? (
-          <motion.button
-            key="open"
-            type="button"
-            className="home__open"
-            initial={{ opacity: 0, scale: 0.6 }}
-            animate={{
-              opacity: 1,
-              scale: 1,
-              x: 0,
-              y: 0,
-            }}
-            exit={{ opacity: 0, scale: 0.6 }}
-            transition={{
-              opacity: { duration: 0.25, ease: EASE },
-              scale: { duration: 0.35, ease: EASE },
-              x: { type: 'spring', stiffness: 380, damping: 30 },
-              y: { type: 'spring', stiffness: 380, damping: 30 },
-            }}
-            onClick={(event) => {
-              event.stopPropagation();
-              onSelect?.(hovered);
-            }}
-          >
-            Open
-          </motion.button>
-        ) : null}
-      </AnimatePresence>
     </section>
   );
 }

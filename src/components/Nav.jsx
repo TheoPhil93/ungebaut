@@ -22,10 +22,15 @@ export function Nav({ view, onNavigate }) {
     setOpen(false);
   };
 
-  // Close drawer when the route changes (e.g. user clicked a link).
-  useEffect(() => {
-    setOpen(false);
-  }, [view]);
+  // Close drawer when the route changes (e.g. user clicked a link). Uses the
+  // "store info from previous renders" pattern instead of an effect so React's
+  // new react-hooks/set-state-in-effect rule is satisfied — view is the
+  // external (URL) signal, drawer open state is what we sync to it.
+  const [previousView, setPreviousView] = useState(view);
+  if (previousView !== view) {
+    setPreviousView(view);
+    if (open) setOpen(false);
+  }
 
   // Lock page scroll while the drawer is open and trap focus.
   useEffect(() => {

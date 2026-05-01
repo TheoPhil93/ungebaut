@@ -4,7 +4,7 @@ import { projects } from '../data/projects';
 import { stripeVertex, stripeFragment } from '../lib/gl/shaders';
 import { hexToRgb } from '../lib/gl/hexToRgb';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
-import { detectAvifSupport, toAvif, toWebVideo } from '../lib/image';
+import { getAvifSupport, toAvif, toWebVideo } from '../lib/image';
 
 // Geometry — slightly squat verticals arranged as a flat row at rest. The
 // wave-induced Z push is the only source of asymmetry while scrolling.
@@ -225,15 +225,12 @@ export function GalleryGL({ onSelect, onHoverChange, onExplore, selectedId, hove
       };
     });
 
-    // AVIF support detection runs once and caches. While the probe is in
-    // flight the loader uses original raster paths; subsequent loads after
-    // the probe resolves switch to the smaller .avif sources. Stripes that
-    // started loading before the probe finished still benefit because most
-    // assets aren't fetched until the camera scrolls near them.
-    let avifSupported = false;
-    detectAvifSupport().then((ok) => {
-      avifSupported = ok;
-    });
+    // AVIF support is resolved before React mounts (see main.jsx /
+    // resolveAvifSupport), so getAvifSupport() returns the definitive answer
+    // synchronously here. This is what makes the first batch of texture
+    // fetches request .avif sidecars (~hundreds of KB) instead of the
+    // multi-MB PNG originals.
+    const avifSupported = getAvifSupport();
 
     // Lazy media loader. Idempotent — safe to call every frame; subsequent
     // calls bail at the mediaLoading/mediaLoaded check. We only kick this

@@ -19,9 +19,7 @@ import sharp from 'sharp';
 const ROOT = resolve(process.cwd(), 'public/images');
 const args = process.argv.slice(2);
 const FORCE = args.includes('--force');
-const QUALITY = Number(
-  args.find((a) => a.startsWith('--quality='))?.split('=')[1] ?? 80,
-);
+const QUALITY = Number(args.find((a) => a.startsWith('--quality='))?.split('=')[1] ?? 80);
 const JPG_QUALITY = 85;
 
 // Walk recursively, returning every PNG/JPG/JPEG file path.
@@ -118,9 +116,7 @@ for await (const source of walk(ROOT)) {
   await Promise.all(tasks);
   processed++;
   const pct = ((1 - (totalAvif + totalJpg) / totalIn) * 100).toFixed(0);
-  console.log(
-    `  ${source.replace(ROOT, '').replace(/\\/g, '/')} → avif (saved ~${pct}%)`,
-  );
+  console.log(`  ${source.replace(ROOT, '').replace(/\\/g, '/')} → avif (saved ~${pct}%)`);
 }
 
 const mb = (n) => (n / 1024 / 1024).toFixed(1);

@@ -36,10 +36,7 @@ async function* walk(dir) {
     if (entry.isDirectory()) yield* walk(full);
     // Catch every common upload format the design tools spit out. Skip
     // .web.mp4 to avoid re-encoding our own outputs on rerun.
-    else if (
-      /\.(mp4|mov|webm|m4v)$/i.test(entry.name) &&
-      !/\.web\.mp4$/i.test(entry.name)
-    )
+    else if (/\.(mp4|mov|webm|m4v)$/i.test(entry.name) && !/\.web\.mp4$/i.test(entry.name))
       yield full;
   }
 }
