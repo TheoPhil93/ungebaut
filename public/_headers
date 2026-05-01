@@ -1,0 +1,28 @@
+# Netlify / Cloudflare Pages headers. Mirrors vercel.json so we can switch
+# hosts without changing security posture. Closes #20 + #32 (Netlify side).
+#
+# CSP allows 'unsafe-inline' on style-src because framer-motion injects
+# inline transform styles at runtime; script-src stays strict because all JS
+# is hashed Vite bundles. Once VITE_SENTRY_DSN is wired (#33), the ingest
+# origin must already be in connect-src below — already pre-listed.
+
+/*
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self'; connect-src 'self' https://*.ingest.sentry.io https://*.ingest.us.sentry.io; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()
+
+# Hashed Vite assets — filenames change on every content change, cache forever.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# @fontsource woff2 files ship with content hashes — same immutable cache.
+/*.woff2
+  Cache-Control: public, max-age=31536000, immutable
+
+# SPA shell must always revalidate so a fresh deploy serves the new asset
+# hashes immediately.
+/index.html
+  Cache-Control: public, max-age=0, must-revalidate

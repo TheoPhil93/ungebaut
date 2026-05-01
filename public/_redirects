@@ -1,0 +1,5 @@
+# Netlify / Cloudflare Pages SPA fallback. Static asset paths (under /assets,
+# /images, anything with a file extension) are served directly from disk;
+# everything else falls through to /index.html so useUrlSync can route the
+# request client-side (incl. /404 → NotFoundView with noindex).
+/*    /index.html   200

@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { sentryVitePlugin } from '@sentry/vite-plugin';
 
 /**
  * Inject a <link rel="preload"> for the LCP-rendering font face. Vite
@@ -32,10 +33,30 @@ function fontPreloadPlugin() {
   };
 }
 
+// Sentry sourcemap upload — only runs when SENTRY_AUTH_TOKEN is present at
+// build time. Without the token the plugin is a no-op, so dev/CI builds
+// don't fail when Sentry is not yet configured. Wire SENTRY_ORG /
+// SENTRY_PROJECT / SENTRY_AUTH_TOKEN as deploy-host environment variables
+// to flip it on (see #33).
+const sentryPlugins = process.env.SENTRY_AUTH_TOKEN
+  ? [
+      sentryVitePlugin({
+        org: process.env.SENTRY_ORG,
+        project: process.env.SENTRY_PROJECT,
+        authToken: process.env.SENTRY_AUTH_TOKEN,
+        sourcemaps: { assets: './dist/**' },
+      }),
+    ]
+  : [];
+
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), fontPreloadPlugin()],
+  plugins: [react(), fontPreloadPlugin(), ...sentryPlugins],
   build: {
+    // Sentry needs sourcemaps to symbolicate stack traces. Hidden mode
+    // emits the .map files for upload but keeps the //# sourceMappingURL
+    // out of the bundle — production users never download them.
+    sourcemap: 'hidden',
     rollupOptions: {
       output: {
         manualChunks(id) {

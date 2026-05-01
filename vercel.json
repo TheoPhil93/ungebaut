@@ -1,0 +1,69 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "pnpm build:prerender",
+  "outputDirectory": "dist",
+  "framework": "vite",
+  "rewrites": [
+    {
+      "comment": "SPA fallback. Vercel checks the filesystem first, so /assets/foo.js still hits the hashed bundle; only unknown paths fall through to /index.html where useUrlSync routes the request (incl. /404 → NotFoundView).",
+      "source": "/(.*)",
+      "destination": "/"
+    }
+  ],
+  "headers": [
+    {
+      "comment": "Site-wide security baseline. Closes #20. CSP allows 'unsafe-inline' on style-src because framer-motion injects inline transform styles at runtime; script-src stays strict because all JS is hashed Vite bundles. connect-src will need to add the Sentry ingest origin once VITE_SENTRY_DSN is wired (#33).",
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=63072000; includeSubDomains; preload"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self'; connect-src 'self' https://*.ingest.sentry.io https://*.ingest.us.sentry.io; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'"
+        },
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+        }
+      ]
+    },
+    {
+      "comment": "Hashed Vite assets — filenames change on every content change, so cache aggressively forever.",
+      "source": "/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "comment": "Self-hosted woff2 fonts ship with content hashes from @fontsource — same immutable cache.",
+      "source": "/(.*)\\.woff2",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "comment": "index.html is the SPA shell — must always revalidate so a deploy ships the new asset hashes immediately.",
+      "source": "/",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    }
+  ]
+}

@@ -23,4 +23,12 @@ export default defineConfig([
       parserOptions: { ecmaFeatures: { jsx: true } },
     },
   },
+  {
+    // Build config + Node scripts run under Node, not in the browser. Without
+    // this override `process`/`__dirname`/etc. trip the no-undef rule.
+    files: ['vite.config.js', 'playwright.config.js', 'scripts/**/*.{js,mjs}'],
+    languageOptions: {
+      globals: { ...globals.node, ...globals.es2022 },
+    },
+  },
 ]);

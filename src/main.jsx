@@ -4,6 +4,12 @@ import { MotionConfig } from 'framer-motion';
 import './index.css';
 import App from './App.jsx';
 import { ErrorBoundary } from './components/ErrorBoundary.jsx';
+import { initSentry } from './lib/sentry.js';
+
+// Fire-and-forget — initSentry resolves immediately when no DSN is set, so
+// rendering never waits on it. With a DSN configured the @sentry/react
+// bundle is dynamically imported into its own chunk.
+initSentry();
 
 // reducedMotion="user" → framer-motion skips transform animations (x/y/scale
 // /rotate/skew) when the OS reports prefers-reduced-motion: reduce. Opacity
