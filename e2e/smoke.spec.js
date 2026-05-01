@@ -8,12 +8,16 @@ test('home → card → explore → close', async ({ page }) => {
   // motion isn't suppressed here — the smoke run wants to exercise the real
   // animation path and prove nothing blocks the user during transitions.
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto('/', { waitUntil: 'networkidle' });
+  // `networkidle` doesn't work here — the gallery auto-loads 16 AVIF textures
+  // plus an autoplaying poster video, so the network never goes idle within
+  // the test timeout on CI. Use `domcontentloaded` and assert on the canvas
+  // being mounted instead.
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
   await page.evaluate(() => document.fonts.ready);
 
   // Confirm the gallery canvas mounted and the app is in browse state.
   const canvas = page.locator('.gallery-gl__canvas');
-  await expect(canvas).toBeVisible();
+  await expect(canvas).toBeVisible({ timeout: 15000 });
   await expect(page.locator('.app')).toHaveAttribute('data-detail', 'closed');
 
   // Tap roughly where the centre stripe sits at this viewport. The gallery
