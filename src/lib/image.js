@@ -36,11 +36,15 @@ export async function pickBestImage(path) {
   return supports ? toAvif(path) : path;
 }
 
-// Swap an .mp4 source to its `.web.mp4` re-encoded sidecar (H.264 capped at
-// 3 Mbps with audio stripped — see scripts/optimize-videos.mjs). The
-// originals stay in the source tree so designers can reach them; only the
-// .web.mp4 ever ships to the browser.
-const VIDEO_EXT = /\.mp4$/i;
+// Swap any source video (mp4/mov/webm/m4v) to its `.web.mp4` re-encoded
+// sidecar (H.264 capped at 3 Mbps with audio stripped — see
+// scripts/optimize-videos.mjs). The originals stay in the source tree so
+// designers can reach them; only the .web.mp4 ever ships to the browser.
+//
+// Important: ProRes/HEVC .mov files don't decode in Chrome at all and
+// stream as multi-MB partial fetches in Safari, so the swap is correctness,
+// not just optimization.
+const VIDEO_EXT = /\.(mp4|mov|webm|m4v)$/i;
 export function toWebVideo(path) {
   if (!path || !VIDEO_EXT.test(path) || /\.web\.mp4$/i.test(path)) return path;
   return path.replace(VIDEO_EXT, '.web.mp4');

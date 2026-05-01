@@ -34,7 +34,12 @@ async function* walk(dir) {
   for (const entry of await readdir(dir, { withFileTypes: true })) {
     const full = resolve(dir, entry.name);
     if (entry.isDirectory()) yield* walk(full);
-    else if (/\.mp4$/i.test(entry.name) && !/\.web\.mp4$/i.test(entry.name))
+    // Catch every common upload format the design tools spit out. Skip
+    // .web.mp4 to avoid re-encoding our own outputs on rerun.
+    else if (
+      /\.(mp4|mov|webm|m4v)$/i.test(entry.name) &&
+      !/\.web\.mp4$/i.test(entry.name)
+    )
       yield full;
   }
 }
