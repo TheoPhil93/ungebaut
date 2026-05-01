@@ -45,7 +45,10 @@ test('home → card → explore → close', async ({ page }) => {
   // The detail close button is auto-focused on mount (a11y commit 7bdeba2),
   // so Escape exits the takeover. We use the button click instead so the
   // smoke also covers the click handler.
-  await page.locator('.detail__close, button[aria-label="Close project"]').first().click();
+  // Scope to the detail panel — both home and detail render a button with
+  // aria-label="Close project", and the home one is matched first in DOM
+  // order, so we'd otherwise try to click the obscured home button.
+  await page.locator('.detail').locator('button[aria-label="Close project"]').click();
 
   // Back to selected card view (one level up). One more close returns to
   // pure browse.
