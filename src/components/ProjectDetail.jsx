@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { MassiveTitle } from './MassiveTitle';
+import { Picture } from './Picture';
+import { toWebVideo } from '../lib/image';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 
 // Aristide's `o6` (expo-out) approximated as cubic-bezier — see HomeView.
@@ -203,9 +205,16 @@ export function ProjectDetail({ project, onClose }) {
           style={heroRatio ? { aspectRatio: String(heroRatio) } : undefined}
         >
           {heroIsVideo ? (
-            <video src={heroSrc} autoPlay muted loop playsInline preload="auto" />
+            <video
+              src={toWebVideo(heroSrc)}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+            />
           ) : (
-            <img src={heroSrc} alt="" loading="eager" />
+            <Picture src={heroSrc} alt="" loading="eager" />
           )}
         </motion.figure>
       </div>
@@ -237,9 +246,16 @@ export function ProjectDetail({ project, onClose }) {
                 >
                   <figure className="detail__strip-figure">
                     {itemIsVideo ? (
-                      <video src={src} autoPlay muted loop playsInline preload="metadata" />
+                      <video
+                        src={toWebVideo(src)}
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        preload="metadata"
+                      />
                     ) : (
-                      <img src={src} alt="" loading="lazy" />
+                      <Picture src={src} alt="" loading="lazy" />
                     )}
                     <figcaption className="detail__strip-caption">
                       <span className="detail__strip-num">

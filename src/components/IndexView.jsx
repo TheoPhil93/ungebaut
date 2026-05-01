@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { projects } from '../data/projects';
 import { SeoHead } from './SeoHead';
+import { Picture } from './Picture';
+import { toWebVideo } from '../lib/image';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 
 const ARROW = '→';
@@ -93,7 +95,7 @@ export function IndexView({ onSelect }) {
               >
                 {isVideo ? (
                   <video
-                    src={project.image}
+                    src={toWebVideo(project.image)}
                     muted
                     loop
                     playsInline
@@ -101,7 +103,7 @@ export function IndexView({ onSelect }) {
                     autoPlay={isHovered}
                   />
                 ) : (
-                  <img src={project.image} alt="" loading="lazy" decoding="async" />
+                  <Picture src={project.image} alt="" loading="lazy" decoding="async" />
                 )}
                 <span className="index__row-media-shade" />
               </motion.div>

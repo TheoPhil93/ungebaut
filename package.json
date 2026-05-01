@@ -8,6 +8,8 @@
     "build": "vite build",
     "build:prerender": "node scripts/sync-sitemap.mjs && vite build && node scripts/prerender.mjs",
     "sync-sitemap": "node scripts/sync-sitemap.mjs",
+    "optimize-assets": "node scripts/optimize-assets.mjs",
+    "optimize-videos": "node scripts/optimize-videos.mjs",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -58,6 +60,7 @@
     "lint-staged": "^16.4.0",
     "prettier": "^3.8.3",
     "puppeteer": "^24.42.0",
+    "sharp": "^0.34.5",
     "vite": "^8.0.10",
     "vitest": "^4.1.5"
   }
