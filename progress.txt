@@ -1,0 +1,94 @@
+UNGEBAUT — Gallery text refresh launch
+Progress log (one entry per autonomous iteration)
+
+============================================================
+Iteration 001 — 2026-05-06
+Task: Issue 01 plumbing (AFK subset)
+
+Context: this is the first iteration. The grilling pass with
+the founder produced docs/PRDs/2026-05-06-gallery-text-refresh.md
+and 6 vertical-slice issues at docs/issues/. Both committed in
+this iteration alongside the implementation.
+
+Issue 01 — "Plumbing & first validated card (tracer)" — has an
+AFK subset (per-project `role` field plumbing) and a HITL subset
+(validate f001 Ard de Vries end-to-end with founder). This
+iteration completed the AFK subset only; HITL deferred until the
+founder is in the loop.
+
+Done this iteration:
+  [x] Add `role: 'Visualisation & Direction'` (default) field
+      to every project record via the final .map() block in
+      src/data/projects.js. No per-card changes; the default
+      preserves current rendering on every card.
+  [x] Update src/components/HomeView.jsx lines 279 and 317 to
+      read `focused?.role || 'Visualisation & Direction'`
+      instead of the hardcoded literal. Defensive fallback to
+      the original string protects against an empty field.
+  [x] Create src/data/projects.test.js (vitest harness) with
+      two assertions: (a) `projects.length === 34`,
+      (b) every card has a non-empty `role` string.
+  [x] Repaired pnpm install — node_modules was missing
+      `@vitest/utils`. `pnpm install` with CI=true rebuilt the
+      lockfile-resolved tree. Both new tests pass + the
+      existing useUrlSync tests pass.
+  [x] Committed planning docs (PRD + 6 issues) as a separate
+      commit so the implementation commit stays clean.
+
+Discoveries / corrections needed:
+  ! Card count is 34, not 30 as written in the PRD and
+    issues 01/03/06. Test assertion uses 34 (correct). PRD
+    and issues need a documentation-only correction on a
+    later iteration. Breakdown: 4 in featuredCards array,
+    30 in richProjects array, 0 in looseCards (LOOSE_FILES
+    is empty). Of the 34: 14 named, 2 borderline (007 Atelier
+    + f003 Golden Sanctum — UNGEBAUT-as-client but real
+    titles), 18 pure placeholders (Project 0XX or Sequence
+    0XX with `client: 'UNGEBAUT'` + `location: 'Studio
+    archive'`).
+  ! Pre-existing uncommitted user changes on src/App.jsx,
+    src/index.css, src/main.jsx, vite.config.js were left
+    untouched — not part of this task. They predate the
+    refresh work and belong to the user.
+
+Files committed this iteration:
+  Commit 1 (docs):
+    docs/PRDs/2026-05-06-gallery-text-refresh.md
+    docs/issues/2026-05-06-01-plumbing-and-tracer-card.md
+    docs/issues/2026-05-06-02-mechanical-bug-fixes.md
+    docs/issues/2026-05-06-03-tier-merge-and-tag-vocab.md
+    docs/issues/2026-05-06-04-named-cards-validation.md
+    docs/issues/2026-05-06-05-placeholder-promotion.md
+    docs/issues/2026-05-06-06-final-validation-and-launch-qa.md
+  Commit 2 (implementation):
+    src/components/HomeView.jsx
+    src/data/projects.js
+    src/data/projects.test.js (new)
+
+Verification:
+  ✓ pnpm exec vitest run src/data/projects.test.js → 2 passed
+  ✓ pnpm exec vitest run src/hooks/useUrlSync.test.jsx → passes
+  ✓ Pre-commit hooks (eslint --fix, prettier --write) passed
+  ✓ Both commits landed cleanly on main
+  ✗ Dev server / Playwright smoke not run this iteration
+    (defer to Issue 06 / final QA)
+
+============================================================
+Issue status board
+============================================================
+[~] Issue 01 — plumbing AFK done; f001 validation HITL pending
+[ ] Issue 02 — mechanical bug fixes (AFK, ready)
+[ ] Issue 03 — tier merge + tag vocab (AFK, blocks: 01-AFK ✓)
+[ ] Issue 04 — named cards validation (HITL, blocks: 01,02,03)
+[ ] Issue 05 — placeholder promotion (HITL, blocks: 01,02,03)
+[ ] Issue 06 — final validation + launch QA (AFK, blocks: 04,05)
+
+Next-up candidates for the next iteration:
+  - Issue 02 (mechanical bug fixes) — pure AFK, no blockers,
+    smallest scope, can complete autonomously.
+  - Issue 03 (tier merge + tag vocab) — pure AFK, blocked
+    only on Issue 01 plumbing which is now done.
+  - Issue 01 HITL (f001 validation) — needs founder.
+  - Issues 04 + 05 — both HITL, need founder.
+
+Recommended next iteration: Issue 02 (mechanical bug fixes).
