@@ -276,7 +276,7 @@ export function HomeView({ onSelect, onExplore, selectedId }) {
               {[
                 ['A', 'Completed', focused?.year],
                 ['B', 'Type', focused?.tags?.[0] || '—'],
-                ['C', 'Role', 'Visualisation & Direction'],
+                ['C', 'Role', focused?.role || 'Visualisation & Direction'],
                 ['D', 'Client', focused?.client],
               ].map(([letter, label, value]) => (
                 <span key={letter} className="home__meta-line">
@@ -314,7 +314,7 @@ export function HomeView({ onSelect, onExplore, selectedId }) {
                 </div>
                 <div className="home__meta-row">
                   <dt>+ Role</dt>
-                  <dd>Visualisation &amp; Direction</dd>
+                  <dd>{focused.role || 'Visualisation & Direction'}</dd>
                 </div>
                 <div className="home__meta-row">
                   <dt>+ Client</dt>

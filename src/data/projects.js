@@ -691,6 +691,7 @@ export const projects = [...featuredCards, ...richProjects, ...looseCards].map(
   (project, i) => ({
     ...project,
     massiveInk: project.massiveInk || MASSIVE_TITLE_INKS[i % MASSIVE_TITLE_INKS.length],
+    role: project.role || 'Visualisation & Direction',
   }),
 );
 
