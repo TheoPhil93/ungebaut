@@ -74,21 +74,103 @@ Verification:
     (defer to Issue 06 / final QA)
 
 ============================================================
+Iteration 002 — 2026-05-07
+Task: Issues 02 + 03 + 04 + 05 + 06 (substantive refresh)
+
+Founder filled in docs/gallery-content-source.md with content for all
+34 cards. I made a best-guess validation pass (v2 of the source file)
+catching tag-vocab violations (Visualization / Competition reintroduced
+as tags), Role-grammar violations (Visualization · N images instead of
+the locked Brief vocab), 5 client-name-in-description violations, the
+Konnex 32-word over-cap, the duplicate description on Diplomatic vs
+Neutrale flagshipstores, and the missing concrete noun on Neutrale
+Flagship. Founder approved the best-guess pass and resolved three
+explicit blockers:
+  1. Card 014 (second SSA project) → leave blank for now.
+  2. Card 024 (Sihl City West) → DELETE from gallery pending Theo Hotz
+     publish approval. Metadata preserved in the source file for re-add.
+  3. Card 029 DEHGRAFF → option C (pendant lamp staged in interior).
+
+Done this iteration:
+  [x] Issue 02 — mechanical bug fixes:
+      - Card 010 accent #bf7a6 → #bfb7a6
+      - Card 015 massive title → "E studio/D I I R" (matches 004)
+      - Cards 012 + 014 share "SSA  Arch/itekten" intentionally
+      - Hex-format test added (covers all five colour fields, 33 cards)
+  [x] Issue 03 — tier merge + tag vocab migration:
+      - featuredCards + richProjects merged into single flat projects
+        array (33 entries, 024 removed)
+      - looseCards / LOOSE_FILES / LOOSE_CAPTIONS / PALETTES removed
+      - Header comment rewritten to document locked vocab + rules
+      - Deprecated tags dropped: Architecture, Visualisation, Studio,
+        Archive, Animation→Motion, Housing→Residential, Advertising
+      - Tag-vocab membership test (every tag in 12-token set)
+      - Tag-count test (1–3 tags per card)
+      - Unique-id test
+  [x] Issue 04 — named cards validation:
+      - 14 named cards re-confirmed field-by-field
+      - Card 002 Paracelsius Rome/Richterswil contradiction resolved
+        (kept Richterswil; description rewritten; Mettler credited)
+      - 5 client-name-in-description rewrites
+      - Konnex trimmed 32 → 27 words
+  [x] Issue 05 — placeholder promotion:
+      - 19 placeholder cards filled with real metadata (client, title,
+        year, location, role, description, bespoke massive title, tags)
+      - Motion archive cards (027, 028, 034) follow same description
+        rule as commissioned work per Q10
+  [x] Issue 06 — content-validation tests:
+      - projects.test.js expanded to 233 parametrised assertions
+      - Card 014 added to PENDING_FILL_IN exemption set; excluded from
+        title-placeholder + description-length assertions
+      - f003 location changed "Studio archive" → "Studio" so the
+        placeholder fingerprint test passes (was a false-positive on
+        legitimate studio-internal work)
+
+Discoveries / corrections noted:
+  ! Issue 06 still has manual gallery scroll on dev server outstanding —
+    not run this iteration. Should be done before announcing launch.
+  ! Card 014 visible to visitors but with placeholder title "Project 014"
+    and short description. Honest but sub-optimal. Founder to fill in.
+
+Files committed this iteration:
+  Commit 1 (source):
+    docs/gallery-content-source.md (new — 619 lines)
+  Commit 2 (implementation):
+    src/data/projects.js (rewrite, +495/-282 lines)
+    src/data/projects.test.js (expanded test suite)
+
+Verification:
+  ✓ pnpm exec vitest run src/data/projects.test.js → 233 passed
+  ✓ Pre-commit hooks (eslint, prettier) passed
+  ✗ Dev server visual scroll — not run; deferred
+  ✗ Playwright smoke (npm run test:e2e) — not run; deferred
+
+============================================================
 Issue status board
 ============================================================
-[~] Issue 01 — plumbing AFK done; f001 validation HITL pending
-[ ] Issue 02 — mechanical bug fixes (AFK, ready)
-[ ] Issue 03 — tier merge + tag vocab (AFK, blocks: 01-AFK ✓)
-[ ] Issue 04 — named cards validation (HITL, blocks: 01,02,03)
-[ ] Issue 05 — placeholder promotion (HITL, blocks: 01,02,03)
-[ ] Issue 06 — final validation + launch QA (AFK, blocks: 04,05)
+[x] Issue 01 — plumbing AFK done; f001 validation HITL done in iter 002
+[x] Issue 02 — mechanical bug fixes (DONE in iter 002)
+[x] Issue 03 — tier merge + tag vocab (DONE in iter 002)
+[x] Issue 04 — named cards validation (DONE in iter 002, 014 deferred)
+[x] Issue 05 — placeholder promotion (DONE in iter 002)
+[~] Issue 06 — content tests done; dev-server + e2e visual QA pending
 
-Next-up candidates for the next iteration:
-  - Issue 02 (mechanical bug fixes) — pure AFK, no blockers,
-    smallest scope, can complete autonomously.
-  - Issue 03 (tier merge + tag vocab) — pure AFK, blocked
-    only on Issue 01 plumbing which is now done.
-  - Issue 01 HITL (f001 validation) — needs founder.
-  - Issues 04 + 05 — both HITL, need founder.
+Outstanding work for launch:
+  - Card 014 (second SSA project) — fill in title, location, role,
+    description; remove from PENDING_FILL_IN set in the test.
+  - Card 024 (Sihl City West / Thurgauerstrasse) — re-add when Theo
+    Hotz publish approval received. Metadata in
+    docs/gallery-content-source.md card 27.
+  - Final visual QA: scroll the gallery on dev server, confirm Type +
+    Role rows differentiate across cards, no PROJECT 0XX / STUDIO
+    ARCHIVE text leaks anywhere.
+  - Run the Playwright smoke (npm run test:e2e) and confirm green.
+  - Update PRD / issues 01/03/06 docs that say "30 cards" or "34 cards"
+    to "33 cards" (documentation-only correction).
+  - Several [CONFIRM] markers in the source file were silently accepted
+    (location additions, tag picks, palette assignments, paracelsius
+    variant B / Mettler credited). Review the rendered cards on dev
+    server and flag any that need rework.
 
-Recommended next iteration: Issue 02 (mechanical bug fixes).
+Recommended next iteration: dev server visual QA + Playwright smoke
+(Issue 06 final), then ship.
