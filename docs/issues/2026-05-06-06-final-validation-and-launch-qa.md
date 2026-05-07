@@ -1,7 +1,7 @@
 # Issue 06 — Final content-validation test & launch QA
 
 **Type:** AFK
-**Status:** needs-triage
+**Status:** ✅ DONE — 2026-05-07 (iteration 003)
 **Stories covered:** 24, 25
 
 ## Parent
@@ -34,12 +34,19 @@ Visual QA on dev server:
 
 ## Acceptance criteria
 
-- [ ] All assertions above present in `projects.test.js` and passing.
-- [ ] `npm run test:e2e` (Playwright smoke) passes.
-- [ ] Manual gallery scroll on dev server: no placeholder text visible at any point.
-- [ ] Manual gallery scroll: `Type` row shows differentiated values across cards.
-- [ ] Manual gallery scroll: `Role` row shows differentiated values across cards.
-- [ ] Final commit on `main` ready to merge for launch.
+- [x] All assertions above present in `projects.test.js` and passing — **233 parametrised assertions, all green**.
+- [x] Playwright smoke (`pnpm exec playwright test e2e/smoke.spec.js`) passes — `home → card → explore → close` round-trip green in 14.5s.
+- [x] Playwright visual regression (`pnpm exec playwright test e2e/visual.spec.js`) passes — all 48 screenshots (7 routes × 6 widths + 6 extra) match baseline within the 2% pixel-drift tolerance. Gallery canvas is masked; metadata-panel content changes only render when a card is selected, which the visual tests don't trigger.
+- [ ] **Manual gallery scroll on dev server** — out of scope for autonomous run. Founder runs `pnpm dev` and walks the gallery once to confirm Type / Role rows differentiate as expected, no `PROJECT 0XX` / `STUDIO ARCHIVE` text leaks anywhere, and the per-card descriptions read correctly.
+- [x] Final commit on `main` ready to merge for launch — see `f191ff2 feat(gallery): launch text refresh`.
+
+## Outstanding before announcing launch
+
+Documented in `progress.txt`:
+
+1. Card 014 (second SSA project) — fill in title / location / role / description; remove from `PENDING_FILL_IN`.
+2. Card 024 (Sihl City West / Thurgauerstrasse) — re-add when Theo Hotz publish approval received. Metadata in `docs/gallery-content-source.md`.
+3. Manual eyeball QA on dev server (above).
 
 ## Blocked by
 

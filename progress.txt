@@ -146,6 +146,28 @@ Verification:
   ✗ Playwright smoke (npm run test:e2e) — not run; deferred
 
 ============================================================
+Iteration 003 — 2026-05-07
+Task: Issue 06 final — Playwright smoke + visual regression
+
+Done this iteration:
+  [x] pnpm build — 6.31s, no errors
+  [x] pnpm exec playwright test e2e/smoke.spec.js → 1 passed (14.5s)
+      Critical-path round-trip: home → card → explore → close.
+  [x] pnpm exec playwright test e2e/visual.spec.js → 48 passed (2.1m)
+      All 7 routes × 6 widths visual baselines hold. Gallery WebGL
+      canvas masked per the spec; metadata-panel content changes only
+      render on select, which visual tests don't trigger — so the
+      existing baselines remain valid.
+  [x] Issue 06 acceptance criteria checked off in
+      docs/issues/2026-05-06-06-*.md and Status: DONE.
+
+Remaining for launch (founder action — not automatable):
+  - Manual eyeball QA: pnpm dev, walk the gallery, hover each card,
+    confirm Type / Role rows differentiate, no placeholder text leaks.
+  - Card 014 fill-in.
+  - Card 024 re-add when Theo Hotz approves.
+
+============================================================
 Issue status board
 ============================================================
 [x] Issue 01 — plumbing AFK done; f001 validation HITL done in iter 002
@@ -153,7 +175,7 @@ Issue status board
 [x] Issue 03 — tier merge + tag vocab (DONE in iter 002)
 [x] Issue 04 — named cards validation (DONE in iter 002, 014 deferred)
 [x] Issue 05 — placeholder promotion (DONE in iter 002)
-[~] Issue 06 — content tests done; dev-server + e2e visual QA pending
+[x] Issue 06 — final validation + launch QA (DONE in iter 003)
 
 Outstanding work for launch:
   - Card 014 (second SSA project) — fill in title, location, role,
