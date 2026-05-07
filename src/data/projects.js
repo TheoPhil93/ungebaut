@@ -1,30 +1,34 @@
 // UNGEBAUT — Architectural visualisation studio, Zürich.
 //
-// Project data is built directly from the assets that actually live under
-// `public/images/projects/`. Three card types feed the gallery:
+// Locked tag vocabulary (12 tokens):
+//   Subject  Exterior · Interior · Urban · Landscape · Product
+//   Medium   Motion · VR · Drone
+//   Sector   Residential · Commercial · Retail · Cultural · Hospitality
 //
-//   1. FEATURED — front-of-row cards with a single named hero asset
-//      (Ard de Vries, Montparnasse Residence, motion archive clips).
-//   2. RICH projects — folders `001/` … `018/` each holding `main.<ext>`
-//      plus `detail.*` / `thumb-*` variants. All variants surface in the
-//      detail-view scroll-strip.
-//   3. LOOSE renders — every JPG/PNG that lives directly under the
-//      projects folder, surfaced as a single-image card.
+// Each card carries 1–3 tags; tags[0] is the headline `Type` shown in the
+// home metadata panel.
+//
+// Locked Role grammar: "<Brief> · <deliverables>". Brief vocab —
+//   Pitch · Pitch-deck visual · Marketing campaign · Brand campaign ·
+//   Brand film · Competition entry · Studio film · Studio motion ·
+//   Studio still · Product still · Pre-construction set · Site survey.
+//
+// Description rule: 1 sentence · 18–30 words · em-dash · one concrete noun
+// (material / place / time of day / light condition) · no client name ·
+// no deliverable count.
+//
+// Massive title: bespoke editorial typography per card. Toolbox — ALL CAPS
+// or mixed case · `/` for manual line break · real spaces between letters
+// for letterspacing · double spaces for wider gaps.
+//
+// Cards are listed in render order — single flat array. The featured/rich
+// two-array tier was dropped on the 2026-05-07 launch refresh; see
+// docs/PRDs/2026-05-06-gallery-text-refresh.md.
 
 const local = (path) => `/images/projects/${path}`;
 
-// Bold, saturated detail palettes — opening a card flips the page into
-// that mood. Each entry pairs a strong BG with light ink for legibility.
-const PALETTES = [
-  { accent: '#a88a6c', accentSoft: '#1c1712', detailBg: '#7d6242', detailInk: '#f4ead7' }, // dark sandstone
-  { accent: '#5a89a8', accentSoft: '#0c151c', detailBg: '#2a3a5a', detailInk: '#f1ecdf' }, // indigo
-  { accent: '#8c8a86', accentSoft: '#161616', detailBg: '#0d0f1a', detailInk: '#f5f1e6' }, // ink
-  { accent: '#5d7a5b', accentSoft: '#0e1610', detailBg: '#3d5d4c', detailInk: '#e8e3cf' }, // forest
-  { accent: '#7a2434', accentSoft: '#1c0a0e', detailBg: '#6f1d2a', detailInk: '#f5dfd1' }, // burgundy
-  { accent: '#bfb7a6', accentSoft: '#1a1814', detailBg: '#8d9d96', detailInk: '#1c2520' }, // sage
-  { accent: '#b4674a', accentSoft: '#1c0f0a', detailBg: '#c54e3a', detailInk: '#fae6cf' }, // terracotta
-];
-
+// Massive-title ink fallback. Each card without an explicit massiveInk
+// gets one of these by index, cycling through the palette.
 const MASSIVE_TITLE_INKS = [
   '#f6ead8',
   '#f0a1aa',
@@ -40,57 +44,44 @@ const MASSIVE_TITLE_INKS = [
   '#d8d1c2',
 ];
 
-const LOOSE_CAPTIONS = [
-  'A still from the studio archive — material, light, and the moment we wanted the camera to land on.',
-  'A working frame from a longer sequence: the geometry studied at one chosen angle.',
-  'An evening pass over the model — daylight pulled almost out of the room.',
-  'A composition test — wall, floor, and the single object that decides the rest.',
-  'A rendering held back by an aperture stop, so the eye does the rest.',
-  'A study in surface — concrete, fabric, glass, in that order.',
-];
-
-// ---------------------------------------------------------------------------
-// Featured cards — fresh single-asset projects + motion archive clips,
-// pinned to the front of the gallery row.
-// Optional `massiveTitle` controls the oversized overlay title:
-// use `/` for a manual line break, and spaces for deliberate letter gaps.
-// Example: massiveTitle: 'H OUSE    OF/G UCCI'
-// Optional `detailOverlay` controls the colour wash over neighbouring images
-// in the clicked-card view. Falls back to `detailBg` when omitted.
-// ---------------------------------------------------------------------------
-const featuredCards = [
+const projectList = [
+  // 01 — Ard de Vries (Agelo, Netherlands)
   {
     id: 'f001',
-    massiveTitle: 'ARD/DE VRIES',
     client: 'Ard de Vries',
     title: 'Ard de Vries',
-    tags: ['Architecture', 'Exterior'],
-    year: 2026,
-    location: 'Netherlands',
+    tags: ['Interior'],
+    year: 2025,
+    location: 'Agelo, Netherlands',
+    role: 'Pitch · 1 hero still',
     accent: '#b4674a',
     accentSoft: '#1c0f0a',
     detailBg: '#c54e3a',
     detailInk: '#fae6cf',
     description:
-      'Visualisation for Ard de Vries — a quiet architectural moment, materially specific, holding its frame.',
+      'A timber-lined interior opening toward a quiet garden courtyard — soft morning light, woven textures, and large glazing create a serene domestic atmosphere.',
+    massiveTitle: 'ARD/DE VRIES',
     image: local('026/Ard_de_Vries.png'),
     detailImage: local('026/Ard_de_Vries.png'),
     sections: [],
   },
+
+  // 02 — Karamanli Haus (Athens) · motion timelapse
   {
     id: '006',
-    massiveTitle: 'Ilias Skroum/p e l o s',
     client: 'Ilias Skroumeplos',
     title: 'Karamanli Haus',
-    tags: ['Motion', 'Studio'],
+    tags: ['Motion'],
     year: 2026,
-    location: 'Athens',
+    location: 'Athens, Greece',
+    role: 'Studio motion · timelapse',
     accent: '#8c8a86',
     accentSoft: '#161616',
     detailBg: '#0d0f1a',
     detailInk: '#f5f1e6',
     description:
-      'A timelapse cut from the studio — model, camera, and the moment the geometry decides to settle.',
+      'A time-lapse through a narrow Athens side street beneath hanging laundry — evening light, passing scooters, and café terraces animate the dense Mediterranean streetscape.',
+    massiveTitle: 'Ilias Skroum/p e l o s',
     image: local('006/Timelaps.mp4'),
     video: local('006/Timelaps.mp4'),
     detailImage: local('006/Timelaps.mp4'),
@@ -98,123 +89,134 @@ const featuredCards = [
     gallery: [local('006/Timelaps.mp4'), local('006/thumb-1.png')],
     sections: [],
   },
+
+  // 03 — Competition Bassersdorf (SGGK)
   {
     id: '009',
-    massiveTitle: 'SGGK',
     client: 'SGGK',
-    title: 'Project 009',
-    tags: ['Visualisation'],
+    title: 'Competition Bassersdorf',
+    tags: ['Exterior', 'Residential'],
     year: 2023,
-    location: 'Studio archive',
+    location: 'Steinling, Bassersdorf',
+    role: 'Competition entry · 2 stills',
     accent: '#7a2434',
     accentSoft: '#1c0a0e',
     detailBg: '#6f1d2a',
     detailInk: '#f5dfd1',
-    description: 'A study in surface — concrete, fabric, glass, in that order.',
+    description:
+      '"Form follows parking" shapes the fanned arrangement of the building volumes — each apartment benefits from views into the lush, tree-lined neighborhood and surrounding greenery.',
+    massiveTitle: 'SGGK',
     image: local('009/main.png'),
     detailImage: local('009/main.png'),
     gallery: [local('009/main.png'), local('009/thumb-1.png')],
     sections: [],
   },
+
+  // 04 — Ferrum House (Harpenden, Hertfordshire)
   {
     id: '010',
-    massiveTitle: 'John S. /Bonnington',
     client: 'John S. Bonnington',
     title: 'Ferrum House',
-    tags: ['Visualisation'],
+    tags: ['Interior', 'Residential'],
     year: 2024,
     location: 'Harpenden, Hertfordshire',
-    accent: '#bf7a6',
+    role: 'Studio still · 1 hero',
+    accent: '#bfb7a6',
     accentSoft: '#1a1814',
     detailBg: '#8d9d96',
     detailInk: '#1c2520',
-    description: 'A rendering held back by an aperture stop, so the eye does the rest.',
+    description:
+      'A 1964 family home in Hertfordshire built by an architect for his own use — warm timber surfaces and panoramic glazing reflect the quiet rigor of Miesian modernism.',
+    massiveTitle: 'John S. /Bonnington',
     image: local('010/main.png'),
     detailImage: local('010/main.png'),
     gallery: [local('010/main.png'), local('010/thumb-1.png')],
     sections: [],
   },
-];
 
-// ---------------------------------------------------------------------------
-// Rich projects — folders `001/` through `018/`. The first four keep
-// their original client + title metadata; 005–018 default to studio
-// placeholders (UNGEBAUT studio) and a single rotating palette so the
-// row reads with visual variety until you give them dedicated names.
-// ---------------------------------------------------------------------------
-const richProjects = [
+  // 05 — Quarry House (Winwood McKenzy, UK)
   {
     id: '001',
-    massiveTitle: 'WIN WOOD/MC KENZ Y',
     client: 'Winwood McKenzy',
     title: 'Quarry House',
-    tags: ['Residential', 'Exterior'],
+    tags: ['Exterior', 'Residential'],
     year: 2024,
     location: 'United Kingdom',
+    role: 'Pitch-deck visual · hero + studies',
     accent: '#a88a6c',
     accentSoft: '#1c1712',
     detailBg: '#7d6242',
     detailInk: '#f4ead7',
     massiveInk: '#FFBCAB',
     description:
-      'A weekend retreat carved into a disused quarry — staged at golden hour for a residential development pitch.',
+      'Quarry House reclaims a former workers cottage beside the Northcote quarry — brick courtyards, filtered light, and vegetation return domestic life to the land.',
+    massiveTitle: 'WIN WOOD/MC KENZ Y',
     image: local('001/main.png'),
     detailImage: local('001/detail.png'),
     gallery: [local('001/main.png'), local('001/detail.png'), local('001/thumb-1.png')],
     sections: [],
   },
+
+  // 06 — Paracelsius (Baukontor architect, Mettler Entwickler developer)
   {
     id: '002',
-    massiveTitle: 'Bau/kontor',
-    client: 'Baukontor/Mettler Entwickler',
+    client: 'Baukontor',
     title: 'Paracelsius',
-    tags: ['Residential', 'Exterior', 'Animation'],
+    tags: ['Exterior', 'Residential'],
     year: 2024,
     location: 'Richterswil, Switzerland',
+    role: 'Marketing campaign · stills + animation',
     accent: '#b4674a',
     accentSoft: '#1c0f0a',
     detailBg: '#c54e3a',
     detailInk: '#fae6cf',
     description:
-      'A renewed Roman façade reading the Via Salaria — balcony plants, evening light, and the quiet authority of the Capitoline.',
+      'A linear residential building developed by Mettler settles into the sloping village landscape — timber balconies, soft daylight, and views toward the church spire define its calm presence.',
+    massiveTitle: 'Bau/kontor',
     image: local('002/main.jpg'),
     detailImage: local('002/detail.jpg'),
     gallery: [local('002/main.jpg'), local('002/detail.jpg'), local('002/thumb-1.jpg')],
     sections: [{ label: 'Detail', image: local('002/thumb-1.jpg') }],
   },
+
+  // 07 — Chelsea Brut House (Pricegore, London)
   {
     id: '003',
-    massiveTitle: 'P r i c e/g o r e',
     client: 'Pricegore',
-    title: 'CHELSEA BRUT HOUSE',
-    tags: ['Housing', 'Interior'],
+    title: 'Chelsea Brut House',
+    tags: ['Interior', 'Retail'],
     year: 2024,
     location: 'London, England',
+    role: 'Brand campaign · interior hero + detail',
     accent: '#a88c4d',
     accentSoft: '#0f0c08',
     detailBg: '#0d0f1a',
     detailInk: '#f5f1e6',
     description:
-      'A flagship retail interior staged across twelve hours of daylight — the product becomes a study in shadow and brass.',
+      'A brutalist townhouse in Kensington and Chelsea revived for contemporary life — Victorian traces, robust conservation, and spatial expansion sharpen its modernist character.',
+    massiveTitle: 'P r i c e/g o r e',
     image: local('003/main.jpg'),
     detailImage: local('003/detail.jpg'),
     gallery: [local('003/main.jpg'), local('003/detail.jpg')],
     sections: [],
   },
+
+  // 08 — Neutrale Flagship (Estudio DIIR, Madrid) · motion
   {
     id: '004',
-    massiveTitle: 'E Stduio/D I R R',
     client: 'Estudio DIIR',
     title: 'Neutrale — Flagship',
     tags: ['Retail', 'Interior', 'Motion'],
     year: 2023,
     location: 'Madrid, Spain',
+    role: 'Brand film · motion + 2 stills',
     accent: '#bfb7a6',
     accentSoft: '#1a1814',
     detailBg: '#3d5d4c',
     detailInk: '#e8e3cf',
     description:
-      'A neutral palette where the product is the only colour in the room — limestone floors, chalked walls, a single pendant. Now delivered as a slow camera pass.',
+      'Three precise gestures transform an already suggestive space — terrazzo floors, brushed-steel fittings, and shifting daylight intensify its existing architectural atmosphere.',
+    massiveTitle: 'E studio/D I I R',
     image: local('004/main.mov'),
     video: local('004/main.mov'),
     detailImage: local('004/main.mov'),
@@ -222,37 +224,45 @@ const richProjects = [
     gallery: [local('004/main.mov'), local('004/thumb-1.png'), local('004/thumb-2.png')],
     sections: [],
   },
+
+  // 09 — Concrete House in Brissago (Wespi de Meuron Romeo)
   {
     id: '005',
-    client: 'UNGEBAUT',
-    title: 'Project 005',
-    tags: ['Visualisation'],
-    year: 2025,
-    location: 'Studio archive',
+    client: 'Wespi de Meuron Romeo',
+    title: 'Concrete House in Brissago',
+    tags: ['Exterior', 'Residential'],
+    year: 2024,
+    location: 'Brissago, Switzerland',
+    role: 'Marketing campaign · 2 stills',
     accent: '#5a89a8',
     accentSoft: '#0c151c',
     detailBg: '#2a3a5a',
     detailInk: '#f1ecdf',
     description:
-      'A working frame from the studio archive — geometry held in the camera and a chosen light direction.',
+      'A washed concrete monolith rises from the slope above Lago Maggiore — rooftop parking, a linear entrance path, and open interiors frame the mountain landscape.',
+    massiveTitle: 'Wespi de Meuron Romeo',
     image: local('005/main.jpg'),
     detailImage: local('005/main.jpg'),
     gallery: [local('005/main.jpg'), local('005/thumb-1.jpg')],
     sections: [],
   },
+
+  // 10 — Living and Working / Atelier in Vienna (studio-internal) · motion
   {
     id: '007',
     client: 'UNGEBAUT',
-    title: 'Atelier',
+    title: 'Living and Working',
     tags: ['Motion', 'Interior'],
-    year: 2026,
-    location: 'Studio archive',
+    year: 2023,
+    location: 'Vienna, Austria',
+    role: 'Studio motion · atelier pass',
     accent: '#a88a6c',
     accentSoft: '#1c1712',
     detailBg: '#7d6242',
     detailInk: '#f4ead7',
     description:
-      'A short atelier pass — the camera reads the working surface, then drifts off the model.',
+      'A raw concrete studio unfolds beneath monumental skylights — scattered tools, large-scale artworks, and diffuse daylight shape an atmosphere of creative production.',
+    massiveTitle: 'Atelier in Vienna',
     image: local('007/Atelier.mp4'),
     video: local('007/Atelier.mp4'),
     detailImage: local('007/Atelier.mp4'),
@@ -260,37 +270,45 @@ const richProjects = [
     gallery: [local('007/Atelier.mp4'), local('007/21.png'), local('007/22.png')],
     sections: [],
   },
+
+  // 11 — Winebar in Zurich (Stefan Wülser)
   {
     id: '008',
-    massiveTitle: 'Stefan Wülser',
     client: 'Stefan Wülser',
-    title: 'Project 008',
-    tags: ['Visualisation'],
+    title: 'Winebar in Zurich',
+    tags: ['Interior', 'Commercial'],
     year: 2023,
-    location: 'Zürich',
+    location: 'Zürich, Switzerland',
+    role: 'Pitch · interior hero + study',
     accent: '#5d7a5b',
     accentSoft: '#0e1610',
     detailBg: '#3d5d4c',
     detailInk: '#e8e3cf',
     description:
-      'A composition test — wall, floor, and the single object that decides the rest.',
+      "A wine bar in Zurich's historic center — raw marble, monochrome contrasts, and collage-like materials redefine the space through radical material ambiguity.",
+    massiveTitle: 'Stefan Wülser',
     image: local('008/main.png'),
     detailImage: local('008/main.png'),
     gallery: [local('008/main.png'), local('008/thumb-1.png')],
     sections: [],
   },
+
+  // 12 — Housing in Playa Brava (Ricardo Gomara, Punta del Este) · motion
   {
     id: '011',
-    client: 'UNGEBAUT',
-    title: 'Sequence 011',
-    tags: ['Motion', 'Studio'],
-    year: 2026,
-    location: 'Studio archive',
+    client: 'Ricardo Gomara',
+    title: 'Housing in Playa Brava',
+    tags: ['Motion', 'Exterior', 'Residential'],
+    year: 2025,
+    location: 'Punta del Este, Uruguay',
+    role: 'Studio motion · atmospheric timelapse',
     accent: '#b4674a',
     accentSoft: '#1c0f0a',
     detailBg: '#c54e3a',
     detailInk: '#fae6cf',
-    description: 'A motion frame held just long enough to read the room.',
+    description:
+      'A 1982 beachfront house in Punta del Este — seaside modernism, economic optimism, and shifting tourism cultures frame its architectural presence.',
+    massiveTitle: 'Ricardo Gomara',
     image: local('011/main.mp4'),
     video: local('011/main.mp4'),
     detailImage: local('011/main.mp4'),
@@ -298,38 +316,45 @@ const richProjects = [
     gallery: [local('011/main.mp4')],
     sections: [],
   },
+
+  // 13 — Areal Moosbühl (SSA Architekten — same massive title as card 16)
   {
     id: '012',
-    massiveTitle: 'SSA  Arch/itekten',
-    client: 'SSA ARchitekten',
+    client: 'SSA Architekten',
     title: 'Areal Moosbühl',
-    tags: ['Visualisation'],
+    tags: ['Exterior', 'Residential'],
     year: 2025,
-    location: 'Moosseedorf, CH',
+    location: 'Moosseedorf, Switzerland',
+    role: 'Competition entry · stills',
     accent: '#a88a6c',
     accentSoft: '#1c1712',
     detailBg: '#7d6242',
     detailInk: '#f4ead7',
     description:
-      'A still from the studio archive — material, light, and the moment we chose. Weitere Infos:www.moosbuehl-wohnen.ch',
+      'Moosbühl in Moosseedorf mediates between rural landscape and urban infrastructure — retention areas, biotopes, and soft edges shape a sustainable residential quarter.',
+    massiveTitle: 'SSA  Arch/itekten',
     image: local('012/main.png'),
     detailImage: local('012/main.png'),
     gallery: [local('012/main.png'), local('012/thumb-1.png'), local('012/thumb-2.png')],
     sections: [],
   },
+
+  // 14 — Konnex (Theo Hotz, Baden Nord)
   {
     id: '013',
-    massiveTitle: 'Theo/Hotz',
     client: 'Theo Hotz',
     title: 'Konnex',
-    tags: ['Visualisation'],
+    tags: ['Exterior', 'Interior', 'Commercial'],
     year: 2025,
-    location: 'Baden, CH',
+    location: 'Baden, Switzerland',
+    role: 'Marketing campaign · 4 stills',
     accent: '#5a89a8',
     accentSoft: '#0c151c',
     detailBg: '#2a3a5a',
     detailInk: '#f1ecdf',
-    description: 'A series of frames over the same model — light, angle, and apertures.',
+    description:
+      'A former ABB industrial site in Baden Nord transforms into a transparent multi-tenant urban hub — glazed circulation, flexible offices, and shared amenities reanimate the city block.',
+    massiveTitle: 'Theo/Hotz',
     image: local('013/main.png'),
     detailImage: local('013/main.png'),
     gallery: [
@@ -341,76 +366,90 @@ const richProjects = [
     ],
     sections: [],
   },
+
+  // 15 — Timex Chronograph
   {
     id: 'f004',
-    massiveTitle: 'T  i  m/e  x',
     client: 'Timex',
-    title: 'Timex',
-    tags: ['Product', 'Advertising'],
-    year: 2026,
+    title: 'Timex Chronograph',
+    tags: ['Product'],
+    year: 2024,
     location: 'Studio',
+    role: 'Product still · 1 hero',
     accent: '#bfb7a6',
     accentSoft: '#1a1814',
     detailBg: '#4A4636',
     detailInk: '#1c2520',
     massiveInk: '#FFBCAB',
     description:
-      'A product still for Timex — a single watch held in one frame, surface and reflection doing the work.',
+      'A single chronograph held in one frame — brushed steel, glass, and reflection doing the work as the only objects in the room.',
+    massiveTitle: 'T  i  m/e  x',
     image: local('032/Timex.png'),
     detailImage: local('032/Timex.png'),
     sections: [],
   },
+
+  // 16 — SSA second project (PARTIAL FILL — title/location/description pending
+  // founder input; client + massive title applied for visual consistency
+  // with card 13). Same office, distinct project.
   {
     id: '014',
-    massiveTitle: 'SSA  Arch/itekten',
     client: 'SSA Architekten',
     title: 'Project 014',
-    tags: ['Visualisation'],
+    tags: ['Exterior'],
     year: 2025,
-    location: 'Studio archive',
+    location: 'Studio',
     accent: '#8c8a86',
     accentSoft: '#161616',
     detailBg: '#0d0f1a',
     detailInk: '#f5f1e6',
     description: 'An evening pass over the model — daylight pulled almost out of the room.',
+    massiveTitle: 'SSA  Arch/itekten',
     image: local('014/main.jpg'),
     detailImage: local('014/main.jpg'),
     gallery: [local('014/main.jpg'), local('014/thumb-1.png')],
     sections: [],
   },
+
+  // 17 — Golden Sanctum (studio-internal film) · motion
   {
     id: 'f003',
     client: 'UNGEBAUT',
-    title: 'THE GOLDEN/Sanctum',
+    title: 'Golden Sanctum',
     tags: ['Motion', 'Interior'],
-    year: 2026,
-    location: 'Studio archive',
+    year: 2024,
+    location: 'Studio',
+    role: 'Studio film · cinematic walkthrough',
     accent: '#a88a6c',
     accentSoft: '#1c1712',
     detailBg: '#7d6242',
     detailInk: '#f4ead7',
     description:
-      'A slow tour of a vaulted, gilded interior — light raking across plaster and brass, the camera barely moving.',
+      'Vaulted stone chambers dissolve into shadow and amber light — ritual, decay, and silent monumentality shape an atmosphere suspended between myth and ruin.',
+    massiveTitle: 'THE GOLDEN/Sanctum',
     image: local('031/The Golden Sanctum.mp4'),
     video: local('031/The Golden Sanctum.mp4'),
     detailImage: local('031/The Golden Sanctum.mp4'),
     mediaType: 'video',
     sections: [],
   },
+
+  // 18 — Casa Neutrale (Estudio DIIR, Madrid) · motion
   {
     id: '015',
-    massiveTitle: 'E studio/D I I R',
-    client: 'Estudio Diir',
+    client: 'Estudio DIIR',
     title: 'Casa Neutrale',
-    tags: ['Motion', 'Studio'],
+    tags: ['Motion', 'Interior'],
     year: 2025,
-    location: 'Madrid, ES',
+    location: 'Madrid, Spain',
+    role: 'Studio motion · cinematic walkthrough',
     accent: '#5d7a5b',
     accentSoft: '#0e1610',
     detailBg: '#3d5d4c',
     detailInk: '#e8e3cf',
     description:
-      'A motion pass over the model — the camera holds longer than expected, then drifts off.',
+      'A monolithic granite bar anchors the depth of the coffee shop — raw stone surfaces and spatial clarity transform it into an architectural landmark.',
+    massiveTitle: 'E studio/D I I R',
     image: local('015/main.mp4'),
     video: local('015/main.mp4'),
     detailImage: local('015/main.mp4'),
@@ -418,161 +457,220 @@ const richProjects = [
     gallery: [local('015/main.mp4'), local('015/thumb-1.jpg'), local('015/thumb-2.jpg')],
     sections: [],
   },
+
+  // 19 — Via Salaria (Capolei / Cavalli, Rome)
   {
     id: '016',
-    client: 'UNGEBAUT',
-    title: 'Project 016',
-    tags: ['Visualisation'],
+    client: 'Giancarlo Capolei, Francesco Capolei, Manlino Cavalli',
+    title: 'Via Salaria',
+    tags: ['Exterior', 'Residential'],
     year: 2025,
-    location: 'Studio archive',
+    location: 'Rome, Italy',
+    role: 'Marketing campaign · 1 hero',
     accent: '#7a2434',
     accentSoft: '#1c0a0e',
     detailBg: '#6f1d2a',
     detailInk: '#f5dfd1',
     description:
-      'A working frame from a longer sequence: the geometry studied at one chosen angle.',
+      "A contemporary residence along Rome's Via Salaria reads the city through light and detail — urban vitality, quiet elegance, and architectural precision meet in balance.",
+    massiveTitle: 'Via Salaria',
     image: local('016/main.jpg'),
     detailImage: local('016/main.jpg'),
-    gallery: [local('016/main.jpg'), local('016/thumb-1.jpg')],
+    gallery: [local('016/main.jpg'), local('016/thumb-1.jpg'), local('016/thumb-2.jpg')],
     sections: [],
   },
+
+  // 20 — Stool 60 (Artek / Alvar Aalto)
   {
     id: '017',
-    client: 'UNGEBAUT',
-    title: 'Project 017',
-    tags: ['Visualisation'],
+    client: 'Artek',
+    title: 'Stool 60',
+    tags: ['Product'],
     year: 2025,
-    location: 'Studio archive',
+    location: 'Studio',
+    role: 'Product still · 1 hero',
     accent: '#bfb7a6',
     accentSoft: '#1a1814',
     detailBg: '#8d9d96',
     detailInk: '#1c2520',
-    description: 'A study held over three frames — the same room, three apertures.',
+    description:
+      "Alvar Aalto's Stool 60 distills modern design into birch wood simplicity — stackability, industrial logic, and human warmth define its lasting cultural presence.",
+    massiveTitle: 'A R T E K',
     image: local('017/main.jpg'),
     detailImage: local('017/main.jpg'),
     gallery: [local('017/main.jpg'), local('017/thumb-1.jpg'), local('017/thumb-2.jpg')],
     sections: [],
   },
+
+  // 21 — Sihl City (Theo Hotz, Zurich)
   {
     id: '018',
-    client: 'UNGEBAUT',
-    title: 'Project 018',
-    tags: ['Visualisation'],
+    client: 'Theo Hotz',
+    title: 'Sihl City',
+    tags: ['Exterior', 'Residential'],
     year: 2025,
-    location: 'Studio archive',
+    location: 'Zurich, Switzerland',
+    role: 'Marketing campaign · stills',
     accent: '#b4674a',
     accentSoft: '#1c0f0a',
     detailBg: '#c54e3a',
     detailInk: '#fae6cf',
     description:
-      'A still from the studio archive — material, light, and the moment we wanted the camera to land on.',
+      'Housing emerges on the former Sihlpapier factory site — adaptive reuse, urban density, and mixed programs connect living with work, culture, and public life.',
+    massiveTitle: 'Theo/Hotz',
     image: local('018/main.png'),
     detailImage: local('018/main.png'),
     gallery: [local('018/main.png'), local('018/thumb-1.png')],
     sections: [],
   },
-  // ---------- New folders 019–034 — auto-generated UNGEBAUT archive cards ----------
+
+  // 22 — Restaurant (Erich Prödl Associates)
   {
     id: '019',
-    client: 'UNGEBAUT',
-    title: 'Project 019',
-    tags: ['Visualisation'],
-    year: 2025,
-    location: 'Studio archive',
-    ...PALETTES[0],
-    description: LOOSE_CAPTIONS[0],
+    client: 'Erich Prödl Associates',
+    title: 'Restaurant',
+    tags: ['Interior', 'Hospitality'],
+    year: 2023,
+    location: 'Austria',
+    role: 'Pitch · 1 still',
+    accent: '#a88a6c',
+    accentSoft: '#1c1712',
+    detailBg: '#7d6242',
+    detailInk: '#f4ead7',
+    description:
+      'A warm atmosphere envelops the guest — timber, candlelight, and quiet textures define a space shaped by presence and atmosphere.',
+    massiveTitle: 'Erich/Prödl',
     image: local('019/main.png'),
     detailImage: local('019/main.png'),
     gallery: [local('019/main.png'), local('019/thumb-1.png')],
     sections: [],
   },
+
+  // 23 — Casa Tepetate (Manuel Cervantes, Mexico City)
   {
     id: '020',
-    client: 'UNGEBAUT',
-    title: 'Project 020',
-    tags: ['Visualisation'],
-    year: 2025,
-    location: 'Studio archive',
-    ...PALETTES[1],
-    description: LOOSE_CAPTIONS[1],
+    client: 'Manuel Cervantes',
+    title: 'Casa Tepetate',
+    tags: ['Exterior', 'Residential'],
+    year: 2024,
+    location: 'Mexico City, Mexico',
+    role: 'Marketing campaign · stills',
+    accent: '#5a89a8',
+    accentSoft: '#0c151c',
+    detailBg: '#2a3a5a',
+    detailInk: '#f1ecdf',
+    description:
+      'Casa Tepetate stages the dialogue between concrete and landscape — interior courtyards, raw materiality, and precise light articulate the architectural concept.',
+    massiveTitle: 'Manuel Cervantes',
     image: local('020/main.png'),
     detailImage: local('020/main.png'),
     sections: [],
   },
+
+  // 24 — HAUS PASSWANGSTRASSE (Clauss Kahl Merz Atelier, Basel)
   {
     id: '021',
-    client: 'UNGEBAUT',
-    title: 'Project 021',
-    tags: ['Visualisation'],
-    year: 2025,
-    location: 'Studio archive',
-    ...PALETTES[2],
-    description: LOOSE_CAPTIONS[2],
+    client: 'Clauss Kahl Merz Atelier',
+    title: 'HAUS PASSWANGSTRASSE',
+    tags: ['Exterior', 'Residential'],
+    year: 2024,
+    location: 'Basel, Switzerland',
+    role: 'Marketing campaign · stills',
+    accent: '#8c8a86',
+    accentSoft: '#161616',
+    detailBg: '#0d0f1a',
+    detailInk: '#f5f1e6',
+    description:
+      'A house transformation on Passwangstrasse in Basel — precise detailing, contemporary domesticity, and clear spatial communication support the architectural renewal.',
+    massiveTitle: 'Clauss Kahl Merz Atelier',
     image: local('021/main.png'),
     detailImage: local('021/main.png'),
     sections: [],
   },
+
+  // 25 — Oberhus (Peter Zumthor, Valais)
   {
     id: '022',
-    client: 'UNGEBAUT',
-    title: 'Project 022',
-    tags: ['Visualisation'],
-    year: 2025,
-    location: 'Studio archive',
-    ...PALETTES[3],
-    description: LOOSE_CAPTIONS[3],
+    client: 'Peter Zumthor',
+    title: 'Oberhus',
+    tags: ['Exterior', 'Hospitality'],
+    year: 2023,
+    location: 'Valais, Switzerland',
+    role: 'Marketing campaign · stills',
+    accent: '#5d7a5b',
+    accentSoft: '#0e1610',
+    detailBg: '#3d5d4c',
+    detailInk: '#e8e3cf',
+    description:
+      'Timber holiday houses turn alpine domesticity into an architectural retreat — generous rooms, crafted wood, and mountain silence define their quiet exclusivity.',
+    massiveTitle: 'Ober/hus',
     image: local('022/main.jpg'),
     detailImage: local('022/main.jpg'),
     sections: [],
   },
+
+  // 26 — Diplomatic Flagshipstore (Estudio DIIR, Madrid)
   {
     id: '023',
-    client: 'UNGEBAUT',
-    title: 'Project 023',
-    tags: ['Visualisation'],
-    year: 2025,
-    location: 'Studio archive',
-    ...PALETTES[4],
-    description: LOOSE_CAPTIONS[4],
+    client: 'Estudio DIIR',
+    title: 'Diplomatic Flagshipstore',
+    tags: ['Interior', 'Retail'],
+    year: 2024,
+    location: 'Madrid, Spain',
+    role: 'Brand campaign · interior stills',
+    accent: '#7a2434',
+    accentSoft: '#1c0a0e',
+    detailBg: '#6f1d2a',
+    detailInk: '#f5dfd1',
+    description:
+      'A diplomatic-quarter retail interior turned into spatial choreography — shifting geometries, exhibition sequences, and a guided route transform the monotonous enclosure.',
+    massiveTitle: 'Diplomatic/Flagshipstore',
     image: local('023/main.png'),
     detailImage: local('023/main.png'),
     sections: [],
   },
-  {
-    id: '024',
-    client: 'UNGEBAUT',
-    title: 'Project 024',
-    tags: ['Visualisation'],
-    year: 2025,
-    location: 'Studio archive',
-    ...PALETTES[5],
-    description: LOOSE_CAPTIONS[5],
-    image: local('024/main.png'),
-    detailImage: local('024/main.png'),
-    sections: [],
-  },
+
+  // 27 — Sihl City West / Thurgauerstrasse — REMOVED PENDING THEO HOTZ APPROVAL.
+  // Re-add from docs/gallery-content-source.md when approved. Image assets
+  // remain on disk at public/images/projects/024/.
+
+  // 28 — Neutrale Flagshipstore (Estudio DIIR, Madrid)
   {
     id: '025',
-    client: 'UNGEBAUT',
-    title: 'Project 025',
-    tags: ['Visualisation'],
-    year: 2025,
-    location: 'Studio archive',
-    ...PALETTES[6],
-    description: LOOSE_CAPTIONS[0],
+    client: 'Estudio DIIR',
+    title: 'Neutrale Flagshipstore',
+    tags: ['Interior', 'Retail'],
+    year: 2024,
+    location: 'Madrid, Spain',
+    role: 'Brand campaign · interior stills',
+    accent: '#bfb7a6',
+    accentSoft: '#1a1814',
+    detailBg: '#8d9d96',
+    detailInk: '#1c2520',
+    description:
+      "Madrid's Neutrale flagship turns the showroom into spatial choreography — limestone floors, layered partitions, and a guided route reframe the brand's product display.",
+    massiveTitle: 'Neutrale/Flagshipstore',
     image: local('025/main.png'),
     detailImage: local('025/main.png'),
     sections: [],
   },
+
+  // 29 — James Street (Taylor and Hinds Architects, Tasmania) · motion
   {
     id: '027',
-    client: 'UNGEBAUT',
-    title: 'Sequence 027',
-    tags: ['Motion', 'Archive'],
-    year: 2026,
-    location: 'Studio archive',
-    ...PALETTES[0],
-    description: 'A motion frame held just long enough to read the room.',
+    client: 'Taylor and Hinds Architects',
+    title: 'James Street',
+    tags: ['Motion'],
+    year: 2024,
+    location: 'Tasmania, Australia',
+    role: 'Studio motion · cinematic pass',
+    accent: '#a88a6c',
+    accentSoft: '#1c1712',
+    detailBg: '#7d6242',
+    detailInk: '#f4ead7',
+    description:
+      'James Street in Launceston folds heritage context into a compact brick villa — framed openings, a walled garden, and a walnut tree shape secluded domestic life.',
+    massiveTitle: 'James / Street',
     image: local('027/main.mp4'),
     video: local('027/main.mp4'),
     detailImage: local('027/main.mp4'),
@@ -580,16 +678,23 @@ const richProjects = [
     gallery: [local('027/main.mp4')],
     sections: [],
   },
+
+  // 30 — ASTRUP HAVE (NORRØN, Copenhagen) · motion
   {
     id: '028',
-    client: 'UNGEBAUT',
-    title: 'Sequence 028',
-    tags: ['Motion', 'Archive'],
-    year: 2026,
-    location: 'Studio archive',
-    ...PALETTES[1],
+    client: 'NORRØN',
+    title: 'ASTRUP HAVE',
+    tags: ['Motion'],
+    year: 2024,
+    location: 'Copenhagen, Denmark',
+    role: 'Studio motion · cinematic pass',
+    accent: '#5a89a8',
+    accentSoft: '#0c151c',
+    detailBg: '#2a3a5a',
+    detailInk: '#f1ecdf',
     description:
-      'A second working capture — slow camera, the room composed for one decisive frame.',
+      'Åstrup Have overlooks Haderslev Fjord as a contemporary Danish farmhouse — biodynamic cultivation, grazing animals, and vernacular forms renew the countryside dream.',
+    massiveTitle: 'ASTRUP HAVE',
     image: local('028/main.mp4'),
     video: local('028/main.mp4'),
     detailImage: local('028/main.mp4'),
@@ -597,56 +702,87 @@ const richProjects = [
     gallery: [local('028/main.mp4')],
     sections: [],
   },
+
+  // 31 — Pendant Lamp (DEHGRAF) · option C: lamp staged in interior set
   {
     id: '029',
-    client: 'UNGEBAUT',
-    title: 'Project 029',
-    tags: ['Visualisation'],
-    year: 2026,
-    location: 'Studio archive',
-    ...PALETTES[2],
-    description: LOOSE_CAPTIONS[1],
+    client: 'DEHGRAF',
+    title: 'Pendant Lamp',
+    tags: ['Product'],
+    year: 2025,
+    location: 'Zürich, Switzerland',
+    role: 'Product still · 1 hero',
+    accent: '#8c8a86',
+    accentSoft: '#161616',
+    detailBg: '#0d0f1a',
+    detailInk: '#f5f1e6',
+    description:
+      'A cast-concrete pendant set against monastic raw walls — single suspension cable, deep shadow, and warm timber surroundings stage the lamp as a sculptural object.',
+    massiveTitle: 'DEHGRA/GRAF',
     image: local('029/main.png'),
     detailImage: local('029/main.png'),
     sections: [],
   },
+
+  // 32 — Montparnasse Residence (cyrus ardalan architecte, Paris)
   {
     id: '030',
-    client: 'UNGEBAUT',
-    title: 'Project 030',
-    tags: ['Visualisation'],
-    year: 2026,
-    location: 'Studio archive',
-    ...PALETTES[3],
-    description: LOOSE_CAPTIONS[2],
+    client: 'cyrus ardalan architecte',
+    title: 'Montparnasse Residence',
+    tags: ['Interior', 'Residential'],
+    year: 2025,
+    location: 'Paris, France',
+    role: 'Competition entry · stills',
+    accent: '#5d7a5b',
+    accentSoft: '#0e1610',
+    detailBg: '#3d5d4c',
+    detailInk: '#e8e3cf',
+    description:
+      'Modernist furniture and warm herringbone parquet define a restrained interior composition — soft daylight, geometric volumes, and walnut accents create quiet spatial balance.',
+    massiveTitle: 'Montparnasse/Residence',
     image: local('030/main.jpg'),
     detailImage: local('030/main.jpg'),
     sections: [],
   },
+
+  // 33 — Morgentalstrasse (SGGK, 1st place competition)
   {
     id: '033',
-    client: 'UNGEBAUT',
-    title: 'Project 033',
-    tags: ['Visualisation'],
-    year: 2026,
-    location: 'Studio archive',
-    ...PALETTES[4],
-    description: LOOSE_CAPTIONS[3],
+    client: 'SGGK',
+    title: 'Morgentalstrasse',
+    tags: ['Exterior', 'Residential'],
+    year: 2023,
+    location: 'Zürich, Switzerland',
+    role: 'Competition entry · 2 stills',
+    accent: '#7a2434',
+    accentSoft: '#1c0a0e',
+    detailBg: '#6f1d2a',
+    detailInk: '#f5dfd1',
+    description:
+      'The lush greenery of Manegg cemetery enters the residential fabric — planted front gardens, quiet streets, and recessed houses shape a sheltered urban retreat.',
+    massiveTitle: 'SGGK',
     image: local('033/main.png'),
     detailImage: local('033/main.png'),
     gallery: [local('033/main.png'), local('033/thumb-1.png'), local('033/thumb-2.png')],
     sections: [],
   },
+
+  // 34 — neoro n80 (REUTER) · motion · brand film
   {
     id: '034',
-    client: 'UNGEBAUT',
-    title: 'Sequence 034',
-    tags: ['Motion', 'Archive'],
-    year: 2026,
-    location: 'Studio archive',
-    ...PALETTES[5],
+    client: 'REUTER',
+    title: 'neoro n80',
+    tags: ['Motion', 'Product'],
+    year: 2023,
+    location: 'Studio',
+    role: 'Brand film · motion + still',
+    accent: '#bfb7a6',
+    accentSoft: '#1a1814',
+    detailBg: '#8d9d96',
+    detailInk: '#1c2520',
     description:
-      'A longer working pass — light pulled almost out of the room, the camera barely moving.',
+      'A translucent acrylic bathtub becomes the sculptural centerpiece of the bathroom — soft reflections, jungle-inspired ambience, and flowing geometry elevate the bathing experience.',
+    massiveTitle: 'REUTER',
     image: local('034/main.mp4'),
     video: local('034/main.mp4'),
     detailImage: local('034/main.mp4'),
@@ -661,39 +797,11 @@ const richProjects = [
   },
 ];
 
-// ---------------------------------------------------------------------------
-// Loose-render cards — JPG/PNG files placed directly under
-// public/images/projects/. Currently empty; all assets now live in
-// numbered folders.
-// ---------------------------------------------------------------------------
-const LOOSE_FILES = [];
-
-const looseCards = LOOSE_FILES.map((file, i) => {
-  const num = file.replace(/\.[^.]+$/, '');
-  const palette = PALETTES[i % PALETTES.length];
-  const caption = LOOSE_CAPTIONS[i % LOOSE_CAPTIONS.length];
-  return {
-    id: `r${num.padStart(3, '0')}`,
-    client: 'UNGEBAUT',
-    title: `Render Nº ${num.padStart(2, '0')}`,
-    tags: ['Visualisation'],
-    year: 2024,
-    location: 'Studio archive',
-    ...palette,
-    description: caption,
-    image: local(file),
-    detailImage: local(file),
-    sections: [],
-  };
-});
-
-export const projects = [...featuredCards, ...richProjects, ...looseCards].map(
-  (project, i) => ({
-    ...project,
-    massiveInk: project.massiveInk || MASSIVE_TITLE_INKS[i % MASSIVE_TITLE_INKS.length],
-    role: project.role || 'Visualisation & Direction',
-  }),
-);
+export const projects = projectList.map((project, i) => ({
+  ...project,
+  massiveInk: project.massiveInk || MASSIVE_TITLE_INKS[i % MASSIVE_TITLE_INKS.length],
+  role: project.role || 'Visualisation & Direction',
+}));
 
 export function getProject(id) {
   return projects.find((p) => p.id === id);
