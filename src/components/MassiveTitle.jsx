@@ -38,10 +38,10 @@ export function MassiveTitle({ text, subtitle, ink = '#241a4a', animate = true }
           <TextCascade
             text={row1}
             axis="x"
-            range={110}
+            range={200}
             enterFrom="left"
             exitTo="left"
-            totalDuration={1.2}
+            totalDuration={1.6}
             letterDelay={0.022}
             startDelay={0.16}
             ease="o6"
@@ -56,10 +56,10 @@ export function MassiveTitle({ text, subtitle, ink = '#241a4a', animate = true }
             <TextCascade
               text={row2}
               axis="x"
-              range={110}
+              range={200}
               enterFrom="right"
               exitTo="right"
-              totalDuration={1.2}
+              totalDuration={1.6}
               letterDelay={0.022}
               startDelay={0.28}
               ease="o6"
