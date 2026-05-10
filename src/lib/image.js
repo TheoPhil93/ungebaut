@@ -83,3 +83,11 @@ export function toWebVideo(path) {
   if (!path || !VIDEO_EXT.test(path) || /\.web\.mp4$/i.test(path)) return path;
   return path.replace(VIDEO_EXT, '.web.mp4');
 }
+
+// Truthy check for media-source paths that should render as a <video> rather
+// than an <img>. Allows query strings (`.mp4?v=2`) so cache-busted asset URLs
+// still classify correctly.
+const VIDEO_SRC = /\.(mp4|webm|mov)(\?|$)/i;
+export function isVideoSrc(src = '') {
+  return VIDEO_SRC.test(src);
+}
