@@ -1,13 +1,19 @@
 import { lazy, Suspense, useCallback, useEffect, useState } from 'react';
-import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
-import { Cursor } from './components/Cursor';
 import { Nav } from './components/Nav';
 import { Footer } from './components/Footer';
-import { HomeView } from './components/HomeView';
-import { getProject } from './data/projects';
-import { usePrefersReducedMotion } from './hooks/usePrefersReducedMotion';
 import { useUrlSync, viewFromPath } from './hooks/useUrlSync';
 
+// Cursor + HomeView are framer-motion users; lazy-loading them keeps the
+// framer chunk off the eager critical path so its ~250ms parse/eval cost
+// runs after FCP instead of blocking it. Cursor never renders on mobile/
+// touch devices and HomeView's null Suspense fallback is acceptable because
+// the WebGL gallery (its visible LCP element) is itself lazy.
+const Cursor = lazy(() =>
+  import('./components/Cursor').then((m) => ({ default: m.Cursor })),
+);
+const HomeView = lazy(() =>
+  import('./components/HomeView').then((m) => ({ default: m.HomeView })),
+);
 const IndexView = lazy(() =>
   import('./components/IndexView').then((m) => ({ default: m.IndexView })),
 );
@@ -19,9 +25,6 @@ const ServicesView = lazy(() =>
 );
 const JournalView = lazy(() =>
   import('./components/JournalView').then((m) => ({ default: m.JournalView })),
-);
-const ProjectDetail = lazy(() =>
-  import('./components/ProjectDetail').then((m) => ({ default: m.ProjectDetail })),
 );
 const ImpressumView = lazy(() =>
   import('./components/ImpressumView').then((m) => ({ default: m.ImpressumView })),
@@ -45,21 +48,18 @@ const VIEWS = [
 ];
 
 export default function App() {
-  const reduced = usePrefersReducedMotion();
   const [view, setView] = useState(() =>
     typeof window === 'undefined' ? 'home' : viewFromPath(window.location.pathname),
   );
+  // Selection drives HomeView's unified scroll stack (Section 1 hero +
+  // Section 2 strip/footer). HomeView owns the close affordances and SEO
+  // updates; App only knows whether something is selected so layout and
+  // routing can react.
   const [selectedId, setSelectedId] = useState(null);
-  // Two-stage drill-down: clicking a card opens stage 1 (HomeView's in-place
-  // expansion). Clicking EXPLORE opens stage 2 (the deeper ProjectDetail
-  // with side thumbnails). Closing stage 2 returns to stage 1.
-  const [detailMode, setDetailMode] = useState(false);
-  const selected = selectedId ? getProject(selectedId) : null;
 
   const navigate = useCallback((next) => {
     if (!VIEWS.includes(next)) return;
     setSelectedId(null);
-    setDetailMode(false);
     setView(next);
   }, []);
 
@@ -67,42 +67,20 @@ export default function App() {
 
   const openProject = useCallback((project) => {
     setSelectedId(project ? project.id : null);
-    if (!project) setDetailMode(false);
   }, []);
 
-  const exploreProject = useCallback(() => {
-    setDetailMode(true);
-  }, []);
-
-  const closeProject = useCallback(() => {
-    if (detailMode) {
-      // First click closes the deeper view, second click clears the card.
-      setDetailMode(false);
-    } else {
-      setSelectedId(null);
-    }
-  }, [detailMode]);
-
+  // ESC at the route level — when no project is open, ESC navigates back
+  // to home from any non-home route. Selection-mode ESC is owned by
+  // HomeView (the unified scroll stack closes itself).
   useEffect(() => {
     const onKey = (event) => {
-      if (event.key === 'Escape') {
-        if (detailMode) setDetailMode(false);
-        else if (selectedId) setSelectedId(null);
-        else if (view !== 'home') navigate('home');
-      }
+      if (event.key !== 'Escape') return;
+      if (selectedId) return;
+      if (view !== 'home') navigate('home');
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [navigate, selectedId, view, detailMode]);
-
-  // Per-route titles are rendered inside each view via <SeoHead>. Project
-  // detail keeps the dynamic title here since it depends on the selected
-  // record.
-  useEffect(() => {
-    if (selected) {
-      document.title = `${selected.client} — ${selected.title} · UNGEBAUT`;
-    }
-  }, [selected]);
+  }, [navigate, selectedId, view]);
 
   const indexHandleSelect = useCallback(
     (project) => {
@@ -113,59 +91,34 @@ export default function App() {
     [navigate],
   );
 
-  const transition = reduced
-    ? { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 } }
-    : {
-        initial: { y: 60, opacity: 0, clipPath: 'inset(15% 0% 15% 0%)' },
-        animate: { y: 0, opacity: 1, clipPath: 'inset(0% 0% 0% 0%)' },
-        exit: { y: -40, opacity: 0, clipPath: 'inset(15% 0% 15% 0%)' },
-      };
-
   return (
-    <div className="app" data-detail={selected ? 'open' : 'closed'}>
+    <div className="app" data-detail={selectedId ? 'open' : 'closed'}>
       <a className="skip-link" href="#main">
         Zum Inhalt
       </a>
 
-      <Cursor />
+      <Suspense fallback={null}>
+        <Cursor />
+      </Suspense>
       <Nav view={view} onNavigate={navigate} />
 
       <main id="main" className="app__main">
-        <LayoutGroup id="project-title-transition">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={view}
-              {...transition}
-              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-              style={{ display: 'flex', flexDirection: 'column', flex: 1 }}
-            >
-              <Suspense fallback={null}>
-                {view === 'home' && (
-                  <HomeView
-                    onSelect={openProject}
-                    onExplore={exploreProject}
-                    selectedId={selectedId}
-                  />
-                )}
-                {view === 'index' && <IndexView onSelect={indexHandleSelect} />}
-                {view === 'services' && <ServicesView />}
-                {view === 'journal' && <JournalView />}
-                {view === 'about' && <AboutView />}
-                {view === 'impressum' && <ImpressumView />}
-                {view === 'datenschutz' && <DatenschutzView />}
-                {view === 'not-found' && <NotFoundView onNavigate={navigate} />}
-              </Suspense>
-            </motion.div>
-          </AnimatePresence>
-
-          <AnimatePresence>
-            {selected && detailMode ? (
-              <Suspense fallback={null}>
-                <ProjectDetail project={selected} onClose={closeProject} />
-              </Suspense>
-            ) : null}
-          </AnimatePresence>
-        </LayoutGroup>
+        {/* Per-view CSS fade-in (see .app__view in index.css). Keyed by view
+            so each route swap remounts the wrapper and re-runs the keyframe
+            — same effect as the previous AnimatePresence/motion.div, minus
+            the framer-motion dependency on the eager critical path. */}
+        <div key={view} className="app__view">
+          <Suspense fallback={null}>
+            {view === 'home' && <HomeView onSelect={openProject} selectedId={selectedId} />}
+            {view === 'index' && <IndexView onSelect={indexHandleSelect} />}
+            {view === 'services' && <ServicesView />}
+            {view === 'journal' && <JournalView />}
+            {view === 'about' && <AboutView />}
+            {view === 'impressum' && <ImpressumView />}
+            {view === 'datenschutz' && <DatenschutzView />}
+            {view === 'not-found' && <NotFoundView onNavigate={navigate} />}
+          </Suspense>
+        </div>
       </main>
 
       <Footer onNavigate={navigate} />

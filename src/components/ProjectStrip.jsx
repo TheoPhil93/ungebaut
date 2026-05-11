@@ -41,27 +41,27 @@ export function ProjectStrip({ project }) {
 
   return (
     <motion.section
-      className="detail__strip"
+      className="proj-strip"
       aria-label="More frames from this project"
       initial={{ y: 120, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       exit={{ y: 80, opacity: 0 }}
       transition={{ duration: 1.05, ease, delay: 0.18 }}
     >
-      <p className="detail__strip-heading">Selected frames</p>
-      <ul className="detail__strip-list">
+      <p className="proj-strip__heading">Selected frames</p>
+      <ul className="proj-strip__list">
         {galleryItems.slice(1).map((src, i) => {
           const itemIsVideo = isVideoSrc(src);
           return (
             <motion.li
               key={`${src}-${i}`}
-              className="detail__strip-item"
+              className="proj-strip__item"
               initial={{ opacity: 0, y: 80 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-80px' }}
               transition={{ duration: 0.95, ease, delay: i * 0.05 }}
             >
-              <figure className="detail__strip-figure">
+              <figure className="proj-strip__figure">
                 {itemIsVideo ? (
                   <video
                     src={toWebVideo(src)}
@@ -74,10 +74,8 @@ export function ProjectStrip({ project }) {
                 ) : (
                   <Picture src={src} alt="" loading="lazy" />
                 )}
-                <figcaption className="detail__strip-caption">
-                  <span className="detail__strip-num">
-                    {String(i + 2).padStart(2, '0')}
-                  </span>
+                <figcaption className="proj-strip__caption">
+                  <span className="proj-strip__num">{String(i + 2).padStart(2, '0')}</span>
                   <span>{project.title}</span>
                 </figcaption>
               </figure>

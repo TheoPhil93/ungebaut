@@ -1,9 +1,14 @@
 import { test, expect } from '@playwright/test';
 
-// Critical-path smoke: home loads → tap a gallery stripe → Explore opens the
-// deep ProjectDetail view → close returns to gallery. The gallery itself is
-// a WebGL canvas (no DOM children for individual cards), so we tap pixel
-// coordinates and rely on the data-detail attribute to confirm state changes.
+// Critical-path smoke: home loads → tap a gallery stripe → Explore scrolls
+// down to Section 2 (strip + footer) → sticky × closes back to browse. The
+// gallery itself is a WebGL canvas (no DOM children for individual cards),
+// so we tap pixel coordinates and rely on the data-detail attribute to
+// confirm state changes.
+//
+// Issue 03: ProjectDetail panel retired. The drilldown now lives entirely
+// inside HomeView as a unified scroll stack — there's no .detail panel and
+// no separate panel mount; close affordances belong to the sticky × button.
 test('home → card → explore → close', async ({ page }) => {
   // motion isn't suppressed here — the smoke run wants to exercise the real
   // animation path and prove nothing blocks the user during transitions.
@@ -27,30 +32,35 @@ test('home → card → explore → close', async ({ page }) => {
   if (!box) throw new Error('gallery canvas has no bounding box');
   await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
 
-  // Selected state: .app picks up data-detail='open', the close button
-  // becomes available (mobile-only — desktop hides it, so we look for the
-  // Explore CTA which renders on every breakpoint when selected).
+  // Selected state: .app picks up data-detail='open', .home picks up
+  // .home--scroll (the unified scroll stack), and Section 2 mounts below.
   await expect(page.locator('.app')).toHaveAttribute('data-detail', 'open', {
     timeout: 4000,
   });
+  await expect(page.locator('.home--scroll')).toBeVisible();
+  const stickyClose = page.locator('.home__sticky-close');
+  await expect(stickyClose).toBeVisible();
+
+  // Section 2 should exist in the DOM (strip + footer container).
+  const section2 = page.locator('.home__section--strip');
+  await expect(section2).toBeAttached({ timeout: 4000 });
+
+  // Click EXPLORE — this used to mount a takeover panel; now it
+  // smooth-scrolls to Section 2 within the same surface.
   const explore = page.getByRole('button', { name: /explore/i });
   await expect(explore).toBeVisible();
-
   await explore.click();
 
-  // ProjectDetail mounts as a takeover panel.
-  const detail = page.locator('.detail');
-  await expect(detail).toBeVisible({ timeout: 4000 });
+  // Wait for the smooth scroll to bring Section 2 into view (give the
+  // browser ~1.2s to finish the scroll).
+  await expect(section2).toBeInViewport({ timeout: 4000 });
 
-  // The detail close button is auto-focused on mount (a11y commit 7bdeba2),
-  // so Escape exits the takeover. We use the button click instead so the
-  // smoke also covers the click handler.
-  // Scope to the detail panel — both home and detail render a button with
-  // aria-label="Close project", and the home one is matched first in DOM
-  // order, so we'd otherwise try to click the obscured home button.
-  await page.locator('.detail').locator('button[aria-label="Close project"]').click();
+  // Sticky × stays clickable across sections. Click it and confirm the
+  // selection clears + the scroll stack tears down.
+  await stickyClose.click();
 
-  // Back to selected card view (one level up). One more close returns to
-  // pure browse.
-  await expect(detail).toBeHidden({ timeout: 4000 });
+  await expect(page.locator('.app')).toHaveAttribute('data-detail', 'closed', {
+    timeout: 4000,
+  });
+  await expect(page.locator('.home--scroll')).toHaveCount(0);
 });

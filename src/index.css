@@ -11,6 +11,23 @@
 @import '@fontsource/bebas-neue/400.css';
 @import '@fontsource/anton/400.css';
 
+/* Tailwind v4 — pulled in for the upstream unlumen blob-card and any
+   future shadcn primitives. The site otherwise uses BEM custom CSS
+   defined below; Tailwind utility classes live alongside as an opt-in
+   layer for component primitives that ship as Tailwind by convention. */
+@import 'tailwindcss';
+
+/* Map UNGEBAUT design tokens to the Tailwind theme so the upstream
+   blob-card uses our cream/ink palette instead of the demo's magenta.
+   `bg-background` in the upstream component now resolves to --bg, etc. */
+@theme {
+  --color-background: #f4f0e8;
+  --color-foreground: #0b0b0b;
+  --color-bg-elev: #ebe7df;
+  --radius-blob-outer: 21.5px;
+  --radius-blob-inner: 20px;
+}
+
 :root {
   /* Light theme — warm off-white backdrop, near-black ink. The previous
      dark variant lives in the project palette (per-project detailInk /
@@ -211,6 +228,32 @@ button {
   display: flex;
   flex-direction: column;
   position: relative;
+}
+
+/* Per-view fade+lift on every route swap. Keyed by view in App.jsx so the
+   wrapper remounts and re-runs the keyframe. Replaces the previous
+   framer-motion AnimatePresence so the framer chunk no longer blocks first
+   paint. The keyframe values mirror the old motion.div transition (subtle
+   y-lift + clip-path reveal). The global reduced-motion reset in this file
+   nukes the animation under prefers-reduced-motion: reduce. */
+.app__view {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  animation: app-view-enter 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes app-view-enter {
+  from {
+    opacity: 0;
+    transform: translateY(60px);
+    clip-path: inset(15% 0% 15% 0%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    clip-path: inset(0% 0% 0% 0%);
+  }
 }
 
 /* ---------- Cursor ---------- */
@@ -1592,37 +1635,116 @@ a.about__contact-value:hover::after {
   border-bottom: 1px solid var(--line);
 }
 
-.about__faq-list {
+.faq {
   display: flex;
   flex-direction: column;
   border-top: 1px solid var(--line);
-  margin: 0;
 }
 
-.about__faq-item {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  padding: clamp(1rem, 2vh, 1.5rem) 0;
+.faq__item {
   border-bottom: 1px solid var(--line);
 }
 
-.about__faq-q {
+.faq__heading {
+  margin: 0;
+  font: inherit;
+  font-weight: inherit;
+}
+
+.faq__trigger {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: clamp(1rem, 3vw, 2rem);
+  padding: clamp(1rem, 2vh, 1.5rem) 0;
+  background: none;
+  border: 0;
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+}
+
+.faq__q {
   font-family: var(--font-display);
   font-weight: 300;
   font-size: clamp(1.1rem, 1.7vw, 1.4rem);
   line-height: 1.3;
   letter-spacing: -0.005em;
   color: var(--fg);
+  flex: 1 1 auto;
 }
 
-.about__faq-a {
+/* Plus icon built from two pseudo-element bars. The vertical bar rotates
+   90° on open so it stacks onto the horizontal bar — visually a minus.
+   Wrapper scales on hover for a quiet preview-of-action affordance. */
+.faq__icon {
+  position: relative;
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  margin-top: 0.4em;
+  transform: scale(1);
+  transition: transform 0.32s var(--ease-out);
+}
+
+.faq__icon::before,
+.faq__icon::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  background: var(--fg);
+  transition: transform 0.32s var(--ease-out);
+}
+
+.faq__icon::before {
+  width: 18px;
+  height: 1px;
+  transform: translate(-50%, -50%);
+}
+
+.faq__icon::after {
+  width: 1px;
+  height: 18px;
+  transform: translate(-50%, -50%) rotate(0deg);
+}
+
+.faq__item[data-open='true'] .faq__icon::after {
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+
+.faq__trigger:hover .faq__icon {
+  transform: scale(1.08);
+}
+
+/* grid-template-rows: 0fr → 1fr is the height-to-auto trick. Requires
+   the inner wrapper to have overflow:hidden and min-height:0 so the grid
+   actually clamps the child rather than letting it spill. */
+.faq__panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.32s var(--ease-out);
+}
+
+.faq__item[data-open='true'] .faq__panel {
+  grid-template-rows: 1fr;
+}
+
+.faq__panel-inner {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.faq__a {
   font-family: var(--font-sans);
   font-size: 0.95rem;
   line-height: 1.6;
   color: var(--muted);
   margin: 0;
-  max-width: 64ch;
+  padding-bottom: clamp(1rem, 2vh, 1.5rem);
+  max-width: none;
 }
 
 /* ---------- ServicesView ---------- */
@@ -1651,11 +1773,18 @@ a.about__contact-value:hover::after {
 .services__intro {
   font-family: var(--font-display);
   font-weight: 300;
-  font-size: clamp(1.6rem, 3.2vw, 2.6rem);
+  font-size: clamp(1.6rem, 3.4vw, 2.8rem);
   line-height: 1.25;
   letter-spacing: -0.01em;
-  max-width: 32ch;
+  /* No max-width — matches the About intro's full-width hero treatment.
+     Soft hyphenation handles long German compounds. */
+  max-width: none;
   margin: 0;
+  text-wrap: pretty;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  word-break: normal;
+  overflow-wrap: break-word;
 }
 
 /* Editorial offering blocks. Three-column grid on wide screens with a
@@ -1671,12 +1800,9 @@ a.about__contact-value:hover::after {
   display: grid;
   grid-template-columns: 1fr;
   grid-template-areas:
-    'num'
-    'heading'
-    'summary'
-    'includes'
-    'meta';
-  row-gap: clamp(1rem, 2.2vh, 1.75rem);
+    'text'
+    'card';
+  row-gap: clamp(1.5rem, 3vh, 2.5rem);
   padding: clamp(2.5rem, 5vh, 4rem) 0;
   border-top: 1px solid var(--line);
 }
@@ -1687,15 +1813,66 @@ a.about__contact-value:hover::after {
 
 @media (min-width: 900px) {
   .services__offering {
-    grid-template-columns: 4.5rem minmax(0, 1.6fr) minmax(220px, 0.9fr);
-    grid-template-areas:
-      'num heading meta'
-      '.   summary meta'
-      '.   includes meta';
+    grid-template-columns: minmax(0, 1fr) 320px;
+    grid-template-areas: 'text card';
     column-gap: clamp(2rem, 4vw, 4.5rem);
-    row-gap: clamp(1.25rem, 2vh, 1.75rem);
-    align-items: start;
+    /* `stretch` makes the text column inherit the card column's height
+       (or vice versa) — heading sits at the top edge and the includes
+       block at the bottom edge, mirroring the card's vertical bounds. */
+    align-items: stretch;
   }
+}
+
+.services__offering-text {
+  grid-area: text;
+  display: flex;
+  flex-direction: column;
+  /* heading + summary cluster at the top, includes pin to the bottom,
+     blank middle absorbs whatever extra height the card creates. */
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.services__offering-text-top {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(0.85rem, 1.4vh, 1.2rem);
+}
+
+.services__offering-card {
+  grid-area: card;
+  width: 100%;
+  max-width: 320px;
+}
+
+/* Reversed variant: card on the left, right-aligned text on the right.
+   Mobile keeps the swap (card on top, text below) so the modifier reads
+   as a single intentional flip across breakpoints. */
+.services__offering--reversed {
+  grid-template-areas:
+    'card'
+    'text';
+}
+
+@media (min-width: 900px) {
+  .services__offering--reversed {
+    grid-template-columns: 320px minmax(0, 1fr);
+    grid-template-areas: 'card text';
+  }
+}
+
+.services__offering--reversed .services__offering-text,
+.services__offering--reversed .services__offering-text-top,
+.services__offering--reversed .services__offering-includes {
+  text-align: right;
+}
+
+/* Pin max-width-capped elements to the right edge of their flex column so
+   right-aligned text actually meets the right edge instead of stopping at
+   a 28ch / 60ch box still anchored on the left. */
+.services__offering--reversed .services__offering-h2,
+.services__offering--reversed .services__offering-summary {
+  align-self: flex-end;
 }
 
 .services__offering-num {
@@ -1944,6 +2121,247 @@ a.about__contact-value:hover::after {
   line-height: 1.2;
 }
 
+/* ---------- Pricing cards (blob card, right rail of each offering) ----------
+   One card per studio, embedded as the right column of `.services__offering`.
+   Structurally mirrors the unlumen blob-card: outer wrapper holds an absolute
+   glow frame at -1.5px inset (rounded 21.5px, overflow-hidden) and an inner
+   card at 0 inset (rounded 20px, overflow-hidden, bg). The glow frame's
+   rotating conic-gradient peeks out as a 1.5px halo around the inner card.
+   The detailed pricing table now lives in .services__pricing-details below. */
+
+.services__pricing-details {
+  border-top: 1px solid var(--line);
+  padding-top: clamp(1rem, 2vh, 1.5rem);
+}
+
+.services__pricing-details summary {
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+  cursor: pointer;
+  list-style: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+  user-select: none;
+}
+
+.services__pricing-details summary::-webkit-details-marker {
+  display: none;
+}
+
+.services__pricing-details summary::after {
+  content: '+';
+  display: inline-block;
+  font-size: 1rem;
+  transition: transform 200ms var(--ease-out);
+}
+
+.services__pricing-details[open] summary::after {
+  transform: rotate(45deg);
+}
+
+.services__pricing-details > .services__pricing-table {
+  margin-top: clamp(0.75rem, 1.5vh, 1.25rem);
+}
+
+/* GlowEffect component (src/components/ui/glow-effect.jsx) —
+   keyframe + animation hooks. The inline style sets background, filter,
+   inset, size, and animationDuration; this rule wires the animation
+   name and timing function so the duration var actually drives motion. */
+.glow-effect--rotate {
+  animation-name: glow-effect-rotate;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+.glow-effect--pulse {
+  animation-name: glow-effect-pulse;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+  animation-direction: alternate;
+}
+
+@keyframes glow-effect-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes glow-effect-pulse {
+  from {
+    opacity: 0.5;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glow-effect--rotate,
+  .glow-effect--pulse {
+    animation: none;
+  }
+}
+
+/* Header content (lives in BlobCard's `header` prop, padded p-8 pb-0
+   by the upstream component). Sits z-10 above the blob field. All
+   three rows centred horizontally; sans-serif throughout to match the
+   editorial chrome of the rest of the site rather than Fraunces. */
+.pricing-card-top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.4rem;
+  /* BlobCard wraps this in a `p-8 pb-0` container (32px top). Extra
+     padding here pushes the label down so the upper section reads as
+     breathing room. Reduced from 1.5rem now that headerHeight is 240px. */
+  padding-top: 0.75rem;
+}
+
+.pricing-card-top__label-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.pricing-card-top__label {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: clamp(1.05rem, 1.6vw, 1.25rem);
+  letter-spacing: 0.005em;
+  color: var(--fg);
+}
+
+.pricing-card-top__secondary-label {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 0.78rem;
+  letter-spacing: 0.01em;
+  color: var(--muted);
+}
+
+.pricing-card-top__price-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 0.65rem;
+  margin-top: 0.4rem;
+}
+
+.pricing-card-top__price {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: clamp(2rem, 4.4vw, 2.7rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+  font-variant-numeric: tabular-nums;
+}
+
+.pricing-card-top__old-price {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: clamp(1rem, 1.8vw, 1.2rem);
+  line-height: 1;
+  letter-spacing: -0.005em;
+  color: var(--muted);
+  text-decoration: line-through;
+  text-decoration-thickness: 1.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.pricing-card-top__subtext {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.05rem;
+  margin-top: 0.4rem;
+}
+
+.pricing-card-top__subtext p {
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--muted);
+  margin: 0;
+}
+
+/* Body content (children slot). Lives below the blob header. */
+.pricing-card-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  padding: 0.4rem 1.75rem 1.5rem;
+}
+
+.pricing-card-bottom__cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0.85rem 1.5rem;
+  background: var(--bg-elev);
+  border-radius: 12px;
+  font-family: var(--font-sans);
+  font-size: 0.92rem;
+  color: var(--fg);
+  letter-spacing: 0.005em;
+  transition:
+    background 200ms var(--ease-out),
+    transform 200ms var(--ease-out);
+}
+
+.pricing-card-bottom__cta:hover,
+.pricing-card-bottom__cta:focus-visible {
+  background: var(--line);
+  transform: translateY(-1px);
+}
+
+.pricing-card-bottom__features {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  margin: 0;
+  padding: 0;
+}
+
+.pricing-card-bottom__features li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  line-height: 1.35;
+  color: var(--fg);
+}
+
+.pricing-card-bottom__feature-icon {
+  width: 1.15rem;
+  height: 1.15rem;
+  flex-shrink: 0;
+  color: var(--muted);
+  stroke-width: 1.5;
+}
+
+.pricing-card-bottom__footer {
+  text-align: center;
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  color: var(--muted-soft);
+  margin: 0.25rem 0 0;
+}
+
 /* ---------- JournalView ---------- */
 
 .journal {
@@ -1970,14 +2388,18 @@ a.about__contact-value:hover::after {
 .journal__intro {
   font-family: var(--font-display);
   font-weight: 300;
-  font-size: clamp(1.5rem, 2.8vw, 2.3rem);
-  line-height: 1.3;
+  font-size: clamp(1.6rem, 3.4vw, 2.8rem);
+  line-height: 1.25;
   letter-spacing: -0.01em;
-  max-width: 38ch;
+  /* No max-width — matches the About intro's full-width hero treatment.
+     Soft hyphenation handles long German compounds. */
+  max-width: none;
   margin: 0;
   text-wrap: pretty;
   hyphens: auto;
   -webkit-hyphens: auto;
+  word-break: normal;
+  overflow-wrap: break-word;
 }
 
 .journal__list {
@@ -1996,19 +2418,11 @@ a.about__contact-value:hover::after {
   border-bottom: 1px solid var(--line);
 }
 
-@media (min-width: 900px) {
-  .journal__entry {
-    grid-template-columns: 4.5rem minmax(0, 1fr);
-    column-gap: clamp(2rem, 4vw, 4.5rem);
-  }
-  /* The number column stays empty; the article spans col 2. */
-  .journal__entry > article {
-    grid-column: 2;
-  }
-  .journal__entry-num {
-    grid-column: 1;
-    grid-row: 1;
-  }
+/* Article body spans the full container width on every breakpoint. The
+   entry number renders inline at the start of the head row instead of
+   in a left rail. Text stays left-aligned for readability. */
+.journal__entry > article {
+  text-align: left;
 }
 
 .journal__entry-head {
@@ -2086,7 +2500,7 @@ a.about__contact-value:hover::after {
   line-height: 1.15;
   letter-spacing: -0.01em;
   margin: 0 0 1rem;
-  max-width: 32ch;
+  max-width: none;
   color: var(--fg);
   text-wrap: pretty;
   hyphens: auto;
@@ -2123,7 +2537,7 @@ a.about__contact-value:hover::after {
   font-size: clamp(1.1rem, 1.5vw, 1.3rem);
   line-height: 1.55;
   color: var(--fg);
-  max-width: 60ch;
+  max-width: none;
   margin: 0 0 1.5rem;
   text-wrap: pretty;
   hyphens: auto;
@@ -2210,7 +2624,7 @@ a.about__contact-value:hover::after {
   font-size: 0.95rem;
   line-height: 1.65;
   color: var(--muted);
-  max-width: 64ch;
+  max-width: none;
   margin-top: 1.5rem;
   animation: journalEntryReveal 0.5s var(--ease-out) both;
 }
@@ -2260,7 +2674,7 @@ a.about__contact-value:hover::after {
   letter-spacing: -0.005em;
   color: var(--fg);
   margin: 0;
-  max-width: 40ch;
+  max-width: none;
 }
 
 .journal__entry-inline-list {
@@ -3220,175 +3634,144 @@ a.about__contact-value:hover::after {
   align-self: center;
 }
 
-/* ---------- Project detail (Aristide-style takeover) ---------- */
+/* ---------- Unified scroll stack (Issue 03) ----------
+   Section 1 (`.home__section--hero`) keeps the existing canvas + chrome.
+   Section 2 (`.home__section--strip`) below it hosts the de-spaced massive
+   title, ProjectStrip, and ProjectFooterMeta. Sticky chrome and a fixed ×
+   close button persist across both sections.
+   ----------------------------------------------------- */
 
-.detail {
-  position: fixed;
-  inset: 0;
-  z-index: 70;
+.home--scroll {
+  overflow: visible;
+  min-height: 100vh;
+  min-height: 100dvh;
+  /* Drop .home's stacking-context isolation while a project is selected so
+     the sticky × at z-80 can render and intercept clicks above the fixed
+     Nav (z-50). Idle .home keeps `isolation: isolate` to contain the
+     gallery's z layering. */
+  isolation: auto;
+}
+
+.home__section {
+  position: relative;
+  width: 100%;
+}
+
+/* Section 1 inherits .home's existing clamp(520px, 88vh, 920px) min-height
+   when idle so absolute-positioned descendants (gallery canvas, top/bottom
+   chrome) get the same containing-block height they had before the wrapper
+   was introduced. When the unified scroll stack is active (.home--scroll),
+   the section grows to a full viewport. */
+.home__section--hero {
+  min-height: clamp(520px, 88vh, 920px);
+}
+
+.home--scroll .home__section--hero {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.home__section--strip {
+  position: relative;
+  z-index: 4;
+  background: var(--detail-bg);
+  color: var(--detail-ink);
+  padding: clamp(2rem, 6vh, 5rem) 0 0;
   display: flex;
   flex-direction: column;
-  isolation: isolate;
-  color: var(--detail-ink, #1a1a1a);
-  overflow-y: auto;
-  overflow-x: hidden;
-  scrollbar-width: thin;
-  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
 }
 
-/* Per-project tinted curtain that slides up from the bottom on open. */
-.detail__bg {
-  position: fixed;
-  inset: 0;
-  background: var(--detail-bg, #f0e7e7);
-  z-index: -2;
-  transform-origin: center bottom;
-}
-
-.detail__top {
+/* De-spaced massive title slot at the top of Section 2. Issue 04 will swap
+   this static render for a scroll-driven counter-direction wipe. */
+.home__section-title {
   position: relative;
-  z-index: 5;
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  padding: var(--pad-y) var(--pad-x);
-  font-family: var(--font-sans);
-  font-size: 0.74rem;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-}
-
-.detail__crumb {
-  font-variant-numeric: tabular-nums;
-  opacity: 0.85;
-  justify-self: start;
-}
-
-.detail__top-spacer {
-  justify-self: end;
-}
-
-.detail__close {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.35rem;
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  color: inherit;
-  background: none;
-  border: 0;
-  justify-self: center;
-}
-
-.detail__close-x {
-  font-size: 0.95rem;
-  line-height: 1;
-}
-
-.detail__close-rule {
-  display: inline-block;
-  width: 1px;
-  height: 18px;
-  background: currentColor;
-  opacity: 0.65;
-}
-
-.detail__close-label {
-  font-size: 0.7rem;
-}
-
-/* Centred-stack composition — hero picture sits at the same viewport anchor
-   as the project card view, with the giant client name layered BEHIND the
-   picture as a left-to-right clip-path reveal. Mirrors `.home__expand`'s
-   flex-column centering so the in-card → in-detail transition keeps the
-   picture in place. */
-.detail__main {
-  position: relative;
-  z-index: 3;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: clamp(2rem, 6vh, 5rem) var(--pad-x);
-  min-height: calc(100vh - 80px);
-  min-height: calc(100dvh - 80px);
-}
-
-/* Title wrapper — full-bleed overlay sitting BEHIND the hero, flush to the
-   LEFT edge of the viewport. The clip-path on this wrapper handles the
-   left-to-right "build up" reveal; the inner MassiveTitle renders
-   statically (no per-letter slide). */
-.detail__title-wrap {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
   display: flex;
   align-items: flex-start;
   justify-content: flex-start;
-  padding-top: clamp(1rem, 4vh, 3rem);
+  padding: clamp(2rem, 8vh, 6rem) clamp(2rem, 5vw, 5rem) clamp(1rem, 3vh, 2rem);
   pointer-events: none;
   user-select: none;
   overflow: hidden;
 }
 
-.detail .massive-title {
+.home__section-title .massive-title {
   align-items: flex-start;
-  width: 100vw;
+  width: 100%;
 }
 
-.detail .massive-title__main {
+.home__section-title .massive-title__main {
   font-size: clamp(5rem, 14vw, 14rem);
   line-height: 0.82;
   letter-spacing: 0;
 }
 
-/* Both rows hug the left edge of the viewport — no inset padding. */
-.detail .massive-title__row-wrap--top,
-.detail .massive-title__row-wrap--bot {
+.home__section-title .massive-title__row-wrap--top,
+.home__section-title .massive-title__row-wrap--bot {
   justify-content: flex-start;
-  padding-left: clamp(2rem, 5vw, 5rem);
+  padding-left: 0;
   padding-right: 0;
 }
 
-.detail .massive-title__row-wrap--bot {
+.home__section-title .massive-title__row-wrap--bot {
   margin-top: 0.18em;
 }
 
-.detail .massive-title__sub {
-  align-self: flex-start;
-  font-size: clamp(1.1rem, 2vw, 2rem);
+/* Sticky chrome — counter, ticks, focused project label. Idle: passthrough
+   (`display: contents`); .home__top keeps its absolute positioning against
+   the .home block. Selected (`.home--scroll`): becomes a sticky strip so
+   the counter stays at the top of the viewport across both sections. */
+.home__sticky-chrome {
+  display: contents;
 }
 
-.detail__hero {
-  position: relative;
-  z-index: 2;
-  margin: 0;
-  /* Width-driven sizing — height is computed from the asset's inline
-     `aspect-ratio` (set in ProjectDetail.jsx). Width tracks the card-view
-     scale (~46vw, capped at 720px) but the figure box always matches the
-     asset's natural ratio, so the WHOLE image is visible — no crop. */
-  width: clamp(320px, 46vw, 720px);
-  overflow: hidden;
-}
-
-.detail__hero img,
-.detail__hero video {
+.home--scroll .home__sticky-chrome {
   display: block;
-  width: 100%;
-  height: 100%;
-  /* Contain as a safety net — figure ratio matches asset ratio, so no
-     letterbox is produced in normal cases, but if any cap ever breaks the
-     box's aspect-ratio the image still renders fully. */
-  object-fit: contain;
-  filter: saturate(1.04);
+  position: sticky;
+  top: 0;
+  z-index: 25;
+  height: 0;
+  pointer-events: none;
+}
+
+/* Sticky × close — fixed top-right whenever a project is selected. Sits
+   below Nav (which is fixed at top:0 with var(--pad-y) padding) so the two
+   never compete for the same pixel. Owns the click + ESC + wheel-up close
+   affordances inside HomeView. */
+.home__sticky-close {
+  position: fixed;
+  top: calc(var(--pad-y) * 3.5);
+  right: var(--pad-x);
+  z-index: 80;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  color: var(--home-ink);
+  font-family: var(--font-sans);
+  font-size: 1.6rem;
+  line-height: 1;
+  pointer-events: auto;
+  transition: opacity 0.3s var(--ease-out);
+}
+
+.home__sticky-close:hover {
+  opacity: 0.7;
+}
+
+.home__sticky-close:focus-visible {
+  outline: 2px solid var(--home-ink);
+  outline-offset: 4px;
 }
 
 /* Scrollable image strip beneath the hero — every additional frame from
    THIS project, stacked in a centered single-column flow so the user
    scrolls down through the rest of the project after the hero. */
-.detail__strip {
+.proj-strip {
   position: relative;
   z-index: 4;
   padding: clamp(2rem, 6vh, 5rem) var(--pad-x) clamp(2rem, 4vh, 3rem);
@@ -3398,7 +3781,7 @@ a.about__contact-value:hover::after {
   gap: clamp(1.5rem, 3vh, 2.5rem);
 }
 
-.detail__strip-heading {
+.proj-strip__heading {
   font-family: var(--font-sans);
   font-size: 0.74rem;
   text-transform: uppercase;
@@ -3408,7 +3791,7 @@ a.about__contact-value:hover::after {
   align-self: center;
 }
 
-.detail__strip-list {
+.proj-strip__list {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -3419,14 +3802,14 @@ a.about__contact-value:hover::after {
   width: 100%;
 }
 
-.detail__strip-item {
+.proj-strip__item {
   margin: 0;
   width: 100%;
   display: flex;
   justify-content: center;
 }
 
-.detail__strip-figure {
+.proj-strip__figure {
   margin: 0;
   width: clamp(420px, 60vw, 1080px);
   display: flex;
@@ -3434,8 +3817,8 @@ a.about__contact-value:hover::after {
   gap: 0.85rem;
 }
 
-.detail__strip-figure img,
-.detail__strip-figure video {
+.proj-strip__figure img,
+.proj-strip__figure video {
   display: block;
   width: 100%;
   height: auto;
@@ -3444,7 +3827,7 @@ a.about__contact-value:hover::after {
   filter: saturate(1.04);
 }
 
-.detail__strip-caption {
+.proj-strip__caption {
   display: flex;
   align-items: baseline;
   gap: 0.85rem;
@@ -3455,7 +3838,7 @@ a.about__contact-value:hover::after {
   opacity: 0.85;
 }
 
-.detail__strip-num {
+.proj-strip__num {
   font-variant-numeric: tabular-nums;
   opacity: 0.65;
   letter-spacing: 0.1em;
@@ -3463,7 +3846,7 @@ a.about__contact-value:hover::after {
 
 /* Bottom strip — role left, meta a/b/c/d in centre,
    VISIT SITE marker, SEO description on the right. */
-.detail__footer {
+.proj-foot {
   position: relative;
   z-index: 4;
   display: grid;
@@ -3478,7 +3861,7 @@ a.about__contact-value:hover::after {
   letter-spacing: 0.16em;
 }
 
-.detail__footer-left {
+.proj-foot__left {
   display: flex;
   flex-direction: column;
   gap: 0.3rem;
@@ -3486,11 +3869,11 @@ a.about__contact-value:hover::after {
   justify-self: start;
 }
 
-.detail__footer-muted {
+.proj-foot__muted {
   opacity: 0.65;
 }
 
-.detail__meta-grid {
+.proj-foot__meta-grid {
   grid-column: 2;
   justify-self: end;
   display: grid;
@@ -3502,26 +3885,26 @@ a.about__contact-value:hover::after {
   letter-spacing: 0.14em;
 }
 
-.detail__meta-row {
+.proj-foot__meta-row {
   display: contents;
 }
 
-.detail__meta-row dt {
+.proj-foot__meta-row dt {
   opacity: 0.65;
   text-align: left;
   font-weight: 400;
 }
 
-.detail__meta-key {
+.proj-foot__meta-key {
   opacity: 0.65;
   margin: 0;
 }
 
-.detail__meta-val {
+.proj-foot__meta-val {
   margin: 0;
 }
 
-.detail__footer-cta {
+.proj-foot__cta {
   grid-column: 3;
   display: inline-flex;
   flex-direction: column;
@@ -3532,18 +3915,18 @@ a.about__contact-value:hover::after {
   letter-spacing: 0.18em;
 }
 
-.detail__footer-arrow {
+.proj-foot__arrow {
   font-size: 1rem;
   line-height: 1;
   opacity: 0.85;
 }
 
-.detail__footer-cta-label {
+.proj-foot__cta-label {
   position: relative;
   padding-bottom: 2px;
 }
 
-.detail__footer-cta-label::after {
+.proj-foot__cta-label::after {
   content: '';
   position: absolute;
   left: 0;
@@ -3553,7 +3936,7 @@ a.about__contact-value:hover::after {
   background: currentColor;
 }
 
-.detail__seo {
+.proj-foot__seo {
   grid-column: 5;
   justify-self: start;
   font-family: var(--font-sans);
@@ -3566,298 +3949,44 @@ a.about__contact-value:hover::after {
 }
 
 @media (max-width: 980px) {
-  .detail__main {
-    padding-top: clamp(2rem, 12vh, 10rem);
-    min-height: calc(100vh - 60px);
-    min-height: calc(100dvh - 60px);
+  .home__section-title {
+    padding: clamp(2rem, 12vh, 8rem) clamp(0.75rem, 3vw, 2rem) clamp(0.5rem, 2vh, 1.5rem);
   }
-  .detail .massive-title__main {
+  .home__section-title .massive-title__main {
     font-size: clamp(3.5rem, 12vw, 7rem);
   }
-  .detail__hero {
-    width: min(92vw, 640px);
-  }
-  .detail__strip-figure {
+  .proj-strip__figure {
     width: 100%;
   }
-  .detail__footer {
+  .proj-foot {
     grid-template-columns: 1fr;
     row-gap: 1rem;
   }
-  .detail__footer-left,
-  .detail__meta-grid,
-  .detail__footer-cta,
-  .detail__seo {
+  .proj-foot__left,
+  .proj-foot__meta-grid,
+  .proj-foot__cta,
+  .proj-foot__seo {
     grid-column: 1;
     justify-self: start;
   }
 }
 
-/* Phone + tablet + landscape phone tightening for detail close and strip.
-   At ≤900 the close button needs a 44px tap target per WCAG 2.5.5 / iOS
-   guidelines, the rule is hidden, and the strip caption drops a size. */
+/* Phone + tablet + landscape phone tightening for the strip caption + the
+   Section 2 de-spaced title. The retired ProjectDetail panel chrome
+   (.detail__close, .detail__top) is gone — sticky × close handles that. */
 @media (max-width: 1180px), (max-height: 540px) {
-  /* Phone/tablet close: horizontal "× CLOSE" matching the home close. The
-     vertical rule is hidden — too cramped — and the label stays
-     "Projects" since this control returns to the gallery. */
-  .detail__close {
-    flex-direction: row;
-    gap: 0.55rem;
-    min-height: 44px;
-    padding: 8px 14px;
-  }
-  .detail__close-rule {
-    display: none;
-  }
-  /* Hide the side crumb so the close button is the only top affordance —
-     mirrors the home selected-state treatment. */
-  .detail__top {
-    grid-template-columns: 1fr;
-    justify-items: center;
-  }
-  .detail__crumb,
-  .detail__top-spacer {
-    display: none;
-  }
-  .detail .massive-title__main {
-    /* Tighter floor on small phones — 14vw was bumping into the hero. */
+  .home__section-title .massive-title__main {
+    /* Tighter floor on small phones — 14vw was bumping into the figure. */
     font-size: clamp(2.6rem, 11vw, 5rem);
   }
-  .detail .massive-title__row-wrap--top,
-  .detail .massive-title__row-wrap--bot {
+  .home__section-title .massive-title__row-wrap--top,
+  .home__section-title .massive-title__row-wrap--bot {
     padding-left: clamp(0.75rem, 3vw, 2rem);
   }
-  .detail__strip-caption {
+  .proj-strip__caption {
     font-size: 0.7rem;
     letter-spacing: 0.14em;
   }
-}
-
-.detail__title-layer {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  align-content: start;
-  padding: clamp(2rem, 12vh, 9rem) var(--pad-x) 0;
-  z-index: 5;
-}
-
-.detail__layout {
-  position: relative;
-  z-index: 3;
-  flex: 0 0 auto;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(260px, 360px);
-  gap: clamp(1.5rem, 3vw, 3rem);
-  padding: clamp(2rem, 6vh, 6rem) var(--pad-x) calc(var(--pad-y) * 4);
-  align-items: end;
-  /* Fixed minimum height so the hero block always gets a comfortable hero
-     area; the scroll-gallery below pushes total content past viewport, so
-     the .detail container starts scrolling. */
-  min-height: calc(100vh - 60px);
-}
-
-/* (Legacy `.detail__hero` overrides removed — the canonical rules live
-   above with the rest of the explore-view layout.) */
-
-.detail__caption {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 1.2rem;
-  align-items: end;
-  font-family: var(--font-sans);
-  font-size: 0.78rem;
-  line-height: 1.4;
-}
-
-.detail__caption-eyebrow {
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  opacity: 0.7;
-  white-space: nowrap;
-}
-
-.detail__caption-text {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-weight: 300;
-  font-size: clamp(0.95rem, 1.3vw, 1.1rem);
-  max-width: 55ch;
-}
-
-.detail__aside {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(1.5rem, 3vh, 2.5rem);
-}
-
-.detail__meta {
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-  border-top: 1px solid currentColor;
-  padding-top: 0.9rem;
-  opacity: 0.92;
-}
-
-.detail__title {
-  font-family: var(--font-display);
-  font-weight: 300;
-  font-size: clamp(1.3rem, 2.4vw, 2rem);
-  letter-spacing: -0.01em;
-  line-height: 1.05;
-}
-
-.detail__tags {
-  list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-  font-family: var(--font-sans);
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-}
-
-.detail__sections {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 0.7rem;
-}
-
-.detail__section {
-  display: grid;
-  grid-template-columns: 90px 1fr;
-  gap: 0.9rem;
-  align-items: center;
-  cursor: pointer;
-  transition:
-    opacity 0.4s var(--ease-out),
-    transform 0.4s var(--ease-out);
-}
-
-.detail__section:hover {
-  opacity: 0.72;
-  transform: translateX(4px);
-}
-
-.detail__section-thumb {
-  display: block;
-  width: 90px;
-  height: 56px;
-  background-size: cover;
-  background-position: center;
-  filter: saturate(0.9);
-}
-
-.detail__section-label {
-  font-family: var(--font-sans);
-  font-size: 0.78rem;
-  letter-spacing: 0.06em;
-}
-
-@media (max-width: 880px) {
-  .detail__layout {
-    grid-template-columns: 1fr;
-    gap: 2rem;
-    padding-top: clamp(18vh, 30vh, 22rem);
-    align-items: start;
-  }
-}
-
-/* ---------- Detail scroll gallery (below the hero) ---------- */
-
-.detail__scroll {
-  position: relative;
-  z-index: 4;
-  padding: clamp(4rem, 10vh, 8rem) var(--pad-x) clamp(4rem, 8vh, 6rem);
-  display: flex;
-  flex-direction: column;
-  gap: clamp(2rem, 4vh, 3.5rem);
-}
-
-.detail__scroll-heading {
-  font-family: var(--font-sans);
-  font-size: 0.74rem;
-  text-transform: uppercase;
-  letter-spacing: 0.22em;
-  opacity: 0.6;
-  margin: 0;
-}
-
-.detail__scroll-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
-  gap: clamp(1.5rem, 3vw, 3rem);
-}
-
-.detail__scroll-item {
-  margin: 0;
-}
-
-.detail__scroll-figure {
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
-}
-
-.detail__scroll-figure img {
-  display: block;
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  filter: saturate(1.02);
-}
-
-.detail__scroll-caption {
-  display: flex;
-  align-items: baseline;
-  gap: 0.85rem;
-  font-family: var(--font-sans);
-  font-size: 0.78rem;
-  letter-spacing: 0.06em;
-}
-
-.detail__scroll-num {
-  font-variant-numeric: tabular-nums;
-  opacity: 0.65;
-  letter-spacing: 0.1em;
-}
-
-.detail__scroll-footer {
-  margin-top: clamp(1.5rem, 4vh, 3rem);
-  padding-top: clamp(1.5rem, 3vh, 2.5rem);
-  border-top: 1px solid currentColor;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 1rem;
-  font-family: var(--font-sans);
-  font-size: 0.74rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  opacity: 0.85;
-}
-
-.detail__scroll-back {
-  background: none;
-  border: 0;
-  padding: 0.4rem 0;
-  color: inherit;
-  font: inherit;
-  cursor: pointer;
-  letter-spacing: 0.18em;
-  transition: opacity 0.3s var(--ease-out);
-}
-
-.detail__scroll-back:hover {
-  opacity: 0.6;
 }
 
 /* ===========================================================================
@@ -4072,23 +4201,23 @@ a.about__contact-value:hover::after {
   /* "Independent Studio / Available 2026" and "↗ View Site" hidden on
      phone — they read as duplicate chrome alongside the meta and SEO
      description. */
-  .detail__footer-left,
-  .detail__footer-cta {
+  .proj-foot__left,
+  .proj-foot__cta {
     display: none;
   }
 
   /* Meta dl: full width, values right-aligned. */
-  .detail__meta-grid {
+  .proj-foot__meta-grid {
     width: 100%;
     grid-template-columns: auto auto 1fr;
     column-gap: clamp(0.6rem, 3vw, 1.2rem);
   }
-  .detail__meta-val {
+  .proj-foot__meta-val {
     text-align: right;
   }
 
   /* SEO description — Blocksatz (justified text). */
-  .detail__seo {
+  .proj-foot__seo {
     text-align: justify;
     text-justify: inter-word;
     hyphens: auto;
@@ -4140,20 +4269,11 @@ a.about__contact-value:hover::after {
     padding-right: 1rem;
   }
 
-  /* ---- ProjectDetail — already collapses below 980px; tighten further ---- */
-  .detail__top {
-    padding: calc(var(--pad-y) * 1.5) var(--pad-x);
-    font-size: 0.66rem;
-    letter-spacing: 0.14em;
-  }
-  .detail__crumb,
-  .detail__close-label {
-    font-size: 0.62rem;
-  }
-  .detail__strip-figure {
+  /* ---- Section 2 (strip + footer) — tighten further past 980px ---- */
+  .proj-strip__figure {
     width: 100%;
   }
-  .detail__footer {
+  .proj-foot {
     font-size: 0.66rem;
     letter-spacing: 0.12em;
     padding: var(--pad-y) var(--pad-x) calc(var(--pad-y) * 2);
@@ -4229,10 +4349,10 @@ a.about__contact-value:hover::after {
   }
 
   /* ---- ProjectDetail strip captions ---- */
-  .detail__strip {
+  .proj-strip {
     padding: clamp(1.5rem, 4vh, 3rem) var(--pad-x) clamp(1.5rem, 3vh, 2rem);
   }
-  .detail__strip-list {
+  .proj-strip__list {
     gap: 1.5rem;
   }
 }
