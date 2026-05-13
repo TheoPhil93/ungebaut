@@ -123,6 +123,18 @@ export function GalleryGL({
     const stage = stageRef.current;
     if (!canvas || !stage) return undefined;
 
+    // Touch devices (mostly mobile + a sliver of laptops with touchscreens)
+    // skip video textures entirely. Eleven autoplaying .web.mp4 textures
+    // at 4-10 MB each are network + GPU murder on cellular; the poster
+    // image carries the same "this project is a video" hint when the
+    // user drills in. Use matchMedia rather than `'ontouchstart' in
+    // window` to avoid false positives on Chrome desktops with touch
+    // emulation enabled.
+    const isTouchDevice =
+      typeof window !== 'undefined' &&
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(pointer: coarse)').matches;
+
     const renderer = new Renderer({
       canvas,
       alpha: true,
@@ -177,7 +189,10 @@ export function GalleryGL({
         heightSegments: 24,
       });
 
-      const isVideo = project.mediaType === 'video';
+      // Touch devices treat every project as a still — the poster image
+      // (still loaded below via the standard image path) carries the
+      // motion-project hint. See isTouchDevice comment above for why.
+      const isVideo = project.mediaType === 'video' && !isTouchDevice;
       const texture = new Texture(gl, {
         minFilter: isVideo ? gl.LINEAR : gl.LINEAR_MIPMAP_LINEAR,
         magFilter: gl.LINEAR,
@@ -366,6 +381,15 @@ export function GalleryGL({
         // playback only when the stripe is actually within the play window,
         // and pause it again when it scrolls away.
       } else {
+        // Video projects on touch devices fall into this branch (isVideo
+        // is forced to false at stripe creation) — `project.image` for
+        // them is a .mp4 path, so we swap to the poster.jpg sibling
+        // before format resolution. Still projects use project.image
+        // directly.
+        const stillSrc =
+          project.mediaType === 'video'
+            ? project.image.replace(/[^/]+$/, 'poster.jpg')
+            : project.image;
         const img = new Image();
         img.crossOrigin = 'anonymous';
         img.onload = () => {
@@ -378,15 +402,16 @@ export function GalleryGL({
         };
         img.onerror = () => {
           // AVIF decode failed (e.g. probe lied, file missing) — retry once
-          // with the original raster so the stripe still renders.
-          if (img.src !== project.image) {
-            img.src = project.image;
+          // with the JPG fallback so the stripe still renders.
+          const fallback = toJpgFallback(stillSrc);
+          if (img.src !== fallback) {
+            img.src = fallback;
           }
         };
         // Non-AVIF browsers land on the .jpg version because the .png
         // sources stay local-only (see toJpgFallback comment in
         // lib/image.js). AVIF browsers still get the small AVIF.
-        img.src = avifSupported ? toAvif(project.image) : toJpgFallback(project.image);
+        img.src = avifSupported ? toAvif(stillSrc) : toJpgFallback(stillSrc);
       }
     };
 

@@ -11,7 +11,7 @@
 //      pnpm optimize-assets -- --quality=85   (override AVIF quality)
 //      pnpm optimize-assets -- --force        (regenerate even if up-to-date)
 
-import { readdir, stat } from 'node:fs/promises';
+import { readdir, stat, rename, unlink } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { resolve, extname, dirname, basename } from 'node:path';
 import sharp from 'sharp';
@@ -19,8 +19,20 @@ import sharp from 'sharp';
 const ROOT = resolve(process.cwd(), 'public/images');
 const args = process.argv.slice(2);
 const FORCE = args.includes('--force');
-const QUALITY = Number(args.find((a) => a.startsWith('--quality='))?.split('=')[1] ?? 80);
-const JPG_QUALITY = 85;
+// AVIF default lowered from 80 → 75: barely-perceivable in side-by-side
+// review but cuts ~30% off file size, which matters more on mobile
+// cellular than the last 5% of texture fidelity.
+const QUALITY = Number(args.find((a) => a.startsWith('--quality='))?.split('=')[1] ?? 75);
+const JPG_QUALITY = 82;
+// Max width for the shipped AVIF/JPG sidecars. Source PNGs are 4K
+// renders; the gallery stripe renders at ~110px wide, the project-detail
+// hero at ~720px max, and the strip frames at ~1080px max. 1600px is
+// retina-safe (2× the 800px max display size) while keeping per-image
+// payload around 80-200 KB instead of 1-3 MB. Smaller sources pass
+// through unenlarged (`withoutEnlargement: true`).
+const MAX_WIDTH = Number(
+  args.find((a) => a.startsWith('--max-width='))?.split('=')[1] ?? 1600,
+);
 
 // Walk recursively, returning every PNG/JPG/JPEG file path.
 async function* walk(dir) {
@@ -59,7 +71,7 @@ let processed = 0;
 let skipped = 0;
 
 console.log(
-  `[optimize-assets] AVIF q${QUALITY}, JPEG q${JPG_QUALITY}` +
+  `[optimize-assets] AVIF q${QUALITY}, JPEG q${JPG_QUALITY}, max-width ${MAX_WIDTH}px` +
     (FORCE ? ' (force regenerate)' : ''),
 );
 
@@ -87,7 +99,13 @@ for await (const source of walk(ROOT)) {
   }
 
   // Sharp's pipeline reads once, encodes twice — cheaper than two open()s.
-  const pipeline = sharp(source).rotate(); // honour EXIF orientation
+  // Resize is applied BEFORE format encoding so both AVIF + JPG outputs
+  // share the same downsampled pixels. `withoutEnlargement: true` is a
+  // safety net — smaller sources pass through at native resolution
+  // instead of being upscaled to 1600px (which would just add noise).
+  const pipeline = sharp(source)
+    .rotate() // honour EXIF orientation
+    .resize({ width: MAX_WIDTH, withoutEnlargement: true });
 
   const tasks = [];
   if (!avifFresh) {
@@ -109,6 +127,30 @@ for await (const source of walk(ROOT)) {
         .toFile(jpgPath)
         .then((info) => {
           totalJpg += info.size;
+        }),
+    );
+  }
+
+  // In-place re-encode for .jpg sources: same downsampling + quality
+  // pass as JPG fallbacks, but writes back to the source path. Without
+  // this, JPGs that have no .png sibling (29 in the current set, some
+  // ~2 MB each) stayed at their original 4K size — defeats the whole
+  // point of the resize cap. Write to a temp file first so a crash
+  // mid-pipeline can't corrupt the source.
+  if (FORCE && /\.jpe?g$/i.test(ext)) {
+    const tmp = `${source}.tmp`;
+    tasks.push(
+      pipeline
+        .clone()
+        .jpeg({ quality: JPG_QUALITY, mozjpeg: true })
+        .toFile(tmp)
+        .then(async (info) => {
+          await rename(tmp, source);
+          totalJpg += info.size;
+        })
+        .catch(async (err) => {
+          await unlink(tmp).catch(() => {});
+          throw err;
         }),
     );
   }
