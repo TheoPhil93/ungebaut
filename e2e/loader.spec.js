@@ -165,9 +165,9 @@ test.describe('cold-entry loader', () => {
     // Three preload directives in <head>, each high-priority. URLs
     // match projects[0..2] (projects[1] uses thumb-1 fallback).
     const hrefs = [
-      '/images/projects/026/Ard_de_Vries.png',
-      '/images/projects/006/thumb-1.png',
-      '/images/projects/009/main.png',
+      '/images/projects/026/Ard_de_Vries.jpg',
+      '/images/projects/006/thumb-1.jpg',
+      '/images/projects/009/main.jpg',
     ];
     for (const href of hrefs) {
       const preload = page.locator(`link[rel="preload"][as="image"][href="${href}"]`);
@@ -208,11 +208,11 @@ test.describe('cold-entry loader', () => {
     // Force full-motion so the gesture runs.
     await page.emulateMedia({ reducedMotion: 'no-preference' });
 
-    // Abort Ard_de_Vries.png. It appears as the reel's first frame;
+    // Abort Ard_de_Vries.jpg. It appears as the reel's first frame;
     // its onerror handler collapses that <img>. The reel's other
     // frames (which are the actual final settle position and the
     // adjacent shuffle frame) still paint and the loader completes.
-    await page.route('**/Ard_de_Vries.png', (route) => route.abort());
+    await page.route('**/Ard_de_Vries.jpg', (route) => route.abort());
 
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/?loader=show', { waitUntil: 'domcontentloaded' });
@@ -223,7 +223,7 @@ test.describe('cold-entry loader', () => {
     // At least one <img> collapsed by onerror.
     await page.waitForFunction(
       () => {
-        const imgs = document.querySelectorAll('img[src*="Ard_de_Vries.png"]');
+        const imgs = document.querySelectorAll('img[src*="Ard_de_Vries.jpg"]');
         if (imgs.length === 0) return false;
         for (const img of imgs) {
           if (getComputedStyle(img).display === 'none') return true;

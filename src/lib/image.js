@@ -11,6 +11,17 @@ export function toAvif(path) {
   return path.replace(EXT, '.avif');
 }
 
+// Swap .png → .jpg for the non-AVIF fallback path. Source PNGs are kept
+// local-only (the raw masters from the renderer); only the AVIF + JPG
+// re-encodes ship in git, so any browser without AVIF support needs to
+// land on the JPG version. Paths that don't end in `.png` (already .jpg,
+// .mp4, .avif, etc.) pass through unchanged.
+const PNG_EXT = /\.png$/i;
+export function toJpgFallback(path) {
+  if (!path || !PNG_EXT.test(path)) return path;
+  return path.replace(PNG_EXT, '.jpg');
+}
+
 // One-shot AVIF support probe. Browsers that ship native AVIF decode return
 // a successful load; older Safari (≤16.3) errors out. Result is cached so
 // every subsequent call resolves instantly.

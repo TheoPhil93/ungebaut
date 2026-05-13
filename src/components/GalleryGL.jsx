@@ -4,7 +4,7 @@ import { projects } from '../data/projects';
 import { stripeVertex, stripeFragment } from '../lib/gl/shaders';
 import { hexToRgb } from '../lib/gl/hexToRgb';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
-import { getAvifSupport, toAvif, toWebVideo } from '../lib/image';
+import { getAvifSupport, toAvif, toJpgFallback, toWebVideo } from '../lib/image';
 
 // Geometry — slightly squat verticals arranged as a flat row at rest. The
 // wave-induced Z push is the only source of asymmetry while scrolling.
@@ -383,7 +383,10 @@ export function GalleryGL({
             img.src = project.image;
           }
         };
-        img.src = avifSupported ? toAvif(project.image) : project.image;
+        // Non-AVIF browsers land on the .jpg version because the .png
+        // sources stay local-only (see toJpgFallback comment in
+        // lib/image.js). AVIF browsers still get the small AVIF.
+        img.src = avifSupported ? toAvif(project.image) : toJpgFallback(project.image);
       }
     };
 
