@@ -145,7 +145,9 @@ button {
   padding: 0.5rem 0.75rem;
   background: var(--fg);
   color: var(--bg);
-  z-index: 200;
+  /* Above the cold-entry loader (#ungebaut-loader z:9999) so keyboard
+     users can Tab to "Zum Inhalt" and bypass the loader entirely. */
+  z-index: 10000;
   transition: top 0.2s var(--ease-out);
   font-size: 0.8rem;
   text-transform: uppercase;
@@ -153,6 +155,60 @@ button {
 }
 .skip-link:focus {
   top: 1rem;
+}
+
+/* ---------- Cold-entry loader handshake (Issue 04) ----------
+   The inline controller in index.html sets these classes on <html>
+   before first paint, then toggles to --loader-exiting at hand-off:
+
+   - .app--loader-pending — set ONLY when the loader is shown. Chrome
+     and canvas start invisible underneath the loader so the hand-off
+     can reveal them. When the loader is skipped (?loader=skip,
+     localhost auto-skip, sessionStorage gate), this class is never
+     added, so chrome and canvas paint at full opacity immediately.
+
+   - .app--loader-exiting — set at hand-off. Chrome (nav, top counter,
+     contact CTAs) ramps to opacity 1 over 300ms; gallery canvas ramps
+     over 600ms. Both finish well before the loader's slide-up ends
+     (900ms slide + 100ms delay = 1000ms total), so the page reads as
+     "already underneath" the rising curtain.
+
+   - .app--loaded — persistent marker React adds on receiving
+     ungebaut:loaded. Survives HMR re-mounts so the opacity-0 start
+     state cannot accidentally re-apply mid-session. */
+html.app--loader-pending .nav,
+html.app--loader-pending .home__top,
+html.app--loader-pending .home__contact-cta,
+html.app--loader-pending .home__gl {
+  opacity: 0;
+}
+
+html.app--loader-exiting .nav,
+html.app--loader-exiting .home__top,
+html.app--loader-exiting .home__contact-cta {
+  opacity: 1;
+  transition: opacity 300ms cubic-bezier(0.83, 0, 0.17, 1);
+}
+
+html.app--loader-exiting .home__gl {
+  opacity: 1;
+  transition: opacity 600ms cubic-bezier(0.83, 0, 0.17, 1);
+}
+
+/* Mobile variant (Issue 05) — proportionally shorter pre-fade and
+   canvas ramp so the exit feels snappier on phones. The slide itself
+   shortens to 700ms in index.html's inline <style>, so the chrome
+   still finishes well before the curtain visibly clears. */
+@media (max-width: 768px) {
+  html.app--loader-exiting .nav,
+  html.app--loader-exiting .home__top,
+  html.app--loader-exiting .home__contact-cta {
+    transition: opacity 250ms cubic-bezier(0.83, 0, 0.17, 1);
+  }
+
+  html.app--loader-exiting .home__gl {
+    transition: opacity 500ms cubic-bezier(0.83, 0, 0.17, 1);
+  }
 }
 
 /* ---------- Error Boundary fallback ---------- */
@@ -3714,6 +3770,40 @@ a.about__contact-value:hover::after {
 
 .home__section-title .massive-title__row-wrap--bot {
   margin-top: 0.18em;
+}
+
+/* MorphingTitle (Issue 04) — two MassiveTitle forms stack at the same
+   position inside .home__section-title. The split form sits in normal
+   flow so it sets the height; the de-spaced form overlays it absolutely.
+   Each gets a clip-path driven by useScrollProgress so they wipe in
+   opposing directions as the user scrolls past .home__section-boundary. */
+.morphing-title {
+  position: relative;
+  width: 100%;
+}
+
+.morphing-title__form {
+  width: 100%;
+  /* Compositor-friendly transforms — clip-path animates on the GPU. */
+  will-change: clip-path;
+}
+
+.morphing-title__form--despaced {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+/* Zero-height sentinel placed at the top of Section 2. useScrollProgress
+   reads its bounding rect to time the morph against the section boundary.
+   Marked aria-hidden in the JSX since it carries no semantic content. */
+.home__section-boundary {
+  display: block;
+  height: 1px;
+  width: 100%;
+  margin: 0;
+  pointer-events: none;
 }
 
 /* Sticky chrome — counter, ticks, focused project label. Idle: passthrough

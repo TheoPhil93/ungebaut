@@ -1,27 +1,7 @@
 import { motion } from 'framer-motion';
 import { TextCascade } from './TextCascade';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
-
-// Split a single title string into two display rows. If there's a space, we
-// split on the FIRST space (so multi-word titles read naturally as a stacked
-// composition). Otherwise we split by midpoint, which mirrors the Aristide
-// "DIGI / TAL ASSET" / "CAN / ALS" treatment for single-word titles.
-function splitToRows(text) {
-  if (!text) return ['', ''];
-  const trimmed = text.trim();
-  if (!trimmed) return ['', ''];
-  if (trimmed.includes('/')) {
-    const [top = '', bottom = ''] = trimmed.split('/');
-    return [top.trim(), bottom.trim()];
-  }
-  const spaceIdx = trimmed.indexOf(' ');
-  if (spaceIdx > 0) {
-    return [trimmed.slice(0, spaceIdx), trimmed.slice(spaceIdx + 1)];
-  }
-  if (trimmed.length < 4) return [trimmed, ''];
-  const mid = Math.ceil(trimmed.length / 2);
-  return [trimmed.slice(0, mid), trimmed.slice(mid)];
-}
+import { splitTitleForMorph } from '../lib/title';
 
 // Slammed-in condensed display title. Two rows of giant condensed type sit
 // over the selected project image — the first row bleeds in from the left,
@@ -29,7 +9,11 @@ function splitToRows(text) {
 export function MassiveTitle({ text, subtitle, ink = '#241a4a', animate = true }) {
   const reduced = usePrefersReducedMotion();
   const reducedMotion = reduced || !animate;
-  const [row1, row2] = splitToRows(text);
+  // The split grammar (slash → first-whitespace → midpoint) now lives in
+  // src/lib/title.js so MorphingTitle and MassiveTitle share one source
+  // of truth. splitTitleForMorph returns the split form as a newline-
+  // joined two-row string; we parse it back into rows here.
+  const [row1, row2 = ''] = splitTitleForMorph(text).split.split('\n');
 
   return (
     <div className="massive-title" aria-hidden="true" style={{ color: ink }}>

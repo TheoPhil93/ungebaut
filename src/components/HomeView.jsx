@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 
 const GalleryGL = lazy(() => import('./GalleryGL').then((m) => ({ default: m.GalleryGL })));
 import { MassiveTitle } from './MassiveTitle';
+import { MorphingTitle } from './MorphingTitle';
 import { ProjectStrip } from './ProjectStrip';
 import { ProjectFooterMeta } from './ProjectFooterMeta';
 import { projects, getProject } from '../data/projects';
@@ -42,16 +43,6 @@ function splitDescLines(text) {
   return out;
 }
 
-// Issue 04 will replace this inline helper with `splitTitleForMorph` from
-// `src/lib/title.js`. For now, the de-spaced title at the top of Section 2
-// renders as static text using the same regex ProjectDetail used.
-// Strip plain spaces + non-breaking spaces from a title string. Written
-// with \u escapes so ESLint's no-irregular-whitespace rule doesn't trip
-// on a literal NBSP inside the regex character class.
-function despaceTitle(text) {
-  return (text || '').replace(/[ \u00a0]+/g, '');
-}
-
 export function HomeView({ onSelect, selectedId }) {
   const reduced = usePrefersReducedMotion();
   const [hoveredId, setHoveredId] = useState(null);
@@ -62,6 +53,10 @@ export function HomeView({ onSelect, selectedId }) {
   const stageRef = useRef(null);
   const section2Ref = useRef(null);
   const stickyCloseRef = useRef(null);
+  // Sentinel placed at the top of Section 2. useScrollProgress inside
+  // MorphingTitle reads its bounding rect to drive the counter-direction
+  // wipe between the split and de-spaced title forms.
+  const boundaryRef = useRef(null);
 
   const [previousSelectedId, setPreviousSelectedId] = useState(selectedId);
   if (previousSelectedId !== selectedId) {
@@ -190,7 +185,6 @@ export function HomeView({ onSelect, selectedId }) {
         ? selected.title.toUpperCase()
         : selected.client.toUpperCase())
     : '';
-  const despacedTitleText = despaceTitle(titleText);
   const sectionInk = selected ? selected.massiveInk || selected.detailInk : null;
 
   return (
@@ -520,13 +514,16 @@ export function HomeView({ onSelect, selectedId }) {
         </div>
       </div>
 
-      {/* Section 2: strip + footer (only when selected). Hosts the de-spaced
-          massive title at its top — Issue 04 will swap that static render
-          for a scroll-driven counter-direction wipe via <MorphingTitle />. */}
+      {/* Section 2: strip + footer (only when selected). The MorphingTitle
+          at the top hosts BOTH the split form (preserved whitespace
+          grammar) and the de-spaced form, wiping between them in
+          counter directions as the viewer scrolls past the sentinel
+          boundary. */}
       {selected ? (
         <div className="home__section home__section--strip" ref={section2Ref}>
+          <span ref={boundaryRef} className="home__section-boundary" aria-hidden="true" />
           <div className="home__section-title" aria-hidden="true">
-            <MassiveTitle text={despacedTitleText} ink={sectionInk} animate={false} />
+            <MorphingTitle text={titleText} ink={sectionInk} boundaryRef={boundaryRef} />
           </div>
           <ProjectStrip project={selected} />
           <ProjectFooterMeta project={selected} />
