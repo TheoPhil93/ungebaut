@@ -3,13 +3,13 @@
 
 export const about = {
   intro:
-    'UNGEBAUT ist ein Architekturvisualisierungs-Studio in Zürich, gegründet 2021 von Philippos und Luna Theofanidis. Wir produzieren fotorealistische Renderings, 3D-Design, Animation, VR/AR und Drohnen-Dokumentation für Architekten, Entwickler und Marken in der Schweiz und Europa.',
+    'UNGEBAUT ist ein Architekturvisualisierungs-Studio in Zürich, gegründet 2021 von Philippos und Luna Theofanidis. Wir produzieren fotorealistische Renderings, 3D-Design, Animation, VR/AR, Drohnen-Dokumentation und Immobilien-Marketing-Webseiten für Architekten, Entwickler, Marketing-Agenturen und Marken in der Schweiz und Europa.',
 
   studio: {
     heading: 'Wer ist UNGEBAUT?',
     body: [
       'Gegründet 2021 im Herzen von Zürich, schöpft das Studio aus der Geometrie der Alpen und der Ruhe des Zürichsees, um in jedem Projekt daran zu erinnern, dass wir in einer aussergewöhnlichen Welt leben.',
-      'Drei Studios unter einem Dach: Standbild-Visualisierung, 3D-Design und Bewegtbild, sowie Drohnen-Dokumentation. Jedes Projekt wird von Anfang bis Ende von den Gründern direkt geleitet.',
+      'Vier Studios unter einem Dach: Standbild-Visualisierung, 3D-Design und Bewegtbild, Drohnen-Dokumentation, sowie Immobilien-Marketing-Webseiten. Jedes Projekt wird von Anfang bis Ende von den Gründern direkt geleitet.',
     ],
   },
 
@@ -18,13 +18,13 @@ export const about = {
     people: [
       {
         name: 'Philippos Theofanidis',
-        role: 'Visualisation Director',
-        bio: 'Master in Architektur und CAS in Informatik. Ausgebildeter Architekt, heute in IT-Beratung und Product Management tätig. Verantwortet die 3D-Visualisierung und Produktion des Studios.',
+        role: 'Mitgründer',
+        bio: 'Architekt MSc. Product Manager im Tech-Sektor. Verantwortet 3D-Visualisierung, Animation und Drohnenarbeit.',
       },
       {
         name: 'Luna Theofanidis',
-        role: 'Managing Partner',
-        bio: 'Master in Architektur. Nach mehreren Jahren in der Architekturpraxis heute Geschäftsführerin und Projektleitung des Studios.',
+        role: 'Mitgründerin',
+        bio: 'Architektin MSc. Verantwortet Projektleitung, Kundenbeziehungen und Studiobetrieb.',
       },
     ],
   },
@@ -46,6 +46,7 @@ export const about = {
     'Stadt-, Landschafts- & Immobilien-Bilder',
     'Animation, Motion & VR / AR',
     'Drohnen-Fotografie & -Video',
+    'Immobilien-Marketing-Webseiten',
   ],
 
   contact: {

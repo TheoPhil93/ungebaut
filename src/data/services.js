@@ -3,7 +3,7 @@
 
 export const services = {
   intro:
-    'UNGEBAUT führt drei Studios unter einem Dach: Standbild-Visualisierung, 3D-Design und Bewegtbild, sowie Drohnen-Dokumentation. Nachfolgend die Leistungen, Preise und Lieferzeiten.',
+    'UNGEBAUT führt vier Studios unter einem Dach: Standbild-Visualisierung, 3D-Design und Bewegtbild, Drohnen-Dokumentation, sowie Immobilien-Marketing-Webseiten. Nachfolgend die Leistungen, Preise und Lieferzeiten.',
 
   offerings: [
     {
@@ -16,25 +16,23 @@ export const services = {
         'Innenraum- und Lifestyle-Bilder',
         'Stadt- und Landschaftsbilder',
         'Immobilien-Marketing-Visuals',
-        'Wettbewerbs-Plakate und atmosphärische Stills',
+        'Atmosphärische Wettbewerbs-Stills',
       ],
-      from: 'CHF 1’800',
+      from: 'CHF 1’500',
       turnaround: '5–10 Arbeitstage',
     },
     {
       id: 'motion',
-      heading: 'Was umfasst 3D-Design, Animation und VR/AR?',
+      heading: 'Was umfasst 3D-Design, Animation und VR?',
       summary:
         'Bewegtbild, immersive Erlebnisse und interaktive 3D-Inhalte für Projekte, die mehr brauchen als ein einzelnes Bild. Vom 30-Sekunden-Flug bis zum vollständigen VR-Rundgang durch einen ungebauten Raum.',
       includes: [
         'Architekturanimationen und Flythroughs',
         'Kameragetrackte Motion Graphics',
-        'VR-Rundgänge (WebXR oder Headset)',
-        'AR-Site-Overlays für Kundenpräsentationen',
-        'Echtzeit-3D-Szenen (Unreal / Twinmotion)',
+        'VR-Rundgänge (WebXR)',
       ],
-      from: 'CHF 6’500',
-      turnaround: '3–6 Wochen',
+      from: 'CHF 2’500',
+      turnaround: '2–6 Wochen',
     },
     {
       id: 'drone',
@@ -51,6 +49,21 @@ export const services = {
       from: 'CHF 1’200',
       turnaround: '3–5 Arbeitstage',
     },
+    {
+      id: 'web',
+      heading: 'Was umfasst Immobilien-Marketing-Webseiten?',
+      summary:
+        'Produktionsreife Microsites und Verkaufs-Webseiten für Immobilienprojekte — bewegungsreich, scrollgetrieben, performant. Diese Website ist ein Beispiel derselben Produktion: WebGL-Galerie, smooth-scroll, prerenderter Build, lighthouse-tauglich.',
+      includes: [
+        'Projekt-Microsites für Bauträger und Entwickler',
+        'Developer-Landing-Pages für laufende Vermarktung',
+        'Post-Build-Verkaufs-Webseiten',
+        'White-Label-Produktion für Marketing-Agenturen',
+        'SEO-, Performance- und Accessibility-Audit',
+      ],
+      from: 'Auf Anfrage',
+      turnaround: '3–6 Wochen',
+    },
   ],
 
   pricingTable: [
@@ -58,31 +71,31 @@ export const services = {
       service: 'Aussenrendering',
       from: 'CHF 1’800',
       turnaround: '5–10 Tage',
-      revisions: '1 Runde',
+      revisions: '2 Runden',
     },
     {
       service: 'Innenraum-Rendering',
-      from: 'CHF 2’200',
+      from: 'CHF 1’500',
       turnaround: '5–10 Tage',
-      revisions: '1 Runde',
+      revisions: '2 Runden',
     },
     {
-      service: 'Wettbewerbs-Paket',
-      from: 'CHF 8’500',
+      service: 'Wettbewerbs-Paket (5 Stills)',
+      from: 'CHF 6’500',
       turnaround: '3–4 Wochen',
       revisions: '2 Runden',
     },
     {
       service: 'Animation (30 s)',
-      from: 'CHF 6’500',
-      turnaround: '3–4 Wochen',
-      revisions: '1 Runde',
+      from: 'CHF 2’500',
+      turnaround: '2–3 Wochen',
+      revisions: '2 Runden',
     },
     {
-      service: 'VR-Rundgang',
-      from: 'CHF 9’000',
+      service: 'VR-Rundgang (WebXR)',
+      from: 'CHF 5’000',
       turnaround: '4–6 Wochen',
-      revisions: '1 Runde',
+      revisions: '2 Runden',
     },
     {
       service: 'Drohnen-Fotoset',
@@ -94,13 +107,19 @@ export const services = {
       service: 'Drohnen-Video',
       from: 'CHF 2’400',
       turnaround: '5–7 Tage',
-      revisions: '1 Runde',
+      revisions: '2 Runden',
+    },
+    {
+      service: 'Immobilien-Marketing-Webseite (Microsite)',
+      from: 'Auf Anfrage',
+      turnaround: '3–6 Wochen',
+      revisions: '2 Runden',
     },
   ],
 
   pricingNotes: [
     'Preise verstehen sich exkl. MwSt. und sind Startwerte. Finale Offerten hängen von Umfang, Detailgrad und Anzahl der Ansichten ab.',
-    'Jedes Projekt beinhaltet Plan-Review, Look-Development-Frame, finale Auslieferung und eine Korrekturrunde, sofern nicht anders vermerkt.',
-    'Senden Sie Ihre Pläne an booking@ungebaut.ch — Sie erhalten innerhalb von 24 Stunden ein Fix-Angebot.',
+    'Jedes Projekt beinhaltet Plan-Review, Look-Development-Frame, finale Auslieferung und zwei Korrekturrunden, sofern nicht anders vermerkt.',
+    'Senden Sie Ihre Pläne an booking@ungebaut.ch — Sie erhalten innerhalb von 1–2 Arbeitstagen ein Fix-Angebot.',
   ],
 };
