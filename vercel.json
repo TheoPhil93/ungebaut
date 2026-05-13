@@ -5,14 +5,12 @@
   "framework": "vite",
   "rewrites": [
     {
-      "comment": "SPA fallback. Vercel checks the filesystem first, so /assets/foo.js still hits the hashed bundle; only unknown paths fall through to /index.html where useUrlSync routes the request (incl. /404 → NotFoundView).",
       "source": "/(.*)",
       "destination": "/"
     }
   ],
   "headers": [
     {
-      "comment": "Site-wide security baseline. Closes #20. CSP allows 'unsafe-inline' on style-src because framer-motion injects inline transform styles at runtime; script-src stays strict because all JS is hashed Vite bundles. connect-src will need to add the Sentry ingest origin once VITE_SENTRY_DSN is wired (#33).",
       "source": "/(.*)",
       "headers": [
         {
@@ -36,7 +34,6 @@
       ]
     },
     {
-      "comment": "Hashed Vite assets — filenames change on every content change, so cache aggressively forever.",
       "source": "/assets/(.*)",
       "headers": [
         {
@@ -46,7 +43,6 @@
       ]
     },
     {
-      "comment": "Self-hosted woff2 fonts ship with content hashes from @fontsource — same immutable cache.",
       "source": "/(.*)\\.woff2",
       "headers": [
         {
@@ -56,7 +52,6 @@
       ]
     },
     {
-      "comment": "index.html is the SPA shell — must always revalidate so a deploy ships the new asset hashes immediately.",
       "source": "/",
       "headers": [
         {
