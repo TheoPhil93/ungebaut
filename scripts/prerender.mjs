@@ -94,9 +94,30 @@ async function main() {
     throw new Error('dist/index.html not found — run `pnpm build` first.');
   });
 
-  const preview = await startPreview();
-  const browser = await puppeteer.launch({ headless: 'new' });
+  // Try to launch Chrome. On Vercel and other build hosts that don't ship
+  // Chromium, the postinstall download is skipped, so puppeteer can't find
+  // a browser binary. Treat that as "skip prerender" rather than a build
+  // failure — the SPA fallback serves index.html for every route and JS-
+  // capable crawlers still index per-route content. Local dev keeps the
+  // full prerender because Chrome is installed by `pnpm add puppeteer`.
+  let browser;
+  try {
+    browser = await puppeteer.launch({ headless: 'new' });
+  } catch (err) {
+    const msg = err?.message || '';
+    if (msg.includes('Could not find Chrome') || msg.includes('Could not find browser')) {
+      // eslint-disable-next-line no-console
+      console.log(
+        '[prerender] Chrome not available — skipping per-route prerender. ' +
+          'Vite build output is still served; per-route SEO falls back to the ' +
+          'SPA shell + SeoHead client-side updates.',
+      );
+      return;
+    }
+    throw err;
+  }
 
+  const preview = await startPreview();
   try {
     for (const route of ROUTES) {
       await snapshot(browser, route);
