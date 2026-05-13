@@ -7,23 +7,28 @@ import {
 } from 'lucide-react';
 import { BlobCard } from './unlumen-ui/blob-card';
 
-// Mauve / lavender palette — three stops from the founder's reference
-// (light dusty-pink-with-violet-tint at the top, mid-violet bridge,
-// deep plum at the bottom). Replaces the original unlumen DEMO_PINK,
-// which read too magenta for the studio brand. The four lightColors
-// are spread one-per-FluidBlobs-origin; the five glowColors are conic-
-// gradient stops on the rotating halo (the fifth duplicates the first
-// so the loop closes seamlessly).
-const PALETTE_MAUVE = {
-  lightColors: ['#d4b5c5', '#b59bba', '#9c8cb5', '#6f507d'],
-  darkColors: ['#6f507d', '#9c8cb5', '#9c8cb5', '#b59bba'],
-  glowColors: ['#d4b5c5', '#b59bba', '#9c8cb5', '#6f507d', '#d4b5c5'],
+// Earth / sage palette — five stops from the founder's reference
+// (Cornsilk → Papaya Whip → Beige → Dry Sage → Light Bronze, lightest
+// to deepest). Sits in the same warm family as the site backdrop
+// (#f4f0e8) so the hover field reads as a continuation of the brand
+// rather than an off-brand UI primitive.
+//
+// The four `lightColors` feed FluidBlobs one-per-origin (Beige is
+// dropped from this set because it sits visually between Papaya Whip
+// and Dry Sage and would muddy the cycle). The five `glowColors` feed
+// the rotating GlowEffect halo as conic-gradient stops at 0°/90°/180°/
+// 270°/360°; the fifth loops back to the first so the rotation closes
+// seamlessly.
+const PALETTE_EARTH = {
+  lightColors: ['#fefae0', '#faedcd', '#ccd5ae', '#d4a373'],
+  darkColors: ['#d4a373', '#ccd5ae', '#ccd5ae', '#faedcd'],
+  glowColors: ['#fefae0', '#faedcd', '#ccd5ae', '#d4a373', '#fefae0'],
 };
 
 const TONE_COLORS = {
-  warm: PALETTE_MAUVE,
-  cool: PALETTE_MAUVE,
-  neutral: PALETTE_MAUVE,
+  warm: PALETTE_EARTH,
+  cool: PALETTE_EARTH,
+  neutral: PALETTE_EARTH,
 };
 
 const DEMO_FEATURES = [
