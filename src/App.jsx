@@ -1,4 +1,5 @@
 import { lazy, Suspense, useCallback, useEffect, useState } from 'react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 import { Nav } from './components/Nav';
 import { Footer } from './components/Footer';
 import { useUrlSync, viewFromPath } from './hooks/useUrlSync';
@@ -144,6 +145,7 @@ export default function App() {
       </main>
 
       <Footer onNavigate={navigate} />
+      <SpeedInsights />
     </div>
   );
 }
