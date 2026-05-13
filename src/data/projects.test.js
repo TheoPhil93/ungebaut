@@ -48,8 +48,13 @@ const PENDING_FILL_IN = new Set([
 ]);
 
 describe('projects data — gallery shape', () => {
-  it('exports 33 cards (24 pulled pending Theo Hotz approval)', () => {
-    expect(projects.length).toBe(33);
+  it('exports 30 visible cards (3 hidden pending publication permission)', () => {
+    // The hidden trio (Baukontor Paracelsius + Theo Hotz Konnex + Theo
+    // Hotz Sihl City) stays in projectList but is filtered out of the
+    // public `projects` export until the respective architects grant
+    // publication rights. See src/data/projects.js for the `hidden: true`
+    // flag and the `.filter(p => !p.hidden)` in the export.
+    expect(projects.length).toBe(30);
   });
 
   it('every id is unique', () => {

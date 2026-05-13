@@ -46,6 +46,30 @@ const MASSIVE_TITLE_INKS = [
 
 const projectList = [
   // 01 — Ard de Vries (Agelo, Netherlands)
+  //
+  // LOADER STRIPES — the cold-entry loader shows the first three gallery
+  // projects (projects[0..2]) as vertical stripes during its image phase
+  // (see docs/PRDs/2026-05-12-willem-loading-animation.md and
+  // docs/issues/2026-05-12-03-loader-image-phase.md). Contracts ride on
+  // this entry AND the next two:
+  //
+  //  1. The three `<link rel="preload">` directives in index.html point
+  //     at these entries' image URLs — they must stay in sync. If any of
+  //     the first three projects' image paths change, update the
+  //     corresponding preload href as well.
+  //  2. projects[1] is a video in the gallery (mediaType: 'video'); the
+  //     loader uses its `006/thumb-1.png` as a still fallback. If you
+  //     swap a non-video project into position 1, switch the loader
+  //     preload + img src to the new project's `image` field.
+  //  3. Each image must read at postage-stamp size — the loader starts
+  //     the growth at ~1em wide per stripe. Strong silhouette, no fine
+  //     wireframe detail, no small text in the render.
+  //  4. Each image must survive `object-fit: cover` inside a narrow
+  //     vertical stripe frame. Subject should sit in the central 60%.
+  //  5. Reordering this array reorders the loader stripes. If you
+  //     intend to promote a different project into positions 0..2,
+  //     update BOTH this array order AND the three preload hrefs and
+  //     the three `<img src>` values in index.html.
   {
     id: 'f001',
     client: 'Ard de Vries',
@@ -158,10 +182,13 @@ const projectList = [
   },
 
   // 06 — Paracelsius (Baukontor architect, Mettler Entwickler developer)
+  // HIDDEN: Baukontor publication permission pending — flip `hidden` to
+  // false (or delete the key) once approval lands.
   {
     id: '002',
     client: 'Baukontor',
     title: 'Paracelsius',
+    hidden: true,
     tags: ['Exterior', 'Residential'],
     year: 2024,
     location: 'Richterswil, Switzerland',
@@ -243,7 +270,7 @@ const projectList = [
     massiveTitle: 'Wespi de Meuron Romeo',
     image: local('005/main.jpg'),
     detailImage: local('005/main.jpg'),
-    gallery: [local('005/main.jpg'), local('005/thumb-1.jpg')],
+    gallery: [local('005/main.jpg'), local('005/thumb-1.jpg'), local('005/thumb-3.png')],
     sections: [],
   },
 
@@ -313,7 +340,7 @@ const projectList = [
     video: local('011/main.mp4'),
     detailImage: local('011/main.mp4'),
     mediaType: 'video',
-    gallery: [local('011/main.mp4')],
+    gallery: [local('011/main.mp4'), local('011/thumb-1.mp4'), local('011/thumb-2.jpg')],
     sections: [],
   },
 
@@ -340,10 +367,12 @@ const projectList = [
   },
 
   // 14 — Konnex (Theo Hotz, Baden Nord)
+  // HIDDEN: Theo Hotz publication permission pending.
   {
     id: '013',
     client: 'Theo Hotz',
     title: 'Konnex',
+    hidden: true,
     tags: ['Exterior', 'Interior', 'Commercial'],
     year: 2025,
     location: 'Baden, Switzerland',
@@ -363,6 +392,7 @@ const projectList = [
       local('013/thumb-2.jpg'),
       local('013/thumb-3.png'),
       local('013/thumb-4.png'),
+      local('013/Konnex Top view.mp4'),
     ],
     sections: [],
   },
@@ -503,10 +533,12 @@ const projectList = [
   },
 
   // 21 — Sihl City (Theo Hotz, Zurich)
+  // HIDDEN: Theo Hotz publication permission pending.
   {
     id: '018',
     client: 'Theo Hotz',
     title: 'Sihl City',
+    hidden: true,
     tags: ['Exterior', 'Residential'],
     year: 2025,
     location: 'Zurich, Switzerland',
@@ -675,7 +707,7 @@ const projectList = [
     video: local('027/main.mp4'),
     detailImage: local('027/main.mp4'),
     mediaType: 'video',
-    gallery: [local('027/main.mp4')],
+    gallery: [local('027/main.mp4'), local('027/thumb-1.jpg')],
     sections: [],
   },
 
@@ -797,11 +829,18 @@ const projectList = [
   },
 ];
 
-export const projects = projectList.map((project, i) => ({
-  ...project,
-  massiveInk: project.massiveInk || MASSIVE_TITLE_INKS[i % MASSIVE_TITLE_INKS.length],
-  role: project.role || 'Visualisation & Direction',
-}));
+// Hidden projects are kept in the source list (so the data + asset
+// paths stay version-controlled) but filtered out of the public export
+// so they never render in HomeView / IndexView / GalleryGL. Flip the
+// `hidden` flag back off in projectList once publication permission
+// lands and the project re-enters the rotation immediately.
+export const projects = projectList
+  .filter((project) => !project.hidden)
+  .map((project, i) => ({
+    ...project,
+    massiveInk: project.massiveInk || MASSIVE_TITLE_INKS[i % MASSIVE_TITLE_INKS.length],
+    role: project.role || 'Visualisation & Direction',
+  }));
 
 export function getProject(id) {
   return projects.find((p) => p.id === id);
