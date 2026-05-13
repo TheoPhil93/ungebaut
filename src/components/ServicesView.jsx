@@ -1,9 +1,30 @@
+import {
+  House,
+  Building2,
+  Trophy,
+  Image as ImageIcon,
+  RotateCw,
+  Film,
+  Clapperboard,
+  Glasses,
+  Sparkles,
+  Camera,
+  Video,
+  Map as MapIcon,
+  Mountain,
+  Layers,
+  Download,
+  Code,
+  Users,
+} from 'lucide-react';
 import { services } from '../data/services';
 import { TextCascade } from './TextCascade';
 import { SeoHead } from './SeoHead';
 import { JsonLd } from './JsonLd';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 
+// OfferCatalog schema — one Offer entry per pricingTable row. Mirrors the
+// pricingTable in src/data/services.js. Keep the price + turnaround in sync.
 const SERVICES_SCHEMA = {
   '@context': 'https://schema.org',
   '@type': 'OfferCatalog',
@@ -24,37 +45,45 @@ const SERVICES_SCHEMA = {
         valueAddedTaxIncluded: false,
       },
       description:
-        'Fotorealistische Aussenraum-Visualisierung. 5–10 Arbeitstage. Inklusive einer Korrekturrunde.',
+        'Fotorealistische Aussenraum-Visualisierung. 5–10 Arbeitstage. Inklusive zwei Korrekturrunden.',
     },
     {
       '@type': 'Offer',
       name: 'Innenraum-Rendering',
       priceCurrency: 'CHF',
-      price: '2200',
+      price: '1500',
       description:
-        'Fotorealistische Innenraum-Visualisierung. 5–10 Arbeitstage. Inklusive einer Korrekturrunde.',
+        'Fotorealistische Innenraum-Visualisierung. 5–10 Arbeitstage. Inklusive zwei Korrekturrunden.',
     },
     {
       '@type': 'Offer',
       name: 'Wettbewerbs-Paket',
       priceCurrency: 'CHF',
-      price: '8500',
+      price: '6500',
       description:
-        'Atmosphärische Stills, Diagramme und Wettbewerbs-Plakate. 3–4 Wochen. Zwei Korrekturrunden.',
+        'Fünf atmosphärische Stills (Mischung Innen-/Aussenraum). 3–4 Wochen. Zwei Korrekturrunden.',
     },
     {
       '@type': 'Offer',
       name: 'Architekturanimation (30 Sekunden)',
       priceCurrency: 'CHF',
-      price: '6500',
-      description: 'Cinematischer 30-Sekunden-Flythrough oder Motion-Sequenz. 3–4 Wochen.',
+      price: '2500',
+      description:
+        'Cinematischer 30-Sekunden-Flythrough oder Motion-Sequenz. 2–3 Wochen. Zwei Korrekturrunden.',
     },
     {
       '@type': 'Offer',
-      name: 'VR-Rundgang',
+      name: 'VR-Rundgang (WebXR)',
       priceCurrency: 'CHF',
-      price: '9000',
-      description: 'Immersiver VR-Rundgang (WebXR oder Headset). 4–6 Wochen.',
+      price: '5000',
+      description:
+        'Immersiver VR-Rundgang als WebXR-Build (im Browser begehbar). 4–6 Wochen.',
+    },
+    {
+      '@type': 'Offer',
+      name: 'Immobilien-Marketing-Webseite (Microsite)',
+      description:
+        'Vermarktungs-Microsite für ein Immobilienprojekt — Design, Front-End-Programmierung und Visualisierung aus einem Studio. 3–6 Wochen. Preis auf Anfrage.',
     },
     {
       '@type': 'Offer',
@@ -69,10 +98,67 @@ const SERVICES_SCHEMA = {
       name: 'Drohnen-Video',
       priceCurrency: 'CHF',
       price: '2400',
-      description: 'Cinematisches Standortvideo. 5–7 Arbeitstage.',
+      description: 'Cinematisches Standortvideo. 5–7 Arbeitstage. Zwei Korrekturrunden.',
     },
   ],
 };
+
+// Per-offering pricing-card content (label + feature list). Keyed by
+// offering.id so reordering services.offerings doesn't break the
+// pairing. The card's price and Lieferzeit pull from offering.from /
+// offering.turnaround so there's one source of truth.
+const PRICING_CARDS = {
+  visualisation: {
+    label: 'Visualisierung',
+    features: [
+      { Icon: House, text: 'Innenraum-Rendering' },
+      { Icon: Building2, text: 'Aussenrendering' },
+      { Icon: Trophy, text: 'Wettbewerbs-Paket' },
+      { Icon: ImageIcon, text: 'Atmosphärische Stills' },
+      { Icon: RotateCw, text: '2 Korrekturrunden' },
+    ],
+  },
+  motion: {
+    label: '3D & Motion',
+    features: [
+      { Icon: Film, text: 'Architekturanimation' },
+      { Icon: Clapperboard, text: 'Längere Sequenzen' },
+      { Icon: Glasses, text: 'VR-Rundgang (WebXR)' },
+      { Icon: Sparkles, text: 'Motion Graphics' },
+      { Icon: RotateCw, text: '2 Korrekturrunden' },
+    ],
+  },
+  web: {
+    label: 'Vermarktung',
+    features: [
+      { Icon: ImageIcon, text: 'Rendering-Hero' },
+      { Icon: Download, text: 'Verkaufsdossier-Downloads' },
+      { Icon: Layers, text: 'Musterwohnung & Grundrisse' },
+      { Icon: Code, text: 'Design + Code + Visu' },
+      { Icon: Users, text: 'White-Label für Agenturen' },
+    ],
+  },
+  drone: {
+    label: 'Drohne',
+    features: [
+      { Icon: Camera, text: 'Aerial-Fotoset' },
+      { Icon: Video, text: 'Cinematische Videos' },
+      { Icon: MapIcon, text: 'Orthofotos' },
+      { Icon: Mountain, text: 'Standort-Doku' },
+      { Icon: Layers, text: 'Bauabschluss-Doku' },
+    ],
+  },
+};
+
+// Offerings whose card sits on the LEFT and text on the RIGHT. Alternating
+// across the four offerings produces a back-and-forth rhythm down the page:
+// visualisation (text|card) → motion (card|text) → web (text|card) → drone
+// (card|text). Mobile collapses to a single column, card-on-top for the
+// reversed variants and text-on-top for the default.
+const REVERSED_OFFERINGS = new Set(['motion', 'drone']);
+
+const CTA_HREF = 'mailto:booking@ungebaut.ch?subject=Pl%C3%A4ne%20%2F%20Anfrage';
+const CTA_LABEL = 'Pläne senden';
 
 export function ServicesView() {
   const reduced = usePrefersReducedMotion();
@@ -81,7 +167,7 @@ export function ServicesView() {
     <section className="view services" aria-label="Leistungen und Preise">
       <SeoHead
         title="UNGEBAUT — Leistungen & Preise"
-        description="Leistungen und Preise von UNGEBAUT, Architekturvisualisierungs-Studio in Zürich. Aussenrenderings ab CHF 1’800, Animationen ab CHF 6’500, Drohnenarbeit ab CHF 1’200."
+        description="Leistungen und Preise von UNGEBAUT, Architekturvisualisierungs-Studio in Zürich. Innenraum-Renderings ab CHF 1’500, Aussenrenderings ab CHF 1’800, Animationen ab CHF 2’500, VR-Rundgänge ab CHF 5’000, Immobilien-Marketing-Webseiten auf Anfrage, Drohnenarbeit ab CHF 1’200."
         path="/services"
       />
       <JsonLd data={SERVICES_SCHEMA} />
@@ -101,62 +187,98 @@ export function ServicesView() {
       </h1>
 
       <div className="services__offerings">
-        {services.offerings.map((offering, i) => (
-          <article key={offering.id} id={offering.id} className="services__offering">
-            <span className="services__offering-num" aria-hidden="true">
-              {String(i + 1).padStart(2, '0')}
-            </span>
-            <h2 className="services__offering-h2">{offering.heading}</h2>
-            <p className="services__offering-summary">{offering.summary}</p>
-            <div className="services__offering-includes">
-              <p className="services__offering-includes-label">Umfasst</p>
-              <ul className="services__offering-list">
-                {offering.includes.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-            <dl className="services__offering-meta">
-              <div>
-                <dt>Ab</dt>
-                <dd>{offering.from}</dd>
+        {services.offerings.map((offering) => {
+          const card = PRICING_CARDS[offering.id];
+          const reversed = REVERSED_OFFERINGS.has(offering.id);
+          return (
+            <article
+              key={offering.id}
+              id={offering.id}
+              className={`services__offering${reversed ? ' services__offering--reversed' : ''}`}
+            >
+              <div className="services__offering-text">
+                <div className="services__offering-text-top">
+                  <h2 className="services__offering-h2">{offering.heading}</h2>
+                  <p className="services__offering-summary">{offering.summary}</p>
+                </div>
+                <div className="services__offering-includes">
+                  <p className="services__offering-includes-label">Umfasst</p>
+                  <ul className="services__offering-list">
+                    {offering.includes.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
               </div>
-              <div>
-                <dt>Lieferzeit</dt>
-                <dd>{offering.turnaround}</dd>
-              </div>
-            </dl>
-          </article>
-        ))}
+              {card ? (
+                <aside
+                  className="services__offering-card"
+                  aria-label={`${card.label} — Preis`}
+                >
+                  <div className="services__price-card">
+                    <p className="services__price-card-label">{card.label}</p>
+                    <p className="services__price-card-price">{offering.from}</p>
+                    <p className="services__price-card-subtext">{offering.turnaround}</p>
+                    <ul className="services__price-card-features">
+                      {card.features.map((feature) => {
+                        const FeatureIcon = feature.Icon;
+                        return (
+                          <li key={feature.text}>
+                            <FeatureIcon
+                              className="services__price-card-feature-icon"
+                              aria-hidden="true"
+                            />
+                            <span>{feature.text}</span>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                    <a
+                      className="services__price-card-cta"
+                      href={CTA_HREF}
+                      data-cursor="hover"
+                    >
+                      {CTA_LABEL}
+                    </a>
+                  </div>
+                </aside>
+              ) : null}
+            </article>
+          );
+        })}
       </div>
 
       <div className="services__pricing" id="pricing">
-        <h2 className="services__pricing-h2">Was kostet eine Architekturvisualisierung?</h2>
+        <h2 className="services__pricing-h2">Alle Preise auf einen Blick</h2>
         <p className="services__pricing-lede">
-          Startpreise für die häufigsten Leistungen. Senden Sie Ihre Pläne — Sie erhalten
-          innerhalb von 24 Stunden ein Fix-Angebot.
+          Vollständige Preisübersicht mit Lieferzeiten und Korrekturrunden. Senden Sie Ihre
+          Pläne an booking@ungebaut.ch — Sie erhalten innerhalb von 1–2 Arbeitstagen ein
+          Fix-Angebot.
         </p>
 
-        <table className="services__pricing-table">
-          <thead>
-            <tr>
-              <th scope="col">Leistung</th>
-              <th scope="col">Ab</th>
-              <th scope="col">Lieferzeit</th>
-              <th scope="col">Korrekturen inkl.</th>
-            </tr>
-          </thead>
-          <tbody>
-            {services.pricingTable.map((row) => (
-              <tr key={row.service}>
-                <th scope="row">{row.service}</th>
-                <td>{row.from}</td>
-                <td>{row.turnaround}</td>
-                <td>{row.revisions}</td>
+        <details className="services__pricing-details">
+          <summary>Alle Preise & Lieferzeiten anzeigen</summary>
+          <table className="services__pricing-table">
+            <thead>
+              <tr>
+                <th scope="col">Leistung</th>
+                <th scope="col">Ab</th>
+                <th scope="col">Lieferzeit</th>
+                <th scope="col">Korrekturen inkl.</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {services.pricingTable.map((row) => (
+                <tr key={row.service}>
+                  <th scope="row">{row.service}</th>
+                  <td>{row.from}</td>
+                  <td>{row.turnaround}</td>
+                  <td>{row.revisions}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </details>
 
         <ul className="services__pricing-notes">
           {services.pricingNotes.map((note) => (
