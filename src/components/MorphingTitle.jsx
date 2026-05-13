@@ -13,9 +13,9 @@ import { useScrollProgress } from '../hooks/useScrollProgress';
 // is clip-path-wiped to the right as scroll progresses; the de-spaced
 // form is clip-path-wiped in from the left in lockstep. Reduced motion
 // snaps progress to 1 immediately so only the de-spaced form is visible.
-export function MorphingTitle({ text, ink, boundaryRef }) {
+export function MorphingTitle({ text, ink, boundaryRef, lenis = null }) {
   const { split, despaced } = useMemo(() => splitTitleForMorph(text), [text]);
-  const progress = useScrollProgress({ ref: boundaryRef });
+  const progress = useScrollProgress({ ref: boundaryRef, lenis });
 
   const splitClip = clipPathFromProgress(progress, 'wipe-out-right');
   const despacedClip = clipPathFromProgress(progress, 'wipe-in-left');

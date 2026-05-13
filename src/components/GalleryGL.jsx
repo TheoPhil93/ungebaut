@@ -17,6 +17,11 @@ const SCROLL_LERP = 0.08;
 const LATENCY_LERP_OUT = 0.08;
 const LATENCY_LERP_IN = 0.3;
 const DRAG_SENSITIVITY = 1.2;
+// Lenis emits scroll velocity in pixels-per-frame. The wheel-driven
+// target-currentLatency signal that drives the wave during browse mode
+// sits in the ~50–400 range, so multiply Lenis velocity into a
+// comparable scale before feeding it through the same damp().
+const LENIS_VELOCITY_TO_LATENCY = 20;
 
 // Mirror the vertex-shader bend math on the CPU so we hit-test against the
 // pixel that's actually under the cursor, not the un-bent stripe. Keep the
@@ -59,7 +64,14 @@ function projectStripe(stripe, current, viewportW, latencyX, waveRange) {
   };
 }
 
-export function GalleryGL({ onSelect, onHoverChange, onExplore, selectedId, hoveredId }) {
+export function GalleryGL({
+  onSelect,
+  onHoverChange,
+  onExplore,
+  selectedId,
+  hoveredId,
+  scrollSubscribe,
+}) {
   const reduced = usePrefersReducedMotion();
   const stageRef = useRef(null);
   const canvasRef = useRef(null);
@@ -70,6 +82,15 @@ export function GalleryGL({ onSelect, onHoverChange, onExplore, selectedId, hove
   const selectedIdRef = useRef(selectedId);
   const hoveredIdRef = useRef(hoveredId);
   const reducedRef = useRef(reduced);
+  // Latest Lenis scroll velocity, kept in a ref so the canvas's RAF loop
+  // can read it cheaply each frame without re-running the mount effect.
+  // `null` means "no Lenis subscription active" — fall back to the
+  // internal wheel/drag-driven scroll source.
+  const lenisVelocityRef = useRef(null);
+  // Mirror scrollSubscribe in a ref so the mount effect (which only runs
+  // once) can pick up the latest subscribe handle when it eventually
+  // becomes non-null after the dynamic import resolves.
+  const scrollSubscribeRef = useRef(scrollSubscribe);
 
   useEffect(() => {
     onSelectRef.current = onSelect;
@@ -78,7 +99,24 @@ export function GalleryGL({ onSelect, onHoverChange, onExplore, selectedId, hove
     selectedIdRef.current = selectedId;
     hoveredIdRef.current = hoveredId;
     reducedRef.current = reduced;
+    scrollSubscribeRef.current = scrollSubscribe;
   });
+
+  // Subscribe to Lenis scroll events whenever a non-noop subscribe handle
+  // is provided. The callback caches the latest velocity for the render
+  // loop to read. When Lenis tears down (project deselected, reduced
+  // motion), the unsubscribe nulls out the cached velocity so the canvas
+  // falls back to its internal source.
+  useEffect(() => {
+    if (!scrollSubscribe) return undefined;
+    const unsubscribe = scrollSubscribe((event) => {
+      lenisVelocityRef.current = typeof event?.velocity === 'number' ? event.velocity : 0;
+    });
+    return () => {
+      unsubscribe?.();
+      lenisVelocityRef.current = null;
+    };
+  }, [scrollSubscribe]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -631,7 +669,18 @@ export function GalleryGL({ onSelect, onHoverChange, onExplore, selectedId, hove
         current = damp(current, target, SCROLL_LERP, dt);
         if (Math.abs(target - current) < 0.4) current = target;
         currentLatency = damp(currentLatency, target, latencyLerp, dt);
-        const latencySource = sel ? 0 : target - currentLatency;
+        // Lenis page-scroll velocity (Issue 05) drives the wave while a
+        // project is selected — the gallery is otherwise frozen with
+        // latencySource = 0 in that state, which would leave the canvas
+        // dead during the scroll-through. Scale factor brings Lenis's
+        // px/frame velocity into the same range as the wheel-driven
+        // target-currentLatency signal the browse path uses.
+        const lenisV = lenisVelocityRef.current;
+        const lenisDrivenSource =
+          lenisV !== null ? lenisV * LENIS_VELOCITY_TO_LATENCY : null;
+        const latencySource = sel
+          ? (lenisDrivenSource ?? 0)
+          : (lenisDrivenSource ?? target - currentLatency);
         latency = damp(latency, latencySource, latencyLerp, dt);
         latencyX = clamp(Math.abs(latency) / 850, 0, 1);
         latencyR = clamp(latency / (850 / 1.0), -1.0, 1.0);

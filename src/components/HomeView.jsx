@@ -9,6 +9,7 @@ import { ProjectFooterMeta } from './ProjectFooterMeta';
 import { projects, getProject } from '../data/projects';
 import { SeoHead } from './SeoHead';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
+import { useLenisScroll, o6Easing } from '../hooks/useLenisScroll';
 
 const TICK_TOTAL = 32;
 const EASE = [0.16, 1, 0.3, 1];
@@ -57,6 +58,14 @@ export function HomeView({ onSelect, selectedId }) {
   // MorphingTitle reads its bounding rect to drive the counter-direction
   // wipe between the split and de-spaced title forms.
   const boundaryRef = useRef(null);
+
+  // Lenis smooth-scroll is engaged only while a project is open. The hook
+  // returns { lenis: null, subscribe: noop } when disabled or under
+  // prefers-reduced-motion, so MorphingTitle + GalleryGL stay on their
+  // native paths in those cases.
+  const { lenis, subscribe: scrollSubscribe } = useLenisScroll({
+    enabled: Boolean(selectedId),
+  });
 
   const [previousSelectedId, setPreviousSelectedId] = useState(selectedId);
   if (previousSelectedId !== selectedId) {
@@ -176,7 +185,17 @@ export function HomeView({ onSelect, selectedId }) {
   }, [selected]);
 
   const exploreSection2 = () => {
-    section2Ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const target = section2Ref.current;
+    if (!target) return;
+    // Prefer Lenis smooth-scroll when available so EXPLORE matches the
+    // o6 easing of the title cascade and the rest of the page scroll.
+    // Fall back to native scrollIntoView when Lenis is null (idle,
+    // pre-import, reduced motion).
+    if (lenis) {
+      lenis.scrollTo(target, { duration: 1.4, easing: o6Easing });
+    } else {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   };
 
   const titleText = selected
@@ -262,6 +281,7 @@ export function HomeView({ onSelect, selectedId }) {
               onHoverChange={setHoveredId}
               selectedId={selectedId}
               hoveredId={hoveredId}
+              scrollSubscribe={scrollSubscribe}
             />
           </Suspense>
         </div>
@@ -523,7 +543,12 @@ export function HomeView({ onSelect, selectedId }) {
         <div className="home__section home__section--strip" ref={section2Ref}>
           <span ref={boundaryRef} className="home__section-boundary" aria-hidden="true" />
           <div className="home__section-title" aria-hidden="true">
-            <MorphingTitle text={titleText} ink={sectionInk} boundaryRef={boundaryRef} />
+            <MorphingTitle
+              text={titleText}
+              ink={sectionInk}
+              boundaryRef={boundaryRef}
+              lenis={lenis}
+            />
           </div>
           <ProjectStrip project={selected} />
           <ProjectFooterMeta project={selected} />

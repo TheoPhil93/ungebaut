@@ -10,13 +10,17 @@ import { usePrefersReducedMotion } from './usePrefersReducedMotion';
 // full crossing: progress = 0 when the ref's top is at the bottom of the
 // viewport, progress = 1 when the ref's top is at the top.
 //
-// Listener is native window scroll for now. Issue 05 swaps in a Lenis
-// subscription via the same internal recompute call.
+// `lenis` (optional, Issue 05) — when a Lenis instance is passed in, the
+// hook subscribes to its synthetic scroll events instead of the native
+// window scroll event. Lenis interpolates between real scroll positions,
+// so subscribing to `window` scroll while Lenis is active produces
+// stepped (rather than smooth) progress values. Falling back to native
+// scroll keeps the hook usable on touch / reduced-motion paths.
 //
 // Under prefers-reduced-motion: reduce the hook short-circuits to 1 so
 // consumers (MorphingTitle) render the post-morph end state immediately
 // with no scroll listener attached at all.
-export function useScrollProgress({ ref, enterAt = 0, exitAt = 1 }) {
+export function useScrollProgress({ ref, enterAt = 0, exitAt = 1, lenis = null }) {
   const reduced = usePrefersReducedMotion();
   const [progress, setProgress] = useState(0);
 
@@ -50,13 +54,21 @@ export function useScrollProgress({ ref, enterAt = 0, exitAt = 1 }) {
     };
 
     recompute();
-    window.addEventListener('scroll', recompute, { passive: true });
+    if (lenis) {
+      lenis.on('scroll', recompute);
+    } else {
+      window.addEventListener('scroll', recompute, { passive: true });
+    }
     window.addEventListener('resize', recompute, { passive: true });
     return () => {
-      window.removeEventListener('scroll', recompute);
+      if (lenis) {
+        lenis.off('scroll', recompute);
+      } else {
+        window.removeEventListener('scroll', recompute);
+      }
       window.removeEventListener('resize', recompute);
     };
-  }, [reduced, ref, enterAt, exitAt]);
+  }, [reduced, ref, enterAt, exitAt, lenis]);
 
   return reduced ? 1 : progress;
 }
