@@ -1,6 +1,5 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import { MotionConfig } from 'framer-motion';
 import './index.css';
 import App from './App.jsx';
 import { ErrorBoundary } from './components/ErrorBoundary.jsx';
@@ -13,19 +12,17 @@ import { resolveAvifSupport } from './lib/image.js';
 initSentry();
 
 const root = createRoot(document.getElementById('root'));
+// Reduced-motion is enforced via the global CSS reset in index.css (it nukes
+// keyframes/transitions/animation-* under prefers-reduced-motion: reduce).
+// Framer-motion's MotionConfig used to live here but pulled the framer chunk
+// onto the eager critical path — every framer-using component is now
+// lazy-loaded so the chunk parses after first paint instead of blocking it.
 const render = () =>
-  // reducedMotion="user" → framer-motion skips transform animations (x/y
-  // /scale/rotate/skew) when the OS reports prefers-reduced-motion: reduce.
-  // Opacity and other non-transform values still animate, so cross-fades
-  // remain. The global CSS reset for *::before/after also nukes CSS
-  // keyframes/transitions in the same media block — see index.css.
   root.render(
     <StrictMode>
-      <MotionConfig reducedMotion="user">
-        <ErrorBoundary>
-          <App />
-        </ErrorBoundary>
-      </MotionConfig>
+      <ErrorBoundary>
+        <App />
+      </ErrorBoundary>
     </StrictMode>,
   );
 

@@ -3,6 +3,34 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- Cold-entry loader stripes. The loader's image phase begins with
+         ONE image at letter height (between UNGE and BAUT), shuffles
+         through the first three gallery projects, then splits into
+         three stripes that morph to gallery dimensions. The same three
+         URLs are used for both the shuffle reel (Layer A) and the
+         three final stripes (Layer B), so only three preloads are
+         needed. Source of truth: projects[0..2] in src/data/projects.js.
+         projects[1] is a video in the gallery; the loader uses its
+         thumb-1 fallback. Vite injects the main stylesheet later in
+         <head>, so these preloads enter the network queue first. -->
+    <link
+      rel="preload"
+      as="image"
+      href="/images/projects/026/Ard_de_Vries.png"
+      fetchpriority="high"
+    />
+    <link
+      rel="preload"
+      as="image"
+      href="/images/projects/006/thumb-1.png"
+      fetchpriority="high"
+    />
+    <link
+      rel="preload"
+      as="image"
+      href="/images/projects/009/main.png"
+      fetchpriority="high"
+    />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#f4f0e8" />
     <meta
@@ -23,6 +51,339 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <title>UNGEBAUT — Architekturvisualisierung, Zürich</title>
+
+    <!--
+      Cold-entry loader. Single-image gesture, slide-left exit:
+        Phase 1 (0–1.25s):  UNGE / BAUT letters slide up from below
+        Phase 2 (1.25–2.5): Box grows between letters from 0 to
+                            ~1em wide × letter-h tall — Osmo Willem
+                            "single image between letters" state
+        Phase 3 (2.5–3.5):  Image shuffles through three gallery
+                            thumbnails via a CSS reel and settles on
+                            projects[1] thumb
+        Phase 4 (3.5+):     Exit. The whole loader translates LEFT
+                            (translateX 0 → -100%) while the gallery
+                            (canvas) fades in via the Issue 04 chrome
+                            + canvas pre-fade mechanism.
+    -->
+    <style>
+      #ungebaut-loader {
+        /* Letter cap height — Bebas Neue's visible glyph height is
+           about 0.72em of the font-size. */
+        --letter-h: 0.72em;
+        /* Picture width — wider than tall, Osmo Willem proportions
+           (one letter-em worth of width sits comfortably between
+           UNGE and BAUT). */
+        --picture-w: 1em;
+
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f4f0e8;
+        color: #0b0b0b;
+        font-family: 'Bebas Neue', 'Anton', 'Oswald', Impact, sans-serif;
+        font-weight: 400;
+        letter-spacing: 0.02em;
+        /* Bigger than before. At 1440 viewport: 16vw = 230px font-size,
+           so each letter is ~115px tall and UNGE/BAUT groups are
+           ~460px wide. */
+        font-size: clamp(6em, 16vw, 16em);
+        /* line-height 1 (not 0.75) so the letter glyphs fit fully
+           inside their line-box. Bebas Neue's cap-height ≈ 0.72em
+           is smaller than the line-box, so the glyphs don't get
+           clipped at the top by h1-start/end's overflow:hidden. */
+        line-height: 1;
+        overflow: hidden;
+        pointer-events: auto;
+        animation:
+          ungebaut-loader-fade-in 400ms cubic-bezier(0.83, 0, 0.17, 1) both,
+          ungebaut-loader-fade-out 400ms cubic-bezier(0.83, 0, 0.17, 1) 5500ms forwards;
+      }
+
+      #ungebaut-loader[data-state='active'] {
+        animation: ungebaut-loader-fade-in 400ms cubic-bezier(0.83, 0, 0.17, 1) both;
+      }
+
+      /* Exit: whole loader translates off-screen to the LEFT. The
+         100ms head-start delay lets chrome + canvas begin their
+         opacity transitions (src/index.css) before the curtain
+         visibly moves — gallery fades in beneath as the loader
+         slides away. */
+      #ungebaut-loader[data-state='exiting'] {
+        animation: ungebaut-loader-slide-out 900ms cubic-bezier(0.83, 0, 0.17, 1) 100ms
+          forwards;
+      }
+
+      #ungebaut-loader[data-state='skipped'] {
+        display: none;
+      }
+
+      .ungebaut-loader__inner {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+      }
+
+      .ungebaut-loader__h1 {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        white-space: nowrap;
+      }
+
+      .ungebaut-loader__h1-start {
+        display: flex;
+        justify-content: flex-end;
+        flex: 0 0 auto;
+        overflow: hidden;
+        animation: ungebaut-loader-h1-start-shift 1.25s cubic-bezier(0.83, 0, 0.17, 1) 1.25s
+          forwards;
+      }
+
+      .ungebaut-loader__h1-end {
+        display: flex;
+        justify-content: flex-start;
+        flex: 0 0 auto;
+        overflow: hidden;
+        animation: ungebaut-loader-h1-end-shift 1.25s cubic-bezier(0.83, 0, 0.17, 1) 1.25s
+          forwards;
+      }
+
+      .ungebaut-loader__letter {
+        display: block;
+        position: relative;
+        transform: translateY(100%);
+        animation: ungebaut-loader-letter-in 1.25s cubic-bezier(0.83, 0, 0.17, 1) forwards;
+        animation-delay: calc(var(--i, 0) * 25ms);
+      }
+
+      /* Box grows from 0 to picture-w × letter-h between the letters
+         (Osmo Willem-style). No morph to gallery dimensions — the
+         picture stays at letter scale through phase 3 and exits with
+         the loader. */
+      .ungebaut-loader__box {
+        display: flex;
+        flex-flow: column;
+        justify-content: center;
+        align-items: center;
+        width: 0;
+        height: 0;
+        position: relative;
+        animation: ungebaut-loader-box-grow 1.25s cubic-bezier(0.83, 0, 0.17, 1) 1.25s
+          forwards;
+      }
+
+      .ungebaut-loader__box-inner {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* Reel of three project thumbnails stacked vertically.
+         translateY scrolls through them during the shuffle window.
+         The reel settles on frame index 1 (projects[1] thumb), which
+         is the project that will paint at viewport-centered stripe[1]
+         when the gallery reveals — true visual continuity. */
+      .ungebaut-loader__reel {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 300%;
+        display: flex;
+        flex-direction: column;
+        animation: ungebaut-loader-reel 1s cubic-bezier(0.83, 0, 0.17, 1) 2.5s forwards;
+      }
+
+      .ungebaut-loader__reel-image {
+        pointer-events: none;
+        user-select: none;
+        -webkit-user-select: none;
+        object-fit: cover;
+        object-position: center center;
+        width: 100%;
+        height: 33.333%;
+        flex-shrink: 0;
+      }
+
+      @keyframes ungebaut-loader-fade-in {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      @keyframes ungebaut-loader-fade-out {
+        from {
+          opacity: 1;
+        }
+        to {
+          opacity: 0;
+          visibility: hidden;
+        }
+      }
+
+      @keyframes ungebaut-loader-letter-in {
+        from {
+          transform: translateY(100%);
+        }
+        to {
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes ungebaut-loader-h1-start-shift {
+        from {
+          transform: translateX(0);
+        }
+        to {
+          transform: translateX(-0.05em);
+        }
+      }
+
+      @keyframes ungebaut-loader-h1-end-shift {
+        from {
+          transform: translateX(0);
+        }
+        to {
+          transform: translateX(0.05em);
+        }
+      }
+
+      /* Box grow — single phase. From 0 to picture-w × letter-h over
+         1.25s starting at 1.25s. */
+      @keyframes ungebaut-loader-box-grow {
+        from {
+          width: 0;
+          height: 0;
+        }
+        to {
+          width: var(--picture-w);
+          height: var(--letter-h);
+        }
+      }
+
+      /* Reel: cycles through three frames over 1s starting at t=2.5s
+         (phase 3 shuffle). Each frame holds briefly with an instant
+         jump to the next — slot-machine click-through feel. SETTLES on
+         frame index 1 (projects[1] thumb, the middle frame) which is
+         the project that paints at viewport-centered stripe[1] when
+         the gallery appears. */
+      @keyframes ungebaut-loader-reel {
+        0% {
+          transform: translateY(0);
+        }
+        13% {
+          transform: translateY(0);
+        }
+        14% {
+          transform: translateY(-33.333%);
+        }
+        27% {
+          transform: translateY(-33.333%);
+        }
+        28% {
+          transform: translateY(-66.666%);
+        }
+        41% {
+          transform: translateY(-66.666%);
+        }
+        42% {
+          transform: translateY(0);
+        }
+        55% {
+          transform: translateY(0);
+        }
+        56% {
+          transform: translateY(-66.666%);
+        }
+        69% {
+          transform: translateY(-66.666%);
+        }
+        70% {
+          transform: translateY(-33.333%);
+        }
+        100% {
+          transform: translateY(-33.333%);
+        }
+      }
+
+      @keyframes ungebaut-loader-slide-out {
+        from {
+          transform: translateX(0);
+        }
+        to {
+          transform: translateX(-100%);
+        }
+      }
+
+      /* ---------- Reduced-motion variant ----------
+         Hide the box entirely so there are no translates, splits, or
+         morph gestures. Letters render at their final position from
+         t=0. Exit collapses to a fade in place. */
+      @media (prefers-reduced-motion: reduce) {
+        .ungebaut-loader__letter {
+          animation: none;
+          transform: translateY(0);
+        }
+
+        .ungebaut-loader__h1-start,
+        .ungebaut-loader__h1-end {
+          animation: none;
+          transform: translateX(0);
+        }
+
+        .ungebaut-loader__box {
+          display: none;
+        }
+
+        .ungebaut-loader__reel {
+          animation: none;
+        }
+
+        #ungebaut-loader[data-state='exiting'] {
+          animation: ungebaut-loader-fade-out 400ms cubic-bezier(0.83, 0, 0.17, 1) forwards;
+        }
+      }
+
+      /* ---------- Mobile variant ----------
+         At <768px we skip the image phase entirely — bandwidth concern
+         on phones plus the gesture loses authority at small widths.
+         Letters meet in the middle as a single "UNGEBAUT" word. */
+      @media (max-width: 768px) {
+        #ungebaut-loader {
+          font-size: clamp(3em, 18vw, 5em);
+        }
+
+        .ungebaut-loader__box {
+          display: none;
+        }
+
+        .ungebaut-loader__h1-start,
+        .ungebaut-loader__h1-end {
+          animation: none;
+          transform: translateX(0);
+        }
+
+        #ungebaut-loader[data-state='exiting'] {
+          animation: ungebaut-loader-slide-out 700ms cubic-bezier(0.83, 0, 0.17, 1) 100ms
+            forwards;
+        }
+      }
+    </style>
 
     <!-- Global entity schema. Route-scoped schemas (BlogPosting,
          OfferCatalog, FAQPage) live in their respective view components so
@@ -77,7 +438,264 @@
     </script>
   </head>
   <body>
+    <!--
+      Cold-entry loader. First child of <body> so it paints before
+      anything else mounts. The visible word UNGEBAUT is split into
+      __h1-start (UNGE) | __box (with shuffle + stripes) | __h1-end
+      (BAUT). Decorative — the container's role="status" + aria-label
+      is the single source of truth for assistive tech.
+    -->
+    <div id="ungebaut-loader" role="status" aria-label="UNGEBAUT" data-state="auto">
+      <div class="ungebaut-loader__inner">
+        <div class="ungebaut-loader__h1">
+          <div class="ungebaut-loader__h1-start">
+            <span class="ungebaut-loader__letter" style="--i: 0" aria-hidden="true">U</span>
+            <span class="ungebaut-loader__letter" style="--i: 1" aria-hidden="true">N</span>
+            <span class="ungebaut-loader__letter" style="--i: 2" aria-hidden="true">G</span>
+            <span class="ungebaut-loader__letter" style="--i: 3" aria-hidden="true">E</span>
+          </div>
+          <div class="ungebaut-loader__box">
+            <div class="ungebaut-loader__box-inner">
+              <!-- Single reel of three project thumbnails. Cycles
+                   through them during the shuffle phase and settles
+                   on frame index 1 (projects[1] thumb) — the project
+                   that paints at viewport-centered stripe[1] in the
+                   gallery. After settle, the box morphs height from
+                   letter-h to gallery-stripe-h, becoming visually
+                   identical to the gallery stripe that will appear
+                   beneath it on exit. -->
+              <div class="ungebaut-loader__reel">
+                <img
+                  class="ungebaut-loader__reel-image"
+                  src="/images/projects/026/Ard_de_Vries.png"
+                  alt=""
+                  aria-hidden="true"
+                  onerror="this.style.display = 'none'"
+                />
+                <img
+                  class="ungebaut-loader__reel-image"
+                  src="/images/projects/006/thumb-1.png"
+                  alt=""
+                  aria-hidden="true"
+                  onerror="this.style.display = 'none'"
+                />
+                <img
+                  class="ungebaut-loader__reel-image"
+                  src="/images/projects/009/main.png"
+                  alt=""
+                  aria-hidden="true"
+                  onerror="this.style.display = 'none'"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="ungebaut-loader__h1-end">
+            <span class="ungebaut-loader__letter" style="--i: 4" aria-hidden="true">B</span>
+            <span class="ungebaut-loader__letter" style="--i: 5" aria-hidden="true">A</span>
+            <span class="ungebaut-loader__letter" style="--i: 6" aria-hidden="true">U</span>
+            <span class="ungebaut-loader__letter" style="--i: 7" aria-hidden="true">T</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div id="root"></div>
+
+    <!--
+      Loader runtime controller. Runs synchronously before React boots.
+      DUPLICATES the logic in src/loader/decision.js and
+      src/loader/timing.js — must stay in sync. The unit tests for those
+      modules are the contract; drift is caught by e2e/loader.spec.js.
+    -->
+    <script>
+      (function () {
+        var loader = document.getElementById('ungebaut-loader');
+        if (!loader) return;
+
+        var SESSION_KEY = 'ungebaut.loaderShown';
+        var WINDOW_LOAD_GRACE_MS = 200;
+
+        // Variant detection — mirrors src/loader/timing.js. Desktop's
+        // 3500ms floor accommodates the no-morph gesture (letters
+        // 1.25s + box-grow 1.25s + shuffle 1s = 3.5s). Mobile and
+        // reduced-motion skip the box phase so their floors stay short.
+        var matchesReducedMotion = !!(
+          window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        );
+        var matchesMobile = !!(
+          window.matchMedia && window.matchMedia('(max-width: 768px)').matches
+        );
+        var FLOOR_MS = 3500;
+        var CEILING_MS = 5500;
+        if (matchesReducedMotion && matchesMobile) {
+          FLOOR_MS = 1500;
+          CEILING_MS = 5500;
+        } else if (matchesReducedMotion) {
+          FLOOR_MS = 800;
+          CEILING_MS = 5500;
+        } else if (matchesMobile) {
+          FLOOR_MS = 1500;
+          CEILING_MS = 4000;
+        }
+
+        var loc = window.location;
+        var params = new URLSearchParams(loc.search || '');
+        // Use getAll so ?loader=skip wins regardless of order — see
+        // src/loader/decision.js for the same logic in the testable copy.
+        var forceValues = params.getAll('loader');
+        var forceSkip = forceValues.indexOf('skip') !== -1;
+        var forceShow = !forceSkip && forceValues.indexOf('show') !== -1;
+        var isLocal = loc.hostname === 'localhost' || loc.hostname === '127.0.0.1';
+        var onHome = loc.pathname === '/' || loc.pathname === '';
+
+        function readSeen() {
+          try {
+            return sessionStorage.getItem(SESSION_KEY) === '1';
+          } catch (e) {
+            return false;
+          }
+        }
+
+        function markSeen() {
+          try {
+            sessionStorage.setItem(SESSION_KEY, '1');
+          } catch (e) {
+            /* sessionStorage unavailable — accept double-show on next visit */
+          }
+        }
+
+        function dispatchLoaded() {
+          // Flag exposes "event already fired" to React listeners that
+          // mount AFTER this synchronous dispatch — the skip paths fire
+          // before any React useEffect has had a chance to attach. See
+          // App.jsx for the consumer.
+          window.__ungebautLoaded = true;
+          try {
+            window.dispatchEvent(new CustomEvent('ungebaut:loaded'));
+          } catch (e) {
+            var ev = document.createEvent('Event');
+            ev.initEvent('ungebaut:loaded', true, true);
+            window.dispatchEvent(ev);
+          }
+        }
+
+        // Mirror of src/loader/decision.js — keep in sync.
+        function shouldShow() {
+          if (forceSkip) return false;
+          if (forceShow) return true;
+          if (isLocal) return false;
+          if (!onHome) return false;
+          return !readSeen();
+        }
+
+        // Localhost auto-seeds the sessionStorage flag (unless explicitly
+        // overridden by ?loader=show) so any other code paths agree the
+        // loader has been "shown" for this session.
+        if (isLocal && !forceShow) {
+          markSeen();
+        }
+
+        if (!shouldShow()) {
+          loader.setAttribute('data-state', 'skipped');
+          dispatchLoaded();
+          return;
+        }
+
+        // Show path. Switch from the JS-disabled fallback animation to
+        // the JS-controlled lifecycle.
+        loader.setAttribute('data-state', 'active');
+
+        // Gate the chrome + canvas opacity-0 starting state. CSS in
+        // src/index.css applies this only while the class is present.
+        // The class is set BEFORE any React mount so chrome that mounts
+        // under the loader paints invisible.
+        var html = document.documentElement;
+        html.classList.add('app--loader-pending');
+
+        var priorOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+
+        var startedAt = Date.now();
+        var windowLoadedAt = null;
+        var handedOff = false;
+
+        function exit() {
+          if (handedOff) return;
+          handedOff = true;
+
+          markSeen();
+          dispatchLoaded();
+          document.body.style.overflow = priorOverflow;
+
+          // Hand-off seam: pending → exiting. Chrome and canvas begin
+          // their opacity transitions immediately; the loader's slide-up
+          // has a 100ms CSS animation-delay so the chrome reaches full
+          // opacity before the curtain visibly lifts.
+          html.classList.remove('app--loader-pending');
+          html.classList.add('app--loader-exiting');
+          loader.setAttribute('data-state', 'exiting');
+
+          var removed = false;
+          var remove = function () {
+            if (removed) return;
+            removed = true;
+            if (loader.parentNode) {
+              loader.parentNode.removeChild(loader);
+            }
+            // .app--loaded (added by React on ungebaut:loaded) is the
+            // permanent post-load marker; this transient class can go.
+            html.classList.remove('app--loader-exiting');
+          };
+          loader.addEventListener('animationend', remove);
+          // Safety net for backgrounded tabs etc. Slide is 100ms delay +
+          // 900ms duration = 1000ms; 1200ms is a comfortable margin.
+          setTimeout(remove, 1200);
+        }
+
+        function maybeExit() {
+          if (handedOff) return;
+          var now = Date.now();
+          var elapsed = now - startedAt;
+          if (elapsed < FLOOR_MS) return;
+          if (elapsed >= CEILING_MS) {
+            exit();
+            return;
+          }
+          if (windowLoadedAt !== null && now - windowLoadedAt >= WINDOW_LOAD_GRACE_MS) {
+            exit();
+          }
+        }
+
+        // Wire up the hand-off triggers.
+        if (document.readyState === 'complete') {
+          windowLoadedAt = Date.now();
+        } else {
+          window.addEventListener(
+            'load',
+            function () {
+              windowLoadedAt = Date.now();
+              setTimeout(maybeExit, WINDOW_LOAD_GRACE_MS);
+            },
+            { once: true },
+          );
+        }
+
+        // Floor-reached check.
+        setTimeout(maybeExit, FLOOR_MS);
+        // Ceiling failsafe — if maybeExit hasn't fired by ceiling, force it.
+        setTimeout(function () {
+          if (!handedOff) exit();
+        }, CEILING_MS);
+
+        // Escape skip.
+        window.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape' && !handedOff) {
+            exit();
+          }
+        });
+      })();
+    </script>
+
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

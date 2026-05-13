@@ -65,6 +65,28 @@ export default function App() {
 
   useUrlSync(view, navigate);
 
+  // React side of the cold-entry loader handshake. The inline controller
+  // in index.html dispatches `ungebaut:loaded` once at hand-off (natural,
+  // Escape-skipped, or auto-skipped) and sets window.__ungebautLoaded
+  // synchronously. We mark <html> with `.app--loaded` so HMR-triggered
+  // re-mounts cannot accidentally re-suppress chrome opacity, and so any
+  // future post-load logic can branch on a single persistent flag.
+  //
+  // Race note: on skip paths the event fires during the inline script's
+  // synchronous run, BEFORE React mounts. Checking the window flag
+  // covers that case.
+  useEffect(() => {
+    const markLoaded = () => {
+      document.documentElement.classList.add('app--loaded');
+    };
+    if (window.__ungebautLoaded) {
+      markLoaded();
+      return undefined;
+    }
+    window.addEventListener('ungebaut:loaded', markLoaded, { once: true });
+    return () => window.removeEventListener('ungebaut:loaded', markLoaded);
+  }, []);
+
   const openProject = useCallback((project) => {
     setSelectedId(project ? project.id : null);
   }, []);

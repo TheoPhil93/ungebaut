@@ -469,7 +469,16 @@ export function GalleryGL({
       maxScroll = Math.max(0, (projects.length - 1) * scrollStep);
 
       if (!initialised) {
-        target = clamp(scrollStep * 0.85, minScroll, maxScroll);
+        // Initial scroll aligns the first three stripes with the
+        // cold-entry loader's settled stripes — when the loader exits,
+        // stripes 0/1/2 paint at viewport-left/center/right (mirroring
+        // the loader's `__stripes` flex group). The math:
+        //   stripe[1].world_x = originX + 1*scrollStep - current
+        //   set stripe[1].world_x = 0  →  current = originX + scrollStep
+        // The previous default (scrollStep * 0.85) put stripe 0 near
+        // centre; this puts stripe 1 there so the loader-to-gallery
+        // transition has no horizontal jump.
+        target = clamp(originX + scrollStep, minScroll, maxScroll);
         current = target;
         currentLatency = target;
         initialised = true;

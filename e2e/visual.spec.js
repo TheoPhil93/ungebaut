@@ -26,11 +26,19 @@ const masks = (page) => [
   page.locator('.cursor'),
 ];
 
+// Bypass the cold-entry loader on every snapshot navigation. The loader
+// is home-route-only and the existing snapshots capture the idle state
+// underneath; ?loader=skip ensures we don't depend on the localhost
+// auto-skip when CI runs against a non-localhost preview URL.
+function urlFor(path) {
+  return path.includes('?') ? `${path}&loader=skip` : `${path}?loader=skip`;
+}
+
 for (const route of ROUTES) {
   for (const width of WIDTHS) {
     test(`${route.name} @ ${width}`, async ({ page }) => {
       await page.setViewportSize({ width, height: 900 });
-      await page.goto(route.path, { waitUntil: 'networkidle' });
+      await page.goto(urlFor(route.path), { waitUntil: 'networkidle' });
       // Wait for self-hosted fonts to settle before snapshotting; otherwise
       // FOUT shifts text positions and the diff engine flags the page even
       // when nothing semantic changed.
