@@ -116,7 +116,6 @@ const FOOTER_LABEL = 'Festpreis. Keine Stundenabrechnung.';
 const PRICING_CARDS = {
   visualisation: {
     label: 'Visualisierung',
-    secondaryLabel: '[ Standbild ]',
     subtext: ['ab Innenraum-Rendering', '5–10 Arbeitstage'],
     features: [
       { Icon: House, text: 'Innenraum-Rendering' },
@@ -129,7 +128,6 @@ const PRICING_CARDS = {
   },
   motion: {
     label: '3D & Motion',
-    secondaryLabel: '[ Bewegtbild ]',
     subtext: ['ab Animation 30 s', '2–3 Wochen'],
     features: [
       { Icon: Film, text: 'Architekturanimation' },
@@ -142,7 +140,6 @@ const PRICING_CARDS = {
   },
   web: {
     label: 'Vermarktung',
-    secondaryLabel: '[ Microsite ]',
     subtext: ['Preis auf Anfrage', '3–6 Wochen'],
     features: [
       { Icon: ImageIcon, text: 'Rendering-Hero' },
@@ -155,7 +152,6 @@ const PRICING_CARDS = {
   },
   drone: {
     label: 'Drohne',
-    secondaryLabel: '[ Aerial ]',
     subtext: ['ab Aerial-Fotoset', '3–5 Arbeitstage'],
     features: [
       { Icon: Camera, text: 'Aerial-Fotoset' },
@@ -228,7 +224,7 @@ export function ServicesView() {
                 <div className="services__offering-card">
                   <PricingCard
                     label={card.label}
-                    secondaryLabel={card.secondaryLabel}
+                    secondaryLabel={null}
                     price={offering.from}
                     oldPrice={null}
                     subtext={card.subtext}

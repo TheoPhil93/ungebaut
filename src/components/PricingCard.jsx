@@ -7,19 +7,23 @@ import {
 } from 'lucide-react';
 import { BlobCard } from './unlumen-ui/blob-card';
 
-// Per-tone palette. All three tones share the unlumen demo's pink/
-// magenta palette per user request — single colour scheme across cards
-// rather than the prior cream/ink-on-warm/cool/neutral split.
-const DEMO_PINK = {
-  lightColors: ['#ff0020', '#fc0f60', '#e8227a', '#ff85b3'],
-  darkColors: ['#8c0f60', '#e8227a', '#e8227a', '#ff85b3'],
-  glowColors: ['#ff96a9', '#e8b4f0', '#ffb3c6', '#d44d8a', '#ff96a9'],
+// Mauve / lavender palette — three stops from the founder's reference
+// (light dusty-pink-with-violet-tint at the top, mid-violet bridge,
+// deep plum at the bottom). Replaces the original unlumen DEMO_PINK,
+// which read too magenta for the studio brand. The four lightColors
+// are spread one-per-FluidBlobs-origin; the five glowColors are conic-
+// gradient stops on the rotating halo (the fifth duplicates the first
+// so the loop closes seamlessly).
+const PALETTE_MAUVE = {
+  lightColors: ['#d4b5c5', '#b59bba', '#9c8cb5', '#6f507d'],
+  darkColors: ['#6f507d', '#9c8cb5', '#9c8cb5', '#b59bba'],
+  glowColors: ['#d4b5c5', '#b59bba', '#9c8cb5', '#6f507d', '#d4b5c5'],
 };
 
 const TONE_COLORS = {
-  warm: DEMO_PINK,
-  cool: DEMO_PINK,
-  neutral: DEMO_PINK,
+  warm: PALETTE_MAUVE,
+  cool: PALETTE_MAUVE,
+  neutral: PALETTE_MAUVE,
 };
 
 const DEMO_FEATURES = [
@@ -47,7 +51,7 @@ const DEMO_FEATURES = [
  */
 export function PricingCard({
   label = 'Pro',
-  secondaryLabel = '[ Early Supporter Price ]',
+  secondaryLabel = null,
   price = '99$',
   oldPrice = '149$',
   subtext = ['one-time payment', 'lifetime access'],
