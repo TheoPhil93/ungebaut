@@ -1,14 +1,21 @@
 // UNGEBAUT — Leistungen + Preise. Deutsch primär. Diese Datenquelle füttert
 // die ServicesView und das OfferCatalog-Schema in index.html.
+//
+// Reihenfolge der Studios bewusst gewählt: (1) Standbild-Visualisierung als
+// Kernkompetenz, (2) Bewegtbild/VR als Erweiterung, (3) Vermarktungs-
+// Webseiten als Bündel-Angebot für Bauträger und Marketing-Agenturen,
+// (4) Drohnen-Dokumentation für Standort und Bauphasen. Die Webseiten
+// sitzen direkt nach Animation/VR, weil sie häufig dieselben Render-
+// Assets als Hero verwenden.
 
 export const services = {
   intro:
-    'UNGEBAUT führt vier Studios unter einem Dach: Standbild-Visualisierung, 3D-Design und Bewegtbild, Drohnen-Dokumentation, sowie Immobilien-Marketing-Webseiten. Nachfolgend die Leistungen, Preise und Lieferzeiten.',
+    'UNGEBAUT führt vier Studios unter einem Dach: Standbild-Visualisierung, 3D-Design und Bewegtbild, Vermarktungs-Webseiten, sowie Drohnen-Dokumentation. Nachfolgend die Leistungen, Preise und Lieferzeiten.',
 
   offerings: [
     {
       id: 'visualisation',
-      heading: 'Was umfasst Architektur- und Innenraum-Visualisierung?',
+      heading: 'Was umfasst eine Innenraum- und Aussenraumvisualisierung?',
       summary:
         'Fotorealistische Standbilder von Gebäuden, Innenräumen und urbanen Szenen — für Wettbewerbe, Marketing, Baueingaben und Markenkampagnen. Produziert aus Ihren Rhino-, Revit-, ArchiCAD-, SketchUp- oder AutoCAD-Dateien.',
       includes: [
@@ -23,7 +30,7 @@ export const services = {
     },
     {
       id: 'motion',
-      heading: 'Was umfasst 3D-Design, Animation und VR?',
+      heading: 'Welche Leistungen umfassen 3D-Design, Animation und VR?',
       summary:
         'Bewegtbild, immersive Erlebnisse und interaktive 3D-Inhalte für Projekte, die mehr brauchen als ein einzelnes Bild. Vom 30-Sekunden-Flug bis zum vollständigen VR-Rundgang durch einen ungebauten Raum.',
       includes: [
@@ -35,8 +42,24 @@ export const services = {
       turnaround: '2–6 Wochen',
     },
     {
+      id: 'web',
+      heading: 'Was umfassen Immobilien-Marketing-Webseiten?',
+      summary:
+        'Vermarktungs-Microsites für einzelne Immobilienprojekte — Design, Front-End-Programmierung und Visualisierung aus einem Studio. Rendering-Hero, Downloads-Bereich für Verkaufsdossier, Musterwohnungs-Walkthrough, Grundrisse und Standort-Karte. Diese Website selbst ist Beispiel-Produktion: WebGL-Galerie, smooth-scroll, prerenderter Build.',
+      includes: [
+        'Projekt-Microsites mit Rendering-Hero und Downloads',
+        'Musterwohnungs-Walkthrough mit Grundrissen',
+        'Vor-Bau-Vermarktung für Bauträger und Entwickler',
+        'Post-Build-Verkaufs-Webseiten',
+        'Design, Programmierung und Visualisierung aus einem Studio',
+        'White-Label-Produktion für Marketing-Agenturen',
+      ],
+      from: 'Auf Anfrage',
+      turnaround: '3–6 Wochen',
+    },
+    {
       id: 'drone',
-      heading: 'Was umfasst Drohnen-Fotografie und -Video?',
+      heading: 'Welche Leistungen umfassen Drohnenfotografie und Drohnenvideo?',
       summary:
         'Aerial-Dokumentation von Grundstücken, Bestandsbauten und fertiggestellten Projekten vor Ort. Eingesetzt für Kontextplatten, Standortanalysen, Vorher-/Nachher-Sequenzen und Baueingaben.',
       includes: [
@@ -48,21 +71,6 @@ export const services = {
       ],
       from: 'CHF 1’200',
       turnaround: '3–5 Arbeitstage',
-    },
-    {
-      id: 'web',
-      heading: 'Was umfasst Immobilien-Marketing-Webseiten?',
-      summary:
-        'Produktionsreife Microsites und Verkaufs-Webseiten für Immobilienprojekte — bewegungsreich, scrollgetrieben, performant. Diese Website ist ein Beispiel derselben Produktion: WebGL-Galerie, smooth-scroll, prerenderter Build, lighthouse-tauglich.',
-      includes: [
-        'Projekt-Microsites für Bauträger und Entwickler',
-        'Developer-Landing-Pages für laufende Vermarktung',
-        'Post-Build-Verkaufs-Webseiten',
-        'White-Label-Produktion für Marketing-Agenturen',
-        'SEO-, Performance- und Accessibility-Audit',
-      ],
-      from: 'Auf Anfrage',
-      turnaround: '3–6 Wochen',
     },
   ],
 
@@ -98,6 +106,12 @@ export const services = {
       revisions: '2 Runden',
     },
     {
+      service: 'Immobilien-Marketing-Webseite (Microsite)',
+      from: 'Auf Anfrage',
+      turnaround: '3–6 Wochen',
+      revisions: '2 Runden',
+    },
+    {
       service: 'Drohnen-Fotoset',
       from: 'CHF 1’200',
       turnaround: '3–5 Tage',
@@ -107,12 +121,6 @@ export const services = {
       service: 'Drohnen-Video',
       from: 'CHF 2’400',
       turnaround: '5–7 Tage',
-      revisions: '2 Runden',
-    },
-    {
-      service: 'Immobilien-Marketing-Webseite (Microsite)',
-      from: 'Auf Anfrage',
-      turnaround: '3–6 Wochen',
       revisions: '2 Runden',
     },
   ],

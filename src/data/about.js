@@ -3,13 +3,13 @@
 
 export const about = {
   intro:
-    'UNGEBAUT ist ein Architekturvisualisierungs-Studio in Zürich, gegründet 2021 von Philippos und Luna Theofanidis. Wir produzieren fotorealistische Renderings, 3D-Design, Animation, VR/AR, Drohnen-Dokumentation und Immobilien-Marketing-Webseiten für Architekten, Entwickler, Marketing-Agenturen und Marken in der Schweiz und Europa.',
+    'UNGEBAUT ist ein Architekturvisualisierungs-Studio in Zürich, gegründet 2021 von Philippos und Luna Theofanidis. Wir produzieren fotorealistische Renderings, 3D-Design, Animation, VR/AR, Immobilien-Marketing-Webseiten und Drohnen-Dokumentation für Architekten, Entwickler, Marketing-Agenturen und Marken in der Schweiz und Europa.',
 
   studio: {
     heading: 'Wer ist UNGEBAUT?',
     body: [
       'Gegründet 2021 im Herzen von Zürich, schöpft das Studio aus der Geometrie der Alpen und der Ruhe des Zürichsees, um in jedem Projekt daran zu erinnern, dass wir in einer aussergewöhnlichen Welt leben.',
-      'Vier Studios unter einem Dach: Standbild-Visualisierung, 3D-Design und Bewegtbild, Drohnen-Dokumentation, sowie Immobilien-Marketing-Webseiten. Jedes Projekt wird von Anfang bis Ende von den Gründern direkt geleitet.',
+      'Vier Studios unter einem Dach: Standbild-Visualisierung, 3D-Design und Bewegtbild, Immobilien-Marketing-Webseiten, sowie Drohnen-Dokumentation. Jedes Projekt wird von Anfang bis Ende von den Gründern direkt geleitet.',
     ],
   },
 
@@ -42,11 +42,11 @@ export const about = {
   },
 
   capabilities: [
-    'Architektur- & Innenraum-Visualisierung',
+    'Innenraum- & Aussenraum-Visualisierung',
     'Stadt-, Landschafts- & Immobilien-Bilder',
-    'Animation, Motion & VR / AR',
-    'Drohnen-Fotografie & -Video',
+    '3D-Design, Animation & VR',
     'Immobilien-Marketing-Webseiten',
+    'Drohnen-Fotografie & -Video',
   ],
 
   contact: {
