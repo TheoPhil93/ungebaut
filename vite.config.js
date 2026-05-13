@@ -1,5 +1,7 @@
 import { defineConfig } from 'vite';
+import { fileURLToPath } from 'node:url';
 import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
 
 /**
@@ -51,7 +53,12 @@ const sentryPlugins = process.env.SENTRY_AUTH_TOKEN
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), fontPreloadPlugin(), ...sentryPlugins],
+  plugins: [react(), tailwindcss(), fontPreloadPlugin(), ...sentryPlugins],
+  resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+    },
+  },
   test: {
     // happy-dom is ~3× faster than jsdom for hook tests and ships the same
     // window/history/location surface that useUrlSync needs.
@@ -67,6 +74,19 @@ export default defineConfig({
     // emits the .map files for upload but keeps the //# sourceMappingURL
     // out of the bundle — production users never download them.
     sourcemap: 'hidden',
+    // Drop heavy lazy-only chunks (framer-motion, ogl) from the entry's
+    // <link rel="modulepreload"> list. Vite's default behaviour is to
+    // module-preload every transitive dep of the entry chunk including
+    // dynamic-imported ones — fine for cache priming, but it means the
+    // browser races those big chunks against the entry's own parse on
+    // first paint. We let HomeView/GalleryGL fetch them on demand instead;
+    // the network cost moves out of the LCP window and the parse cost
+    // moves out of the FCP-blocking critical path.
+    modulePreload: {
+      resolveDependencies(_filename, deps) {
+        return deps.filter((dep) => !/\b(framer|ogl)-/.test(dep));
+      },
+    },
     rollupOptions: {
       output: {
         manualChunks(id) {

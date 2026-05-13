@@ -21,6 +21,7 @@ import { services } from '../data/services';
 import { TextCascade } from './TextCascade';
 import { SeoHead } from './SeoHead';
 import { JsonLd } from './JsonLd';
+import { PricingCard } from './PricingCard';
 import { usePrefersReducedMotion } from '../hooks/usePrefersReducedMotion';
 
 // OfferCatalog schema — one Offer entry per pricingTable row. Mirrors the
@@ -103,13 +104,20 @@ const SERVICES_SCHEMA = {
   ],
 };
 
-// Per-offering pricing-card content (label + feature list). Keyed by
-// offering.id so reordering services.offerings doesn't break the
-// pairing. The card's price and Lieferzeit pull from offering.from /
-// offering.turnaround so there's one source of truth.
+// Per-offering pricing-card content. Keyed by offering.id so reordering
+// services.offerings doesn't break the pairing. Each card pulls its price
+// + Lieferzeit from the offering record (services.js stays the single
+// source of truth for those two fields). Tones rotate warm → cool →
+// warm → cool through the four cards.
+const CTA_HREF = 'mailto:booking@ungebaut.ch?subject=Pl%C3%A4ne%20%2F%20Anfrage';
+const CTA_LABEL = 'Pläne senden';
+const FOOTER_LABEL = 'Festpreis. Keine Stundenabrechnung.';
+
 const PRICING_CARDS = {
   visualisation: {
     label: 'Visualisierung',
+    secondaryLabel: '[ Standbild ]',
+    subtext: ['ab Innenraum-Rendering', '5–10 Arbeitstage'],
     features: [
       { Icon: House, text: 'Innenraum-Rendering' },
       { Icon: Building2, text: 'Aussenrendering' },
@@ -117,9 +125,12 @@ const PRICING_CARDS = {
       { Icon: ImageIcon, text: 'Atmosphärische Stills' },
       { Icon: RotateCw, text: '2 Korrekturrunden' },
     ],
+    tone: 'warm',
   },
   motion: {
     label: '3D & Motion',
+    secondaryLabel: '[ Bewegtbild ]',
+    subtext: ['ab Animation 30 s', '2–3 Wochen'],
     features: [
       { Icon: Film, text: 'Architekturanimation' },
       { Icon: Clapperboard, text: 'Längere Sequenzen' },
@@ -127,9 +138,12 @@ const PRICING_CARDS = {
       { Icon: Sparkles, text: 'Motion Graphics' },
       { Icon: RotateCw, text: '2 Korrekturrunden' },
     ],
+    tone: 'cool',
   },
   web: {
     label: 'Vermarktung',
+    secondaryLabel: '[ Microsite ]',
+    subtext: ['Preis auf Anfrage', '3–6 Wochen'],
     features: [
       { Icon: ImageIcon, text: 'Rendering-Hero' },
       { Icon: Download, text: 'Verkaufsdossier-Downloads' },
@@ -137,9 +151,12 @@ const PRICING_CARDS = {
       { Icon: Code, text: 'Design + Code + Visu' },
       { Icon: Users, text: 'White-Label für Agenturen' },
     ],
+    tone: 'warm',
   },
   drone: {
     label: 'Drohne',
+    secondaryLabel: '[ Aerial ]',
+    subtext: ['ab Aerial-Fotoset', '3–5 Arbeitstage'],
     features: [
       { Icon: Camera, text: 'Aerial-Fotoset' },
       { Icon: Video, text: 'Cinematische Videos' },
@@ -147,18 +164,15 @@ const PRICING_CARDS = {
       { Icon: Mountain, text: 'Standort-Doku' },
       { Icon: Layers, text: 'Bauabschluss-Doku' },
     ],
+    tone: 'cool',
   },
 };
 
 // Offerings whose card sits on the LEFT and text on the RIGHT. Alternating
-// across the four offerings produces a back-and-forth rhythm down the page:
+// across the four offerings gives a back-and-forth rhythm down the page:
 // visualisation (text|card) → motion (card|text) → web (text|card) → drone
-// (card|text). Mobile collapses to a single column, card-on-top for the
-// reversed variants and text-on-top for the default.
+// (card|text). Mobile collapses to a single column.
 const REVERSED_OFFERINGS = new Set(['motion', 'drone']);
-
-const CTA_HREF = 'mailto:booking@ungebaut.ch?subject=Pl%C3%A4ne%20%2F%20Anfrage';
-const CTA_LABEL = 'Pläne senden';
 
 export function ServicesView() {
   const reduced = usePrefersReducedMotion();
@@ -211,37 +225,20 @@ export function ServicesView() {
                 </div>
               </div>
               {card ? (
-                <aside
-                  className="services__offering-card"
-                  aria-label={`${card.label} — Preis`}
-                >
-                  <div className="services__price-card">
-                    <p className="services__price-card-label">{card.label}</p>
-                    <p className="services__price-card-price">{offering.from}</p>
-                    <p className="services__price-card-subtext">{offering.turnaround}</p>
-                    <ul className="services__price-card-features">
-                      {card.features.map((feature) => {
-                        const FeatureIcon = feature.Icon;
-                        return (
-                          <li key={feature.text}>
-                            <FeatureIcon
-                              className="services__price-card-feature-icon"
-                              aria-hidden="true"
-                            />
-                            <span>{feature.text}</span>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                    <a
-                      className="services__price-card-cta"
-                      href={CTA_HREF}
-                      data-cursor="hover"
-                    >
-                      {CTA_LABEL}
-                    </a>
-                  </div>
-                </aside>
+                <div className="services__offering-card">
+                  <PricingCard
+                    label={card.label}
+                    secondaryLabel={card.secondaryLabel}
+                    price={offering.from}
+                    oldPrice={null}
+                    subtext={card.subtext}
+                    features={card.features}
+                    ctaLabel={CTA_LABEL}
+                    ctaHref={CTA_HREF}
+                    footerLabel={FOOTER_LABEL}
+                    tone={card.tone}
+                  />
+                </div>
               ) : null}
             </article>
           );
