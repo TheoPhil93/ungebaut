@@ -76,8 +76,22 @@ skills-lock.json
 .env.*
 !.env.example
 
-# Project image/video assets — synced separately from the deploy host
-public/images/
+# Project image/video assets — only the production-ready encodings
+# (AVIF + JPG fallback + .web.mp4) ship in git so Vercel can serve them
+# without an external CDN. The bulky source files (raw PNGs, raw MP4s,
+# MOVs) stay local on the designer's machine and are excluded by the
+# patterns below. `scripts/optimize-assets.mjs` and `optimize-videos.mjs`
+# regenerate the production encodings from sources when they change.
+public/images/**/*.png
+public/images/**/*.mp4
+public/images/**/*.mov
+public/images/**/*.m4v
+public/images/**/*.webm
+!public/images/**/*.web.mp4
+
+# Windows / macOS file-explorer artefacts that sneak into public/
+Thumbs.db
+.DS_Store
 
 # We use pnpm; npm lockfile must not coexist
 package-lock.json
